@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "compile:sass": "sass views/sass/main.scss views/style.scss"
+    "compile:sass": "sass views/sass/main.scss views/style.css"
   },
   "repository": {
     "type": "git",
