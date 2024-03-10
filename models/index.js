@@ -99,9 +99,43 @@ async function deletePost(postID) {
     }
   }
 
+  // Retrieve Post Names
+  async function getPostNames(){
+    try {
+       // Connect to db
+      // store collection
+  
+      //Retrieve post names
+      
+    } catch (error) {
+      console.error("Error while retrieving post names:", error);
+      throw error;
+    }
+  }
+
+  // Gets post
+  async function getPost(postID){
+    try {
+      // Connect to db
+      // store collection
+  
+      // query for post id
+  
+      // return post
+     
+   } catch (error) {
+     console.error("Error while retrieving post names:", error);
+     throw error;
+   }
+  }
+
+  // Model For finding posts
+
   module.exports = {
     findUser,
     newPost,
     updatePost,
-    deletePost
+    deletePost,
+    getPostNames,
+    getPost
   }
