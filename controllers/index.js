@@ -76,16 +76,6 @@ async function login(req, res) {
   }
 }
 
-async function manageFindUser(req, res) {
-  try {
-    const user = req.body.user;
-    await models.findUser(user);
-  } catch (error) {
-    console.error("Error while finding user:", error);
-    throw error;
-  }
-}
-
 async function manageNewPost(req, res) {
   try {
     const post = req.body;
