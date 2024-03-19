@@ -57,7 +57,6 @@ async function newPost(post) {
     const posts = await collection.find().toArray();
     const id = posts.length > 0 ? posts.length + 1 : 1;
 
-    console.log(id);
     const newPost = {
       id: id,
       title: post.title,
