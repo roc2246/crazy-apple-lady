@@ -97,10 +97,10 @@ async function manageUpdatePost(req, res, id, update) {
   }
 }
 
-async function manageDeletePost(req, res) {
+async function manageDeletePost(req, res, id) {
   try {
-    const id = req.body.id;
     await models.deletePost(id);
+    res.status(200).json({message: "Post deleted successfully"});
   } catch (error) {
     console.error("Error while deleting post:", error);
     throw error;

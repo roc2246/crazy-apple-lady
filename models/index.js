@@ -87,13 +87,13 @@ async function updatePost(postID, update) {
   }
 }
 
-// Updates blogpost
+// Deletes blogpost
 async function deletePost(postID) {
   try {
-    // Connect to db
-    // store collection
-    // query for post id
-    // delete post
+    const { db } = await connectToDB();
+    const collection = db.collection("posts");
+
+    await collection.findOneAndDelete({ id: postID });
   } catch (error) {
     console.error("Error while deleting post:", error);
     throw error;

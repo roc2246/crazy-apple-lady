@@ -20,4 +20,9 @@ router.put("/update-post", (req, res)=>{
     controllers.manageUpdatePost(req, res, postId, updatedPost)
 })
 
+router.delete("/delete-post", (req, res)=>{
+    const postId = parseInt(req.query.id)
+    controllers.manageDeletePost(req, res, postId)
+})
+
 module.exports = router;
