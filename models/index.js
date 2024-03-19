@@ -103,14 +103,22 @@ async function deletePost(postID) {
 // Retrieve Post Names
 async function getPostNames() {
   try {
-    // Connect to db
-    // store collection
-    //Retrieve post names
+    const { db } = await connectToDB();
+    const collection = db.collection("posts");
+
+    const namesAndIDs = await collection
+    .aggregate([
+      { $project: { _id: 0, id: 1, title: 1 } }
+    ])
+    .toArray();
+
+    return namesAndIDs.length > 0 ? namesAndIDs : null; // Return null when no posts are available
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;
   }
 }
+
 
 // Gets post
 async function getPost(postID) {

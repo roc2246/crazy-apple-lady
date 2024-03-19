@@ -1,6 +1,6 @@
 const path = require("path");
 const models = require("../models/index");
-const utilities = require("../utilities/index")
+const utilities = require("../utilities/index");
 
 const bcrypt = require("bcrypt");
 
@@ -39,8 +39,8 @@ function logout(req, res) {
     if (err) {
       console.error("Error destroying session:", err);
     } else {
-      res.status(302).send("Succesfully logged out")
-      console.log("Logged out")
+      res.status(302).send("Succesfully logged out");
+      console.log("Logged out");
     }
   });
 }
@@ -65,7 +65,7 @@ async function login(req, res) {
       req.session.sessionId = sessionId;
       req.session.expiresAt = currentTime + sessionTimeout; // Calculate session expiration time
 
-      res.status(200).send("Login succeeded")
+      res.status(200).send("Login succeeded");
     } else {
       // Password doesn't match
       res.status(401).send("Invalid credentials");
@@ -80,7 +80,7 @@ async function manageNewPost(req, res) {
   try {
     const post = req.body;
     await models.newPost(post);
-    res.status(201).json({message: "Post added"})
+    res.status(201).json({ message: "Post added" });
   } catch (error) {
     console.error("Error while adding post:", error);
     throw error;
@@ -90,7 +90,9 @@ async function manageNewPost(req, res) {
 async function manageUpdatePost(req, res, id, update) {
   try {
     await models.updatePost(id, update);
-    res.status(200).json({ message: "Post updated successfully", updatedPost: update });
+    res
+      .status(200)
+      .json({ message: "Post updated successfully", updatedPost: update });
   } catch (error) {
     console.error("Error while updating post:", error);
     throw error;
@@ -100,7 +102,7 @@ async function manageUpdatePost(req, res, id, update) {
 async function manageDeletePost(req, res, id) {
   try {
     await models.deletePost(id);
-    res.status(200).json({message: "Post deleted successfully"});
+    res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
     console.error("Error while deleting post:", error);
     throw error;
@@ -109,7 +111,8 @@ async function manageDeletePost(req, res, id) {
 
 async function manageGetPostNames(req, res) {
   try {
-    await models.getPostNames();
+    const posts = await models.getPostNames();
+    res.status(200).json(!posts ? { message: "no posts available" } : posts);
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;

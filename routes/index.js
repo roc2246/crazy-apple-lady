@@ -25,4 +25,8 @@ router.delete("/delete-post", (req, res)=>{
     controllers.manageDeletePost(req, res, postId)
 })
 
+router.get("/get-post-titles", (req, res) => {
+    controllers.manageGetPostNames(req, res)
+})
+
 module.exports = router;
