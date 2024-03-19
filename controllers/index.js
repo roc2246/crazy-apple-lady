@@ -39,8 +39,8 @@ function logout(req, res) {
     if (err) {
       console.error("Error destroying session:", err);
     } else {
-      // Redirect to the login page after successful logout
-      res.redirect("/login"); // Adjust the path to your login route
+      res.status(302).send({"ERROR": "ERROR"})
+      console.log("Logged out")
     }
   });
 }
