@@ -128,7 +128,6 @@ async function manageGetPost(req, res) {
 }
 
 module.exports = {
-  manageFindUser,
   logout,
   login,
   manageNewPost,
