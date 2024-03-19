@@ -87,12 +87,10 @@ async function manageNewPost(req, res) {
   }
 }
 
-async function manageUpdatePost(req, res) {
+async function manageUpdatePost(req, res, id, update) {
   try {
-    const id = req.body.id;
-    const update = req.body.content;
-
     await models.updatePost(id, update);
+    res.status(200).json({ message: "Post updated successfully", "updatedPost": update });
   } catch (error) {
     console.error("Error while updating post:", error);
     throw error;

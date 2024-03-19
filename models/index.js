@@ -74,10 +74,13 @@ async function newPost(post) {
 // Updates blogpost
 async function updatePost(postID, update) {
   try {
-    // Connect to db
-    // store collection
-    // query for post id
-    // update post content
+    const { db } = await connectToDB();
+    const collection = db.collection("posts");
+
+    await collection.findOneAndUpdate(
+      { id: postID },
+      { $set: { content: update } }
+    );
   } catch (error) {
     console.error("Error while updating post:", error);
     throw error;
