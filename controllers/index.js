@@ -1,5 +1,6 @@
 const path = require("path");
 const models = require("../models/index");
+const utilities = require("../utilities/index")
 
 const bcrypt = require("bcrypt");
 
@@ -55,7 +56,7 @@ async function login(req, res) {
 
     if (passwordMatch) {
       // Authentication successful
-      const sessionId = generateRandomString(20);
+      const sessionId = utilities.generateRandomString(20);
       const currentTime = Date.now();
 
       // Set session properties
