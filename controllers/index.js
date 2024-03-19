@@ -39,7 +39,7 @@ function logout(req, res) {
     if (err) {
       console.error("Error destroying session:", err);
     } else {
-      res.status(302).send({"ERROR": "ERROR"})
+      res.status(302).send("Succesfully logged out")
       console.log("Logged out")
     }
   });
@@ -80,7 +80,7 @@ async function manageNewPost(req, res) {
   try {
     const post = req.body;
     await models.newPost(post);
-    res.status(201).send("Post added")
+    res.status(201).json({message: "Post added"})
   } catch (error) {
     console.error("Error while adding post:", error);
     throw error;
@@ -90,7 +90,7 @@ async function manageNewPost(req, res) {
 async function manageUpdatePost(req, res, id, update) {
   try {
     await models.updatePost(id, update);
-    res.status(200).json({ message: "Post updated successfully", "updatedPost": update });
+    res.status(200).json({ message: "Post updated successfully", updatedPost: update });
   } catch (error) {
     console.error("Error while updating post:", error);
     throw error;
