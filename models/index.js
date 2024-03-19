@@ -123,10 +123,12 @@ async function getPostNames() {
 // Gets post
 async function getPost(postID) {
   try {
-    // Connect to db
-    // store collection
-    // query for post id
-    // return post
+    const { db } = await connectToDB();
+    const collection = db.collection("posts");
+
+    const post = await collection.find({id: postID}).toArray()
+
+    return post
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;

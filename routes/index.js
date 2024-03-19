@@ -29,6 +29,11 @@ router.get("/get-post-titles", (req, res) => {
     controllers.manageGetPostNames(req, res)
 })
 
+router.get("/post", (req, res) => {
+    const postId = parseInt(req.query.id)
+    controllers.manageGetPost(req, res, postId)
+})
+
 // Route for finding posts
 
 module.exports = router;

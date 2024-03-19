@@ -119,10 +119,10 @@ async function manageGetPostNames(req, res) {
   }
 }
 
-async function manageGetPost(req, res) {
+async function manageGetPost(req, res, id) {
   try {
-    const id = req.body.id;
-    await models.getPost(id);
+    const postData = await models.getPost(id);
+    res.status(200).send(`<h1><${postData}/h1>`)
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;
