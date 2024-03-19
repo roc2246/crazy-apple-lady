@@ -1,7 +1,15 @@
 const express = require("express");
 const app = express();
-
+const path = require("path");
 const router = require("./routes/index");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+
+
+// Imports config files
+require("dotenv").config({
+  path: path.join(__dirname, "../config/.env"),
+});
 
 
 // Parse JSON request bodies
@@ -9,6 +17,16 @@ app.use(express.json());
 
 // Parse URL-encoded request bodies
 app.use(express.urlencoded({ extended: true }));
+
+// Configures express session
+app.use(
+  session({
+    secret: process.env.SECRET_KEY,
+    resave: true,
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }), // Replace with your MongoDB connection string
+  })
+);
 
 // Set up middleware for static files (CSS, JS, images, etc.)
 app.use(express.static("views"));
