@@ -129,6 +129,8 @@ async function manageGetPost(req, res) {
   }
 }
 
+// Controller for finding posts
+
 module.exports = {
   logout,
   login,

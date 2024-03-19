@@ -29,4 +29,6 @@ router.get("/get-post-titles", (req, res) => {
     controllers.manageGetPostNames(req, res)
 })
 
+// Route for finding posts
+
 module.exports = router;
