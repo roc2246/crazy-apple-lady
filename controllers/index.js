@@ -82,7 +82,7 @@ async function manageNewPost(req, res) {
     await models.newPost(post);
     res.status(201).json({ message: "Post added" });
   } catch (error) {
-    console.error("Error while adding post:", error);
+    res.status(401).json({ message: error });
     throw error;
   }
 }
@@ -94,7 +94,7 @@ async function manageUpdatePost(req, res, id, update) {
       .status(200)
       .json({ message: "Post updated successfully", updatedPost: update });
   } catch (error) {
-    console.error("Error while updating post:", error);
+    res.status(500).json({ message: error });
     throw error;
   }
 }
@@ -114,7 +114,7 @@ async function manageGetPostNames(req, res) {
     const posts = await models.getPostNames();
     res.status(200).json(!posts ? { message: "no posts available" } : posts);
   } catch (error) {
-    console.error("Error while retrieving post names:", error);
+    res.status(500).json({ message: error });
     throw error;
   }
 }
@@ -124,7 +124,7 @@ async function manageGetPost(req, res, id) {
     const postData = await models.getPost(id);
     res.status(200).send(`<h1><${postData}/h1>`)
   } catch (error) {
-    console.error("Error while retrieving post names:", error);
+    res.status(404).send(`<h1><${error}/h1>`);
     throw error;
   }
 }
