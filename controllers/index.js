@@ -80,6 +80,7 @@ async function manageNewPost(req, res) {
   try {
     const post = req.body;
     await models.newPost(post);
+    res.status(201).send("Post added")
   } catch (error) {
     console.error("Error while adding post:", error);
     throw error;
@@ -120,7 +121,7 @@ async function manageGetPostNames(req, res) {
 async function manageGetPost(req, res) {
   try {
     const id = req.body.id;
-    await models.manageGetPost(id);
+    await models.getPost(id);
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;

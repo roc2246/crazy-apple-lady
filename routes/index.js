@@ -10,4 +10,8 @@ router.post("/logout", (req, res) => {
     controllers.logout(req, res);
   });
 
+router.post("/new-post", (req, res) => {
+    controllers.manageNewPost(req, res)
+})
+
 module.exports = router;
