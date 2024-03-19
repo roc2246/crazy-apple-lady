@@ -1,6 +1,8 @@
 const path = require("path");
 const models = require("../models/index");
 
+const bcrypt = require("bcrypt");
+
 require("dotenv").config({
   path: path.join(__dirname, "../config/.env"),
 });
@@ -42,10 +44,41 @@ function logout(req, res) {
   });
 }
 
-async function manageFindUser(req, res){
+async function login(req, res) {
+  const userExists = await models.findUser(req.body.username);
+
+  if (userExists) {
+    const passwordMatch = await bcrypt.compare(
+      req.body.password,
+      userExists.password
+    );
+
+    if (passwordMatch) {
+      // Authentication successful
+      const sessionId = generateRandomString(20);
+      const currentTime = Date.now();
+
+      // Set session properties
+      req.session.username = req.body.username;
+      req.session.lastAccessed = currentTime;
+      req.session.sessionId = sessionId;
+      req.session.expiresAt = currentTime + sessionTimeout; // Calculate session expiration time
+
+      res.status(200).send("Login succeeded")
+    } else {
+      // Password doesn't match
+      res.status(401).send("Invalid credentials");
+    }
+  } else {
+    // User not found
+    res.status(401).send("Invalid credentials");
+  }
+}
+
+async function manageFindUser(req, res) {
   try {
-    const user = req.body.user
-    await models.findUser(user)
+    const user = req.body.user;
+    await models.findUser(user);
   } catch (error) {
     console.error("Error while finding user:", error);
     throw error;
@@ -84,31 +117,32 @@ async function manageDeletePost(req, res) {
   }
 }
 
-async function manageGetPostNames(req, res){
+async function manageGetPostNames(req, res) {
   try {
-    await models.getPostNames()
+    await models.getPostNames();
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;
   }
 }
 
-async function manageGetPost(req, res){
+async function manageGetPost(req, res) {
   try {
     const id = req.body.id;
     await models.manageGetPost(id);
   } catch (error) {
     console.error("Error while retrieving post names:", error);
-     throw error;
+    throw error;
   }
 }
 
-models.exports = {
+module.exports = {
   manageFindUser,
   logout,
+  login,
   manageNewPost,
   manageUpdatePost,
   manageDeletePost,
   manageGetPostNames,
-  manageGetPost
+  manageGetPost,
 };
