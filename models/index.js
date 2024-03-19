@@ -59,6 +59,7 @@ async function newPost(post) {
 
     const newPost = {
       id: id,
+      type: post.type,
       title: post.title,
       image: post.image,
       content: post.content,
@@ -101,16 +102,17 @@ async function deletePost(postID) {
 }
 
 // Retrieve Post Names
-async function getPostNames() {
+async function getPostNames(type) {
   try {
     const { db } = await connectToDB();
     const collection = db.collection("posts");
 
     const namesAndIDs = await collection
-    .aggregate([
-      { $project: { _id: 0, id: 1, title: 1 } }
-    ])
-    .toArray();
+      .aggregate([
+        { $match: { type: type } },
+        { $project: { _id: 0, id: 1, title: 1 } },
+      ])
+      .toArray();
 
     return namesAndIDs.length > 0 ? namesAndIDs : null; // Return null when no posts are available
   } catch (error) {
@@ -119,16 +121,15 @@ async function getPostNames() {
   }
 }
 
-
 // Gets post
 async function getPost(postID) {
   try {
     const { db } = await connectToDB();
     const collection = db.collection("posts");
 
-    const post = await collection.find({id: postID}).toArray()
+    const post = await collection.find({ id: postID }).toArray();
 
-    return post
+    return post;
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;

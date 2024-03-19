@@ -26,7 +26,8 @@ router.delete("/delete-post", (req, res)=>{
 })
 
 router.get("/get-post-titles", (req, res) => {
-    controllers.manageGetPostNames(req, res)
+    const blogType = req.query.type
+    controllers.manageGetPostNames(req, res, blogType)
 })
 
 router.get("/post", (req, res) => {

@@ -109,9 +109,9 @@ async function manageDeletePost(req, res, id) {
   }
 }
 
-async function manageGetPostNames(req, res) {
+async function manageGetPostNames(req, res, type) {
   try {
-    const posts = await models.getPostNames();
+    const posts = await models.getPostNames(type);
     res.status(200).json(!posts ? { message: "no posts available" } : posts);
   } catch (error) {
     console.error("Error while retrieving post names:", error);
