@@ -7,6 +7,16 @@ function generateRandomString(length) {
       .slice(0, length); // Trim to desired length
   }
 
+  function pipelineToPromise(pipeline) {
+    return new Promise((resolve, reject) => {
+      const data = [];
+      pipeline.on("data", (chunk) => data.push(chunk));
+      pipeline.on("end", () => resolve(data));
+      pipeline.on("error", reject);
+    });
+  }
+
   module.exports = {
-    generateRandomString
+    generateRandomString,
+    pipelineToPromise
   }

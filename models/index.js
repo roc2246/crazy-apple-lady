@@ -1,6 +1,7 @@
 const path = require("path");
-
+const {Transform} = require('stream')
 const { MongoClient } = require("mongodb");
+const utilities = require('../utilities/index')
 
 require("dotenv").config({
   path: path.join(__dirname, "../config/.env"),
@@ -107,14 +108,25 @@ async function getPostNames(type) {
     const { db } = await connectToDB();
     const collection = db.collection("posts");
 
-    const namesAndIDs = await collection
-      .aggregate([
-        { $match: { type: type } },
-        { $project: { _id: 0, id: 1, title: 1 } },
-      ])
-      .toArray();
+    const cursor = collection.aggregate([
+      { $match: { type: type } },
+      { $project: { _id: 0, id: 1, title: 1 } },
+    ]);
 
-    return namesAndIDs.length > 0 ? namesAndIDs : null; // Return null when no posts are available
+    const stream = cursor.stream();
+
+    const pipeline = stream.pipe(
+      new Transform({
+        objectMode: true,
+        transform: function (data, encoding, callback) {
+          callback(null, data);
+        },
+      })
+    );
+
+    const namesAndIDs = await utilities.pipelineToPromise(pipeline)
+
+    return namesAndIDs.length > 0 ? namesAndIDs : null; 
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;
