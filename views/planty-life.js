@@ -27,7 +27,7 @@ fetch("get-post-titles?type=plantyLife")
         links.append(createLink(data[x].id, data[x].title));
       }
     } else {
-      links.innerText = tag
+      links.innerText = createError()
     }
   })
   .catch((error) => {
