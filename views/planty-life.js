@@ -5,6 +5,13 @@ function createLink(id, title) {
   return link;
 }
 
+function createError(){
+  const tag = document.createElement("h1")
+  tag.classList.add = "planty-life__error"
+  tag.innerText = "No blog posts available"
+  return tag
+}
+
 fetch("get-post-titles?type=plantyLife")
   .then((response) => {
     if (!response.ok) {
@@ -19,6 +26,8 @@ fetch("get-post-titles?type=plantyLife")
       for (let x = 0; x < data.length; x++) {
         links.append(createLink(data[x].id, data[x].title));
       }
+    } else {
+      links.innerText = tag
     }
   })
   .catch((error) => {
