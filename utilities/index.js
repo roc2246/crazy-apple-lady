@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const fs = require('fs').promises;
 
 function generateRandomString(length) {
     return crypto
@@ -16,7 +17,22 @@ function generateRandomString(length) {
     });
   }
 
+  async function uploadImage(imageData) {
+    try {
+      // For local storage
+      const imagePath = `uploads/${Date.now()}_image.jpg`; // Assuming it's a JPG image
+      // Write the image buffer to the specified path asynchronously
+      await fs.writeFile(imagePath, imageData);
+  
+      return imagePath;
+    } catch (error) {
+      console.error("Error while uploading image:", error);
+      throw error;
+    }
+  }
+
   module.exports = {
     generateRandomString,
-    pipelineToPromise
+    pipelineToPromise,
+    uploadImage
   }
