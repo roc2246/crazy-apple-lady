@@ -33,9 +33,7 @@ class LoginClient {
     tag.innerText = message;
 
     if (!document.getElementById("error")) {
-      document
-        .getElementsByClassName("main")[0]
-        .append(createError(error.message));
+      document.getElementsByClassName("main")[0].append(tag);
     }
   }
 }
@@ -50,15 +48,16 @@ document
       password: document.getElementById("password").value,
     };
 
+    const loginClient = new LoginClient(
+      credentials.username,
+      credentials.password
+    );
+
     try {
-      const loginClient = new LoginClient(
-        credentials.username,
-        credentials.password
-      );
       await loginClient.login();
       // Handle successful login if needed
-      console.log("Login successful");
+      window.location.replace("/index.html");
     } catch (error) {
-      login.error(error);
+      loginClient.error(error.message);
     }
   });
