@@ -1,26 +1,37 @@
-function createError(message) {
-  const tag = document.createElement("h1");
-  tag.id = "error";
-  tag.innerText = message;
-  return tag;
-}
+class LoginClient {
+  constructor(username, password) {
+    this.username = username;
+    this.password = password;
+  }
 
-async function login(username, password) {
-  try {
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
+  async login() {
+    try {
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: this.username,
+          password: this.password,
+        }),
+      });
 
-    if (!response.ok) {
-      throw new Error("Login failed");
+      if (response.status === 401) {
+        throw new Error("Login failed");
+      } else {
+        return response;
+      }
+    } catch (error) {
+      throw error;
     }
+  }
 
-    const data = await response.json();
-  } catch (error) {
+  error(message) {
+    const tag = document.createElement("h1");
+    tag.id = "error";
+    tag.innerText = message;
+
     if (!document.getElementById("error")) {
       document
         .getElementsByClassName("main")[0]
@@ -29,10 +40,25 @@ async function login(username, password) {
   }
 }
 
-document.getElementsByClassName("login")[0].addEventListener("submit", (e) => {
-  const username = document.getElementById("name");
-  const password = document.getElementById("password");
+document
+  .getElementsByClassName("login")[0]
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  e.preventDefault();
-  login(username, password);
-});
+    const credentials = {
+      username: document.getElementById("name").value,
+      password: document.getElementById("password").value,
+    };
+
+    try {
+      const loginClient = new LoginClient(
+        credentials.username,
+        credentials.password
+      );
+      await loginClient.login();
+      // Handle successful login if needed
+      console.log("Login successful");
+    } catch (error) {
+      login.error(error);
+    }
+  });
