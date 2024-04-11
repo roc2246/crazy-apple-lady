@@ -55,7 +55,6 @@ document
 
     try {
       await loginClient.login();
-      // Handle successful login if needed
       window.location.replace("/index.html");
     } catch (error) {
       loginClient.error(error.message);
