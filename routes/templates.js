@@ -1,34 +1,34 @@
 const express = require("express");
 const router = express.Router();
 const controllers = require("../controllers/index");
+const middleware = require("../middleware/index");
 
 router.get("/", (req, res) => {
- controllers.fillTemplate(req, res, "home", "Home")
+  controllers.fillTemplate(req, res, "home", "Home");
 });
 
 router.get("/planty-life", (req, res) => {
-  controllers.fillTemplate(req, res, "planty-life", "Planty Life")
+  controllers.fillTemplate(req, res, "planty-life", "Planty Life");
 });
 
 router.get("/mushroom-blogs", (req, res) => {
-  controllers.fillTemplate(req, res, "mushroom-blogs", "Mushroom Blogs")
-
+  controllers.fillTemplate(req, res, "mushroom-blogs", "Mushroom Blogs");
 });
 
 router.get("/login", (req, res) => {
-  controllers.fillTemplate(req, res, "login", "Login")
+  controllers.fillTemplate(req, res, "login", "Login");
 });
 
-router.get("/dashboard", (req, res) => {
-  controllers.fillTemplate(req, res, "dashboard", "Dashboard")
+router.get("/dashboard", middleware.requireLogin, (req, res) => {
+  controllers.fillTemplate(req, res, "dashboard", "Dashboard");
 });
 
-router.get("/create-post", (req, res) => {
-  controllers.fillTemplate(req, res, "create-post", "Create Post")
+router.get("/create-post", middleware.requireLogin, (req, res) => {
+  controllers.fillTemplate(req, res, "create-post", "Create Post");
 });
 
-router.get("/manage-post", (req, res) => {
-  controllers.fillTemplate(req, res, "manage-post", "Manage Post")
+router.get("/manage-post", middleware.requireLogin, (req, res) => {
+  controllers.fillTemplate(req, res, "manage-post", "Manage Post");
 });
 
 router.get("/post", (req, res) => {
