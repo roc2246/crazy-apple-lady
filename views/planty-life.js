@@ -12,7 +12,7 @@ function createError(){
   return tag
 }
 
-fetch("get-post-titles?type=plantyLife")
+fetch("/api/get-post-titles?type=plantyLife")
   .then((response) => {
     if (!response.ok) {
       throw new Error("Network response was not ok");

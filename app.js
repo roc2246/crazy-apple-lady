@@ -1,16 +1,15 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const router = require("./routes/index");
+const api = require("./routes/api");
+const templates = require("./routes/templates");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-
 
 // Imports config files
 require("dotenv").config({
   path: path.join(__dirname, "../config/.env"),
 });
-
 
 // Parse JSON request bodies
 app.use(express.json());
@@ -31,14 +30,10 @@ app.use(
 // Set up middleware for static files (CSS, JS, images, etc.)
 app.use(express.static("views"));
 
-// Sets up route for home page
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/views/index.html");
-});
+// Sets up routes
+app.use("/api", api);
+app.use("/", templates)
 
-
-// Sets up routers
-app.use("/", router);
 
 // Start the server
 const port = process.env.PORT || 3000;
