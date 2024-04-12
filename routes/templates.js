@@ -15,7 +15,7 @@ router.get("/mushroom-blogs", (req, res) => {
   controllers.fillTemplate(req, res, "mushroom-blogs", "Mushroom Blogs");
 });
 
-router.get("/login", (req, res) => {
+router.get("/login", middleware.requireLogin, (req, res) => {
   controllers.fillTemplate(req, res, "login", "Login");
 });
 
