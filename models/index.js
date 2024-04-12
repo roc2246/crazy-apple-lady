@@ -36,13 +36,7 @@ async function findUser(username) {
 
     const user = await collection.findOne(query);
 
-    if (user) {
-      console.log(`User found`);
-      return user; // Return the user object
-    } else {
-      console.log(`User not found`);
-      return null; // Return null if user not found
-    }
+    return user ? user : null
   } catch (error) {
     console.error("Error while finding user:", error);
     throw error;

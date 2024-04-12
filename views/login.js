@@ -54,8 +54,13 @@ document
     );
 
     try {
-      await loginClient.login();
-      window.location.replace("/dashboard.html");
+      const login = await loginClient.login();
+
+      if (login.status === 200) {
+        window.location.replace("/dashboard");
+      } else {
+        throw Error;
+      }
     } catch (error) {
       loginClient.error(error.message);
     }

@@ -1,9 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const controllers = require("../controllers/index");
-const components = require("../components/index");
-const fs = require("fs");
-const path = require("path");
 
 // LOGIN
 router.post("/login", (req, res) => {
