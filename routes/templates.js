@@ -81,4 +81,9 @@ router.get("/login", (req, res) => {
   });
 });
 
+router.get("/post", (req, res) => {
+  const postId = parseInt(req.query.id);
+  controllers.manageGetPost(req, res, postId);
+});
+
 module.exports = router;
