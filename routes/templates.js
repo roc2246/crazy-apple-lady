@@ -21,7 +21,6 @@ router.get("/login", (req, res) => {
 
 router.get("/dashboard", (req, res) => {
   controllers.fillTemplate(req, res, "dashboard", "Dashboard")
-
 });
 
 router.get("/create-post", (req, res) => {
