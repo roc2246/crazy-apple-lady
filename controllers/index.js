@@ -2,6 +2,7 @@ const path = require("path");
 const models = require("../models/index");
 const utilities = require("../utilities/index");
 const components = require("../components/index");
+const fs = require("fs");
 
 const bcrypt = require("bcrypt");
 
@@ -135,6 +136,25 @@ async function manageGetPost(req, res, id) {
   }
 }
 
+function fillTemplate(req, res, pageName, metaTitle){
+  const viewsDir = path.join(__dirname, "../views");
+
+  fs.readFile(path.join(viewsDir, `${pageName}.html`), "utf8", (err, data) => {
+    if (err) {
+      return res.status(500).send("Error reading file");
+    }
+
+    let modifiedHTML = data.replace("{{top}}", components.top(metaTitle));
+    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
+    modifiedHTML = modifiedHTML.replace(
+      "{{bottom}}",
+      components.bottom(`${pageName}.js`)
+    );
+
+    res.send(modifiedHTML);
+  });
+}
+
 // Controller for finding posts
 
 module.exports = {
@@ -145,4 +165,5 @@ module.exports = {
   manageDeletePost,
   manageGetPostNames,
   manageGetPost,
+  fillTemplate
 };

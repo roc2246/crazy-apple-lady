@@ -1,143 +1,36 @@
 const express = require("express");
 const router = express.Router();
 const controllers = require("../controllers/index");
-const components = require("../components/index");
-const fs = require("fs");
-const path = require("path");
 
 router.get("/", (req, res) => {
-  const viewsDir = path.join(__dirname, "../views");
-
-  fs.readFile(path.join(viewsDir, "home.html"), "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).send("Error reading file");
-    }
-
-    let modifiedHTML = data.replace("{{top}}", components.top("home"));
-    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
-    modifiedHTML = modifiedHTML.replace(
-      "{{bottom}}",
-      components.bottom("home.js")
-    );
-
-    res.send(modifiedHTML);
-  });
+ controllers.fillTemplate(req, res, "home", "Home")
 });
 
 router.get("/planty-life", (req, res) => {
-  const viewsDir = path.join(__dirname, "../views");
-
-  fs.readFile(path.join(viewsDir, "planty-life.html"), "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).send("Error reading file");
-    }
-
-    let modifiedHTML = data.replace("{{top}}", components.top("Planty-Life"));
-    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
-    modifiedHTML = modifiedHTML.replace(
-      "{{bottom}}",
-      components.bottom("planty-life.js")
-    );
-
-    res.send(modifiedHTML);
-  });
+  controllers.fillTemplate(req, res, "planty-life", "Planty Life")
 });
 
 router.get("/mushroom-blogs", (req, res) => {
-  const viewsDir = path.join(__dirname, "../views");
+  controllers.fillTemplate(req, res, "mushroom-blogs", "Mushroom Blogs")
 
-  fs.readFile(path.join(viewsDir, "mushroom-blogs.html"), "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).send("Error reading file");
-    }
-
-    let modifiedHTML = data.replace("{{top}}", components.top("Planty-Life"));
-    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
-    modifiedHTML = modifiedHTML.replace(
-      "{{bottom}}",
-      components.bottom("mushroom-blogs.js")
-    );
-
-    res.send(modifiedHTML);
-  });
 });
 
 router.get("/login", (req, res) => {
-  const viewsDir = path.join(__dirname, "../views");
-
-  fs.readFile(path.join(viewsDir, "login.html"), "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).send("Error reading file");
-    }
-
-    let modifiedHTML = data.replace("{{top}}", components.top("Planty-Life"));
-    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
-    modifiedHTML = modifiedHTML.replace(
-      "{{bottom}}",
-      components.bottom("login.js")
-    );
-
-    res.send(modifiedHTML);
-  });
+  controllers.fillTemplate(req, res, "login", "Login")
 });
 
 router.get("/dashboard", (req, res) => {
-  const viewsDir = path.join(__dirname, "../views");
+  controllers.fillTemplate(req, res, "dashboard", "Dashboard")
 
-  fs.readFile(path.join(viewsDir, "dashboard.html"), "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).send("Error reading file");
-    }
-
-    let modifiedHTML = data.replace("{{top}}", components.top("dashboard"));
-    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
-    modifiedHTML = modifiedHTML.replace(
-      "{{bottom}}",
-      components.bottom("dashboard.js")
-    );
-
-    res.send(modifiedHTML);
-  });
 });
 
 router.get("/create-post", (req, res) => {
-  const viewsDir = path.join(__dirname, "../views");
-
-  fs.readFile(path.join(viewsDir, "create-post.html"), "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).send("Error reading file");
-    }
-
-    let modifiedHTML = data.replace("{{top}}", components.top("create post"));
-    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
-    modifiedHTML = modifiedHTML.replace(
-      "{{bottom}}",
-      components.bottom("create-post.js")
-    );
-
-    res.send(modifiedHTML);
-  });
+  controllers.fillTemplate(req, res, "create-post", "Create Post")
 });
 
 router.get("/manage-post", (req, res) => {
-  const viewsDir = path.join(__dirname, "../views");
-
-  fs.readFile(path.join(viewsDir, "manage-post.html"), "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).send("Error reading file");
-    }
-
-    let modifiedHTML = data.replace("{{top}}", components.top("manage post"));
-    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
-    modifiedHTML = modifiedHTML.replace(
-      "{{bottom}}",
-      components.bottom("manage-post.js")
-    );
-
-    res.send(modifiedHTML);
-  });
+  controllers.fillTemplate(req, res, "manage-post", "Manage Post")
 });
-
 
 router.get("/post", (req, res) => {
   const postId = parseInt(req.query.id);
