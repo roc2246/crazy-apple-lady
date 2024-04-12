@@ -155,8 +155,6 @@ function fillTemplate(req, res, pageName, metaTitle){
   });
 }
 
-// Controller for finding posts
-
 module.exports = {
   logout,
   login,
