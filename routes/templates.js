@@ -81,6 +81,64 @@ router.get("/login", (req, res) => {
   });
 });
 
+router.get("/dashboard", (req, res) => {
+  const viewsDir = path.join(__dirname, "../views");
+
+  fs.readFile(path.join(viewsDir, "dashboard.html"), "utf8", (err, data) => {
+    if (err) {
+      return res.status(500).send("Error reading file");
+    }
+
+    let modifiedHTML = data.replace("{{top}}", components.top("dashboard"));
+    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
+    modifiedHTML = modifiedHTML.replace(
+      "{{bottom}}",
+      components.bottom("dashboard.js")
+    );
+
+    res.send(modifiedHTML);
+  });
+});
+
+router.get("/create-post", (req, res) => {
+  const viewsDir = path.join(__dirname, "../views");
+
+  fs.readFile(path.join(viewsDir, "create-post.html"), "utf8", (err, data) => {
+    if (err) {
+      return res.status(500).send("Error reading file");
+    }
+
+    let modifiedHTML = data.replace("{{top}}", components.top("create post"));
+    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
+    modifiedHTML = modifiedHTML.replace(
+      "{{bottom}}",
+      components.bottom("create-post.js")
+    );
+
+    res.send(modifiedHTML);
+  });
+});
+
+router.get("/manage-post", (req, res) => {
+  const viewsDir = path.join(__dirname, "../views");
+
+  fs.readFile(path.join(viewsDir, "manage-post.html"), "utf8", (err, data) => {
+    if (err) {
+      return res.status(500).send("Error reading file");
+    }
+
+    let modifiedHTML = data.replace("{{top}}", components.top("manage post"));
+    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
+    modifiedHTML = modifiedHTML.replace(
+      "{{bottom}}",
+      components.bottom("manage-post.js")
+    );
+
+    res.send(modifiedHTML);
+  });
+});
+
+
 router.get("/post", (req, res) => {
   const postId = parseInt(req.query.id);
   controllers.manageGetPost(req, res, postId);
