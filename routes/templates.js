@@ -43,4 +43,42 @@ router.get("/planty-life", (req, res) => {
   });
 });
 
+router.get("/mushroom-blogs", (req, res) => {
+  const viewsDir = path.join(__dirname, "../views");
+
+  fs.readFile(path.join(viewsDir, "mushroom-blogs.html"), "utf8", (err, data) => {
+    if (err) {
+      return res.status(500).send("Error reading file");
+    }
+
+    let modifiedHTML = data.replace("{{top}}", components.top("Planty-Life"));
+    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
+    modifiedHTML = modifiedHTML.replace(
+      "{{bottom}}",
+      components.bottom("mushroom-blogs.js")
+    );
+
+    res.send(modifiedHTML);
+  });
+});
+
+router.get("/login", (req, res) => {
+  const viewsDir = path.join(__dirname, "../views");
+
+  fs.readFile(path.join(viewsDir, "login.html"), "utf8", (err, data) => {
+    if (err) {
+      return res.status(500).send("Error reading file");
+    }
+
+    let modifiedHTML = data.replace("{{top}}", components.top("Planty-Life"));
+    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
+    modifiedHTML = modifiedHTML.replace(
+      "{{bottom}}",
+      components.bottom("login.js")
+    );
+
+    res.send(modifiedHTML);
+  });
+});
+
 module.exports = router;

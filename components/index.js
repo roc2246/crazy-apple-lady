@@ -20,13 +20,13 @@ function hero() {
   
     <nav class="hero__nav">
       <button class="btn btn__hero-nav">
-        <a href="index.html" class="hero__link">Crazy Apple Lady Tee-Shirt Co</a>
+        <a href="/" class="hero__link">Crazy Apple Lady Tee-Shirt Co</a>
       </button>
       <button class="btn btn__hero-nav">
-        <a href="mushroom-blogs.html" class="hero__link">Mushroom Blogs</a>
+        <a href="/mushroom-blogs" class="hero__link">Mushroom Blogs</a>
       </button>
       <button class="btn btn__hero-nav">
-        <a href="planty-life.html" class="hero__link">It's a Planty Life</a>
+        <a href="planty-life" class="hero__link">It's a Planty Life</a>
       </button>
     </nav>
   </header>
