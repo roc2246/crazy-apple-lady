@@ -1,13 +1,13 @@
 function requireLogin(req, res, next) {
   if (!req.session.username) {
-    return res.redirect("/login"); // Replace with login page
+    return res.redirect("/login"); 
   }
   next();
 }
 
 function checkSession(req, res, next) {
   if (req.session.username) {
-    return res.redirect("/dashboard"); // Replace with login page
+    return res.redirect("/dashboard"); 
   }
   next();
 }
