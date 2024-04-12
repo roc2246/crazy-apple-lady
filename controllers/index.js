@@ -32,9 +32,6 @@ async function hashString(inputString) {
 //   });
 // ___________________________________________________
 
-// Set the session timeout duration in milliseconds (e.g., 30 minutes)
-const sessionTimeout = 30 * 60 * 1000;
-
 function logout(req, res) {
   // Destroy the session or clear specific session properties
   req.session.destroy((err) => {
@@ -48,6 +45,7 @@ function logout(req, res) {
 }
 
 async function login(req, res) {
+  const sessionTimeout = 30 * 60 * 1000;
   const userExists = await models.findUser(req.body.username);
 
   if (userExists) {
@@ -136,7 +134,7 @@ async function manageGetPost(req, res, id) {
   }
 }
 
-function fillTemplate(req, res, pageName, metaTitle){
+function fillTemplate(req, res, pageName, metaTitle) {
   const viewsDir = path.join(__dirname, "../views");
 
   fs.readFile(path.join(viewsDir, `${pageName}.html`), "utf8", (err, data) => {
@@ -163,5 +161,5 @@ module.exports = {
   manageDeletePost,
   manageGetPostNames,
   manageGetPost,
-  fillTemplate
+  fillTemplate,
 };
