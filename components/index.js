@@ -50,8 +50,22 @@ function bottom(script) {
 </html>`;
 }
 
+function blogPost(blogTitle, blogContent, blogImg) {
+  return `${top(blogTitle)}
+  ${hero()}
+  <main class="post">
+  <img src="${blogImg}" alt="" class="post__img" />
+        <h1 class="post__heading">${blogTitle}</h1>
+        <section class="post__content">
+            ${blogContent}
+        </section>
+    </main>
+  ${bottom("post.js")}`;
+}
+
 module.exports = {
   top,
   hero,
   bottom,
+  blogPost,
 };

@@ -1,6 +1,7 @@
 const path = require("path");
 const models = require("../models/index");
 const utilities = require("../utilities/index");
+const components = require("../components/index");
 
 const bcrypt = require("bcrypt");
 
@@ -122,8 +123,12 @@ async function manageGetPostNames(req, res, type) {
 async function manageGetPost(req, res, id) {
   try {
     const postData = await models.getPost(id);
-    console.log(postData)
-    res.status(200).send(`<h1>${postData[0].title}</h1>`)
+    const postTemplate = components.blogPost(
+      postData[0].title,
+      postData[0].content,
+      postData[0].image
+    );
+    res.status(200).send(postTemplate);
   } catch (error) {
     res.status(404).send(`<h1><${error}/h1>`);
     throw error;
