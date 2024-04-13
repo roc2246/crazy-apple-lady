@@ -1,13 +1,26 @@
-{{top}}
-{{hero}}
+{{top}} {{hero}}
 
 <main class="create-post">
-    <form class="create-post__form">
-        <input class="create-post__img" type="file" src="" alt="" accept="image/*">
-        <input class="create-post__title" type="text" name="" id="">
-        <textarea name="" id="" cols="30" rows="10" class="create-post__text"></textarea>
-        <input class="create-post__submit" type="submit" value="Create Post">
-    </form>
+  <form class="create-post__form">
+    <label for="image" class="create-post__label">Image:</label>
+    <input name="image" class="create-post__img" type="file" accept="image/*" />
+
+    <label for="title" class="create-post__label">Title:</label>
+    <input name="title" class="create-post__title" type="text" />
+
+    <label for="content" class="create-post__label">Content:</label>
+    <textarea
+      name="content"
+      id=""
+      cols="30"
+      rows="10"
+      class="create-post__text"
+    >
+&nbsp;</textarea
+    >
+
+    <input class="create-post__submit" type="submit" value="Create Post" />
+  </form>
 </main>
 
 {{bottom}}

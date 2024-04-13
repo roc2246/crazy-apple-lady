@@ -1,18 +1,19 @@
-{{top}}
-{{hero}}
+{{top}} {{hero}}
 
-      <main class="main">
-        <h1 class="main__heading">Login User</h1>
-        <form class="login" method="post">
-            <label for="name">Name:</label><br>
-            <input type="text" id="name" name="name"><br>
-            <label for="password">Password:</label><br>
-            <input type="password" id="password" name="password"><br><br>
-            <button type="submit">Submit</button>
+<main class="main">
+  <h1 class="main__heading">Login User</h1>
+  <form class="login" method="post">
+    <label for="name" class="login__label">Name:</label><br />
+    <input class="login__text" type="text" id="name" name="name" /><br />
+    <label for="password" class="login__label">Password:</label><br />
+    <input
+      class="login__text"
+      type="password"
+      id="password"
+      name="password"
+    /><br /><br />
+    <button class="login__submit" type="submit">Submit</button>
+  </form>
+</main>
 
-        </form>
-        
-
-      </main>
-    
 {{bottom}}
