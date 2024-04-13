@@ -134,21 +134,27 @@ async function manageGetPost(req, res, id) {
 }
 
 function fillTemplate(req, res, pageName, metaTitle) {
-  const viewsDir = path.join(__dirname, "../views");
+  const viewsDir = path.join(__dirname, '../views');
+  const filePath = path.join(viewsDir, `${pageName}.html`);
 
-  fs.readFile(path.join(viewsDir, `${pageName}.html`), "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).send("Error reading file");
-    }
+  const stream = fs.createReadStream(filePath, 'utf8');
 
-    let modifiedHTML = data.replace("{{top}}", components.top(metaTitle));
-    modifiedHTML = modifiedHTML.replace("{{hero}}", components.hero());
-    modifiedHTML = modifiedHTML.replace(
-      "{{bottom}}",
-      components.bottom(`${pageName}.js`)
-    );
+  stream.on('error', (err) => {
+    res.status(500).send('Error reading file');
+  });
 
-    res.send(modifiedHTML);
+  stream.on('open', () => {
+    let modifiedHTML = '';
+    stream.on('data', (chunk) => {
+      modifiedHTML += chunk
+        .replace('{{top}}', components.top(metaTitle))
+        .replace('{{hero}}', components.hero())
+        .replace('{{bottom}}', components.bottom(`${pageName}.js`));
+    });
+
+    stream.on('end', () => {
+      res.send(modifiedHTML);
+    });
   });
 }
 
