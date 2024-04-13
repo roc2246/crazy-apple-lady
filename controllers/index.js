@@ -39,7 +39,6 @@ function logout(req, res) {
       console.error("Error destroying session:", err);
     } else {
       res.status(200).send("Succesfully logged out");
-      console.log("Logged out");
     }
   });
 }
