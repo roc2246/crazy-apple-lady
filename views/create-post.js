@@ -35,6 +35,7 @@ class Post {
     const tag = document.createElement("h1");
     tag.id = "success";
     tag.innerText = "Post successfully added";
+    document.getElementsByClassName("create-post__form")[0].reset();
 
     if (document.getElementById("error")) {
       document.getElementsByClassName("create-post")[0].append(tag);
@@ -63,10 +64,10 @@ class Post {
 function addPTags(text) {
   text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
   if (text.startsWith('<p class="post__paragraph">') === false) {
-      text = '<p class="post__paragraph">' + text;
+    text = '<p class="post__paragraph">' + text;
   }
-  if (text.endsWith('</p>') === false) {
-      text += '</p>';
+  if (text.endsWith("</p>") === false) {
+    text += "</p>";
   }
 
   return text;
