@@ -1,19 +1,17 @@
 class ContentFormatter {
-  static addPTags(text) {
-    try {
-      if (typeof text !== "string") throw new Error("Text must be a string");
-      text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
-      if (!text.startsWith('<p class="post__paragraph">')) {
-        text = '<p class="post__paragraph">' + text;
-      }
-      if (!text.endsWith("</p>")) {
-        text += "</p>";
-      }
-      return text;
-    } catch (error) {
-      DomManipulation.error(error.message);
-      throw error;
+  addPTags(text) {
+    if (typeof text !== "string") {
+      throw new Error("Text must be a string");
     }
+
+    text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
+    if (!text.startsWith('<p class="post__paragraph">')) {
+      text = '<p class="post__paragraph">' + text;
+    }
+    if (!text.endsWith("</p>")) {
+      text += "</p>";
+    }
+    return text;
   }
 }
 
@@ -22,11 +20,13 @@ class Post {
     this.type = type;
     this.title = title;
     this.image = image;
-    this.content = ContentFormatter.addPTags(content);
+    this.content = content;
   }
 
   async add() {
     try {
+      const formattedContent = new ContentFormatter().addPTags(this.content);
+
       const response = await fetch("/api/new-post", {
         method: "POST",
         headers: {
@@ -36,7 +36,7 @@ class Post {
           type: this.type,
           title: this.title,
           image: this.image,
-          content: this.content,
+          content: formattedContent,
         }),
       });
 
