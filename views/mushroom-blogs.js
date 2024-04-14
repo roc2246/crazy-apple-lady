@@ -7,7 +7,7 @@ function createLink(id, title) {
   
   function createError(){
     const tag = document.createElement("h1")
-    tag.classList.add = "mushroom-blogs__error"
+    tag.classList.add("mushroom-blogs__error")
     tag.innerText = "No blog posts available"
     return tag
   }
@@ -17,7 +17,7 @@ function createLink(id, title) {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      return response.json(); // Parse the JSON response
+      return response.json(); 
     })
     .then((data) => {
       const links = document.getElementsByClassName("mushroom-blogs__links")[0];
@@ -27,7 +27,7 @@ function createLink(id, title) {
           links.append(createLink(data[x].id, data[x].title));
         }
       } else {
-        links.innerText = createError()
+        links.innerText = createError().textContent
       }
     })
     .catch((error) => {
