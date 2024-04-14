@@ -56,7 +56,8 @@ async function newPost(post) {
       id: id,
       type: post.type,
       title: post.title,
-      image: utilities.uploadImage() || null,
+      // image: utilities.uploadImage() || null,
+      image: "TEST",
       content: post.content,
     };
 
