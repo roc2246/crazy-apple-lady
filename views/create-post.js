@@ -37,8 +37,8 @@ class Post {
     tag.innerText = "Post successfully added";
 
     if (document.getElementById("error")) {
-        document.getElementsByClassName("create-post")[0].append(tag);
-      }
+      document.getElementsByClassName("create-post")[0].append(tag);
+    }
 
     if (!document.getElementById("success")) {
       document.getElementsByClassName("create-post")[0].append(tag);
@@ -51,13 +51,25 @@ class Post {
     tag.innerText = message;
 
     if (document.getElementById("success")) {
-        document.getElementsByClassName("create-post")[0].append(tag);
-      }
+      document.getElementsByClassName("create-post")[0].append(tag);
+    }
 
     if (!document.getElementById("error")) {
       document.getElementsByClassName("create-post")[0].append(tag);
     }
   }
+}
+
+function addPTags(text) {
+  text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
+  if (text.startsWith('<p class="post__paragraph">') === false) {
+      text = '<p class="post__paragraph">' + text;
+  }
+  if (text.endsWith('</p>') === false) {
+      text += '</p>';
+  }
+
+  return text;
 }
 
 document
@@ -77,17 +89,13 @@ document
       newPost.type,
       newPost.title,
       newPost.image,
-      newPost.content
+      addPTags(newPost.content)
     );
 
     try {
       const sendPost = await postReq.add();
 
-      if (sendPost.status === 201) {
-        postReq.success()
-      } else {
-        throw Error;
-      }
+      sendPost.status === 201 ? postReq.success() : Error;
     } catch (error) {
       postReq.error(error.message);
     }
