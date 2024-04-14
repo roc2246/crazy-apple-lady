@@ -1,7 +1,7 @@
 const path = require("path");
-const {Transform} = require('stream')
+const { Transform } = require("stream");
 const { MongoClient } = require("mongodb");
-const utilities = require('../utilities/index')
+const utilities = require("../utilities/index");
 
 require("dotenv").config({
   path: path.join(__dirname, "../config/.env"),
@@ -36,7 +36,7 @@ async function findUser(username) {
 
     const user = await collection.findOne(query);
 
-    return user ? user : null
+    return user ? user : null;
   } catch (error) {
     console.error("Error while finding user:", error);
     throw error;
@@ -50,10 +50,10 @@ async function newPost(post) {
     const collection = db.collection("posts");
 
     const posts = await collection.find().toArray();
-    const id = posts.length > 0 ? posts.length + 1 : 1;
+    posts.sort((a, b) => a.id - b.id);
 
     const newPost = {
-      id: id,
+      id: posts.length > 0 ? posts[posts.length - 1].id + 1 : 1,
       type: post.type,
       title: post.title,
       // image: utilities.uploadImage() || null,
@@ -119,9 +119,9 @@ async function getPostNames(type) {
       })
     );
 
-    const namesAndIDs = await utilities.pipelineToPromise(pipeline)
+    const namesAndIDs = await utilities.pipelineToPromise(pipeline);
 
-    return namesAndIDs.length > 0 ? namesAndIDs : null; 
+    return namesAndIDs.length > 0 ? namesAndIDs : null;
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;
