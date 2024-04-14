@@ -1,9 +1,23 @@
+class ContentFormatter {
+  static addPTags(text) {
+    text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
+    if (!text.startsWith('<p class="post__paragraph">')) {
+      text = '<p class="post__paragraph">' + text;
+    }
+    if (!text.endsWith("</p>")) {
+      text += "</p>";
+    }
+
+    return text;
+  }
+}
+
 class Post {
   constructor(type, title, image, content) {
     this.type = type;
     this.title = title;
     this.image = image;
-    this.content = this.addPTags(content);
+    this.content = ContentFormatter.addPTags(content);
   }
 
   async add() {
@@ -30,18 +44,6 @@ class Post {
       throw error;
     }
   }
-
-  addPTags(text) {
-    text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
-    if (!text.startsWith('<p class="post__paragraph">')) {
-      text = '<p class="post__paragraph">' + text;
-    }
-    if (!text.endsWith("</p>")) {
-      text += "</p>";
-    }
-
-    return text;
-  }
 }
 
 class DomManipulation {
@@ -67,27 +69,29 @@ class DomManipulation {
   }
 }
 
-document.querySelector(".create-post__form").addEventListener("submit", async (e) => {
-  e.preventDefault();
+document
+  .querySelector(".create-post__form")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const newPost = {
-    type: document.querySelector(".create-post__type").value,
-    title: document.querySelector(".create-post__title").value,
-    image: document.querySelector(".create-post__img").value || null,
-    content: document.querySelector(".create-post__content").value,
-  };
+    const newPost = {
+      type: document.querySelector(".create-post__type").value,
+      title: document.querySelector(".create-post__title").value,
+      image: document.querySelector(".create-post__img").value || null,
+      content: document.querySelector(".create-post__content").value,
+    };
 
-  const postReq = new Post(
-    newPost.type,
-    newPost.title,
-    newPost.image,
-    newPost.content
-  );
+    const postReq = new Post(
+      newPost.type,
+      newPost.title,
+      newPost.image,
+      newPost.content
+    );
 
-  try {
-    await postReq.add();
-    DomManipulation.success();
-  } catch (error) {
-    DomManipulation.error(error.message);
-  }
-});
+    try {
+      await postReq.add();
+      DomManipulation.success();
+    } catch (error) {
+      DomManipulation.error(error.message);
+    }
+  });
