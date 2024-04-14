@@ -2,18 +2,21 @@
 
 <main class="create-post">
   <form class="create-post__form">
-
     <label for="type" class="create-post__label">Type of Post:</label>
     <select name="type" class="create-post__type">
-      <option value="mushroomBlog" class="create-post__option">Mushroom Blogs</option>
-      <option value="plantyLife" class="create-post__option">It's a Planty Life</option>
+      <option value="mushroomBlog" class="create-post__option">
+        Mushroom Blogs
+      </option>
+      <option value="plantyLife" class="create-post__option">
+        It's a Planty Life
+      </option>
     </select>
 
     <label for="image" class="create-post__label">Image:</label>
     <input name="image" class="create-post__img" type="file" accept="image/*" />
 
     <label for="title" class="create-post__label">Title:</label>
-    <input name="title" class="create-post__title" type="text" required/>
+    <input name="title" class="create-post__title" type="text" required />
 
     <label for="content" class="create-post__label">Content:</label>
     <textarea
@@ -23,9 +26,7 @@
       rows="10"
       class="create-post__content"
       required
-    >
-&nbsp;</textarea
-    >
+    ></textarea>
 
     <input class="create-post__submit" type="submit" value="Create Post" />
   </form>
