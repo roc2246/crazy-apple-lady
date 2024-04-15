@@ -1,51 +1,42 @@
-// NOTE: IF means interface
+class MessageRenderer {
+  static renderMessage(type, message) {
+    const tag = document.createElement("h1");
+    tag.id = `${type}`;
+    tag.innerText = type === "success" ? "Post added" : message;
+    return tag;
+  }
+}
 
-class ContentFormatterIF {
-  addPTags(text) {
+class FormHandler {
+  static resetForm() {
+    document.querySelector(".create-post__form").reset();
+  }
+}
+
+class DomManipulation {
+  static showMessage(type, message) {
+    const messageTag = MessageRenderer.renderMessage(type, message);
+    FormHandler.resetForm();
+    if (!document.getElementById(`${type}`)) {
+      document.querySelector(".create-post").append(messageTag);
+    }
+  }
+}
+
+class ContentFormatter {
+  static addPTags(text) {
     if (typeof text !== "string") {
       throw new Error("Text must be a string");
     }
-  }
-}
 
-class ConfirmationIF {
-  success(tag) {
-    if (document.getElementById("error")) {
-      document.querySelector(".create-post").remove(tag);
+    text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
+    if (!text.startsWith('<p class="post__paragraph">')) {
+      text = '<p class="post__paragraph">' + text;
     }
-
-    if (!document.getElementById("success")) {
-      document.querySelector(".create-post").append(tag);
+    if (!text.endsWith("</p>")) {
+      text += "</p>";
     }
-  }
-
-  error(tag) {
-    if (document.getElementById("success")) {
-      document.querySelector(".create-post").append(tag);
-    }
-
-    if (!document.getElementById("error")) {
-      document.querySelector(".create-post").append(tag);
-    }
-  }
-}
-
-class ContentFormatter extends ContentFormatterIF {
-  addPTags(text) {
-    try {
-      super.addPTags(text);
-
-      text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
-      if (!text.startsWith('<p class="post__paragraph">')) {
-        text = '<p class="post__paragraph">' + text;
-      }
-      if (!text.endsWith("</p>")) {
-        text += "</p>";
-      }
-      return text;
-    } catch (error) {
-      throw new Error(error.message);
-    }
+    return text;
   }
 }
 
@@ -79,50 +70,32 @@ class Post {
   }
 }
 
-class Confirmation extends ConfirmationIF {
-  success() {
-    const tag = document.createElement("h1");
-    tag.id = "success";
-    tag.innerText = "Post successfully added";
-    document.querySelector(".create-post__form").reset();
-    super.success(tag);
+document.querySelector(".create-post__form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const newPost = {
+    type: document.querySelector(".create-post__type").value,
+    title: document.querySelector(".create-post__title").value,
+    image: document.querySelector(".create-post__img").value || null,
+    content: document.querySelector(".create-post__content").value,
+  };
+
+  if (!newPost.type || !newPost.title || !newPost.content) {
+    DomManipulation.showMessage("error", "Please fill in all required fields.");
+    return;
   }
 
-  error(message) {
-    const tag = document.createElement("h1");
-    tag.id = "error";
-    tag.innerText = message;
-    super.error(tag);
+  const postReq = new Post(
+    newPost.type,
+    newPost.title,
+    newPost.image,
+    ContentFormatter.addPTags(newPost.content),
+  );
+
+  try {
+    await postReq.add();
+    DomManipulation.showMessage("success");
+  } catch (error) {
+    DomManipulation.showMessage("error", error.message || "An error occurred");
   }
-}
-
-document
-  .querySelector(".create-post__form")
-  .addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const newPost = {
-      type: document.querySelector(".create-post__type").value,
-      title: document.querySelector(".create-post__title").value,
-      image: document.querySelector(".create-post__img").value || null,
-      content: document.querySelector(".create-post__content").value,
-    };
-
-    const formatter = new ContentFormatter
-
-    const postReq = new Post(
-      newPost.type,
-      newPost.title,
-      newPost.image,
-      formatter.addPTags(newPost.content)
-    );
-
-    const confirmation = new Confirmation();
-
-    try {
-      await postReq.add();
-      confirmation.success();
-    } catch (error) {
-      confirmation.error(error.message);
-    }
-  });
+});
