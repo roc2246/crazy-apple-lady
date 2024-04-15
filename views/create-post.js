@@ -34,7 +34,7 @@ class FormHandler {
     this.content = content;
   }
 
-  static resetForm() {
+  resetForm() {
     document.querySelector(".create-post__form").reset();
   }
 
@@ -111,16 +111,17 @@ document
       ContentFormatter.addPTags(newPost.content)
     );
 
-    try {
-      new FormHandler(
-        newPost.type,
-        newPost.title,
-        newPost.image,
-        newPost.content
-      ).validate();
+    const handler = new FormHandler(
+      newPost.type,
+      newPost.title,
+      newPost.image,
+      newPost.content
+    );
 
+    try {
+      handler.validate();
       await postReq.add();
-      
+      handler.resetForm();
       new MessageRenderer().success();
     } catch (error) {
       new MessageRenderer().error(error.message);
