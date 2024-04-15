@@ -1,8 +1,38 @@
-class ContentFormatter {
+// NOTE: IF means interface
+
+class ContentFormatterIF {
   addPTags(text) {
     if (typeof text !== "string") {
       throw new Error("Text must be a string");
     }
+  }
+}
+
+class ConfirmationIF {
+  success(tag) {
+    if (document.getElementById("error")) {
+      document.querySelector(".create-post").remove(tag);
+    }
+
+    if (!document.getElementById("success")) {
+      document.querySelector(".create-post").append(tag);
+    }
+  }
+
+  error(tag) {
+    if (document.getElementById("success")) {
+      document.querySelector(".create-post").append(tag);
+    }
+
+    if (!document.getElementById("error")) {
+      document.querySelector(".create-post").append(tag);
+    }
+  }
+}
+
+class ContentFormatter extends ContentFormatterIF {
+  addPTags(text) {
+    super.addPTags(text);
 
     text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
     if (!text.startsWith('<p class="post__paragraph">')) {
@@ -15,18 +45,18 @@ class ContentFormatter {
   }
 }
 
-class Post {
+class Post extends ContentFormatter {
   constructor(type, title, image, content) {
+    super();
     this.type = type;
     this.title = title;
     this.image = image;
     this.content = content;
   }
+}
 
+class Controllers extends Post {
   async add() {
-    try {
-      const formattedContent = new ContentFormatter().addPTags(this.content);
-
       const response = await fetch("/api/new-post", {
         method: "POST",
         headers: {
@@ -36,7 +66,7 @@ class Post {
           type: this.type,
           title: this.title,
           image: this.image,
-          content: formattedContent,
+          content: this.addPTags(this.content),
         }),
       });
 
@@ -45,32 +75,23 @@ class Post {
       } else {
         throw new Error("Failed to create post");
       }
-    } catch (error) {
-      throw error;
-    }
   }
 }
 
-class DomManipulation {
-  static success() {
+class Confirmation extends ConfirmationIF {
+  success() {
     const tag = document.createElement("h1");
     tag.id = "success";
     tag.innerText = "Post successfully added";
     document.querySelector(".create-post__form").reset();
-
-    if (!document.getElementById("success")) {
-      document.querySelector(".create-post").append(tag);
-    }
+    super.success(tag);
   }
 
-  static error(message) {
+  error(message) {
     const tag = document.createElement("h1");
     tag.id = "error";
     tag.innerText = message;
-
-    if (!document.getElementById("error")) {
-      document.querySelector(".create-post").append(tag);
-    }
+    super.error(tag);
   }
 }
 
@@ -86,17 +107,20 @@ document
       content: document.querySelector(".create-post__content").value,
     };
 
-    const postReq = new Post(
+    const postReq = new Controllers(
       newPost.type,
       newPost.title,
       newPost.image,
       newPost.content
     );
 
+
+    const confirmation = new Confirmation
+
     try {
       await postReq.add();
-      DomManipulation.success();
+      confirmation.success();
     } catch (error) {
-      DomManipulation.error(error.message);
+      confirmation.error(error.message);
     }
   });
