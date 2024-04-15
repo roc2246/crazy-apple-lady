@@ -31,7 +31,7 @@ class ConfirmationIF {
 }
 
 class ContentFormatter extends ContentFormatterIF {
-  static addPTags(text) {
+  addPTags(text) {
     try {
       super.addPTags(text);
 
@@ -51,7 +51,6 @@ class ContentFormatter extends ContentFormatterIF {
 
 class Post {
   constructor(type, title, image, content) {
-    super();
     this.type = type;
     this.title = title;
     this.image = image;
@@ -109,11 +108,13 @@ document
       content: document.querySelector(".create-post__content").value,
     };
 
+    const formatter = new ContentFormatter
+
     const postReq = new Post(
       newPost.type,
       newPost.title,
       newPost.image,
-      ContentFormatter.addPTags(newPost.content)
+      formatter.addPTags(newPost.content)
     );
 
     const confirmation = new Confirmation();
