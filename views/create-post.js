@@ -5,6 +5,7 @@ class DOMmanipulation {
     element.innerText = content;
     return element;
   }
+
   checkElement(eleName, element) {
     if (!document.querySelector(`.create-post__${eleName}`)) {
       document.querySelector(".create-post").append(element);
@@ -12,14 +13,23 @@ class DOMmanipulation {
   }
 }
 
-class MessageRenderer extends DOMmanipulation {
-  success() {
-    const element = this.createElement("h1", "success", "Post Added");
-    this.checkElement("success", element);
+class MessageRenderer {
+  constructor(domManipulation) {
+    this.domManipulation = domManipulation;
   }
+
+  success() {
+    const element = this.domManipulation.createElement(
+      "h1",
+      "success",
+      "Post Added"
+    );
+    this.domManipulation.checkElement("success", element);
+  }
+
   error(errorMsg) {
-    const element = this.createElement("h1", "error", errorMsg);
-    this.checkElement("error", element);
+    const element = this.domManipulation.createElement("h1", "error", errorMsg);
+    this.domManipulation.checkElement("error", element);
   }
 }
 
@@ -88,7 +98,7 @@ class Post {
     if (response.status === 201) {
       return response;
     } else {
-      throw new Error(`Failed to create post: ${response}`);
+      throw new Error(`${response.status} error`);
     }
   }
 }
@@ -118,12 +128,14 @@ document
       newPost.content
     );
 
+    const messageRenderer = new MessageRenderer(new DOMmanipulation());
     try {
+
       handler.validate();
       await postReq.add();
       handler.resetForm();
-      new MessageRenderer().success();
+      messageRenderer.success();
     } catch (error) {
-      new MessageRenderer().error(error.message);
+      messageRenderer.error(error.message);
     }
   });
