@@ -1,24 +1,47 @@
-class MessageRenderer {
-  static renderMessage(type, message) {
-    const tag = document.createElement("h1");
-    tag.id = `${type}`;
-    tag.innerText = type === "success" ? "Post added" : message;
-    return tag;
+class DOMmanipulation {
+  createElement(type, eleName, content) {
+    const element = document.createElement(`${type}`);
+    element.classList.add(`create-post__${eleName}`);
+    element.innerText = content;
+    return element;
+  }
+  checkElement(eleName, element) {
+    if (!document.querySelector(`.create-post__${eleName}`)) {
+      document.querySelector(".create-post").append(element);
+    }
+  }
+}
+
+class MessageRenderer extends DOMmanipulation {
+  success() {
+    const element = this.createElement("h1", "success", "Post Added");
+    this.checkElement("success", element);
+  }
+  error(errorMsg) {
+    const element = this.createElement("h1", "error", errorMsg);
+    this.checkElement("error", element);
   }
 }
 
 class FormHandler {
+  constructor(type, title, image, content) {
+    if (!type || !title || !content) {
+      throw new Error("Type, title, and content are required.");
+    }
+    this.type = type;
+    this.title = title;
+    this.image = image;
+    this.content = content;
+  }
+
   static resetForm() {
     document.querySelector(".create-post__form").reset();
   }
-}
 
-class DomManipulation {
-  static showMessage(type, message) {
-    const messageTag = MessageRenderer.renderMessage(type, message);
-    FormHandler.resetForm();
-    if (!document.getElementById(`${type}`)) {
-      document.querySelector(".create-post").append(messageTag);
+  validate() {
+    const isValid = () => this.type && this.title && this.content;
+    if (!isValid()) {
+      throw new Error("Type, title, and content are required.");
     }
   }
 }
@@ -70,32 +93,36 @@ class Post {
   }
 }
 
-document.querySelector(".create-post__form").addEventListener("submit", async (e) => {
-  e.preventDefault();
+document
+  .querySelector(".create-post__form")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const newPost = {
+      type: document.querySelector(".create-post__type").value,
+      title: document.querySelector(".create-post__title").value,
+      image: document.querySelector(".create-post__img").value || null,
+      content: document.querySelector(".create-post__content").value,
+    };
 
-  const newPost = {
-    type: document.querySelector(".create-post__type").value,
-    title: document.querySelector(".create-post__title").value,
-    image: document.querySelector(".create-post__img").value || null,
-    content: document.querySelector(".create-post__content").value,
-  };
+    const postReq = new Post(
+      newPost.type,
+      newPost.title,
+      newPost.image,
+      ContentFormatter.addPTags(newPost.content)
+    );
 
-  if (!newPost.type || !newPost.title || !newPost.content) {
-    DomManipulation.showMessage("error", "Please fill in all required fields.");
-    return;
-  }
+    try {
+      new FormHandler(
+        newPost.type,
+        newPost.title,
+        newPost.image,
+        newPost.content
+      ).validate();
 
-  const postReq = new Post(
-    newPost.type,
-    newPost.title,
-    newPost.image,
-    ContentFormatter.addPTags(newPost.content),
-  );
-
-  try {
-    await postReq.add();
-    DomManipulation.showMessage("success");
-  } catch (error) {
-    DomManipulation.showMessage("error", error.message || "An error occurred");
-  }
-});
+      await postReq.add();
+      
+      new MessageRenderer().success();
+    } catch (error) {
+      new MessageRenderer().error(error.message);
+    }
+  });
