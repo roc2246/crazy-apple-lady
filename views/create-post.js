@@ -31,21 +31,25 @@ class ConfirmationIF {
 }
 
 class ContentFormatter extends ContentFormatterIF {
-  addPTags(text) {
-    super.addPTags(text);
+  static addPTags(text) {
+    try {
+      super.addPTags(text);
 
-    text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
-    if (!text.startsWith('<p class="post__paragraph">')) {
-      text = '<p class="post__paragraph">' + text;
+      text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
+      if (!text.startsWith('<p class="post__paragraph">')) {
+        text = '<p class="post__paragraph">' + text;
+      }
+      if (!text.endsWith("</p>")) {
+        text += "</p>";
+      }
+      return text;
+    } catch (error) {
+      throw new Error(error.message);
     }
-    if (!text.endsWith("</p>")) {
-      text += "</p>";
-    }
-    return text;
   }
 }
 
-class Post extends ContentFormatter {
+class Post {
   constructor(type, title, image, content) {
     super();
     this.type = type;
@@ -53,28 +57,26 @@ class Post extends ContentFormatter {
     this.image = image;
     this.content = content;
   }
-}
 
-class Controllers extends Post {
   async add() {
-      const response = await fetch("/api/new-post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          type: this.type,
-          title: this.title,
-          image: this.image,
-          content: this.addPTags(this.content),
-        }),
-      });
+    const response = await fetch("/api/new-post", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        type: this.type,
+        title: this.title,
+        image: this.image,
+        content: this.content,
+      }),
+    });
 
-      if (response.status === 201) {
-        return response;
-      } else {
-        throw new Error("Failed to create post");
-      }
+    if (response.status === 201) {
+      return response;
+    } else {
+      throw new Error(`Failed to create post: ${response}`);
+    }
   }
 }
 
@@ -107,15 +109,14 @@ document
       content: document.querySelector(".create-post__content").value,
     };
 
-    const postReq = new Controllers(
+    const postReq = new Post(
       newPost.type,
       newPost.title,
       newPost.image,
-      newPost.content
+      ContentFormatter.addPTags(newPost.content)
     );
 
-
-    const confirmation = new Confirmation
+    const confirmation = new Confirmation();
 
     try {
       await postReq.add();
