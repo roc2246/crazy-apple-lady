@@ -15,17 +15,17 @@ class DOM {
 
 class MessageRenderer extends DOM {
   success() {
-    const element = this.createElement.createElement(
+    const element = this.createElement(
       "h1",
       "success",
       "Post Added"
     );
-    this.createElement.checkElement("success", element);
+    this.checkElement("success", element);
   }
 
   error(errorMsg) {
-    const element = this.createElement.createElement("h1", "error", errorMsg);
-    this.createElement.checkElement("error", element);
+    const element = this.createElement("h1", "error", errorMsg);
+    this.checkElement("error", element);
   }
 }
 
