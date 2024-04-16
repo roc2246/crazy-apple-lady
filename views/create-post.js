@@ -1,4 +1,4 @@
-class DOMmanipulation {
+class DOM {
   createElement(type, eleName, content) {
     const element = document.createElement(`${type}`);
     element.classList.add(`create-post__${eleName}`);
@@ -13,23 +13,19 @@ class DOMmanipulation {
   }
 }
 
-class MessageRenderer {
-  constructor(domManipulation) {
-    this.domManipulation = domManipulation;
-  }
-
+class MessageRenderer extends DOM {
   success() {
-    const element = this.domManipulation.createElement(
+    const element = this.createElement.createElement(
       "h1",
       "success",
       "Post Added"
     );
-    this.domManipulation.checkElement("success", element);
+    this.createElement.checkElement("success", element);
   }
 
   error(errorMsg) {
-    const element = this.domManipulation.createElement("h1", "error", errorMsg);
-    this.domManipulation.checkElement("error", element);
+    const element = this.createElement.createElement("h1", "error", errorMsg);
+    this.createElement.checkElement("error", element);
   }
 }
 
@@ -128,7 +124,7 @@ document
       newPost.content
     );
 
-    const messageRenderer = new MessageRenderer(new DOMmanipulation());
+    const messageRenderer = new MessageRenderer();
     try {
 
       handler.validate();
