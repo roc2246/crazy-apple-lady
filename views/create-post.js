@@ -45,8 +45,8 @@ class FormHandler {
   }
 
   validate() {
-    const isValid = () => this.type && this.title && this.content;
-    if (!isValid()) {
+    const isValid = this.type && this.title && this.content;
+    if (!isValid) {
       throw new Error("Type, title, and content are required.");
     }
   }
