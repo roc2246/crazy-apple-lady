@@ -24,7 +24,7 @@ function upload() {
       cb(null, file.fieldname);
     },
   });
-  return multer({ storage: storage });
+  return multer({ storage: storage }).single('image');
 }
 
 module.exports = {

@@ -34,7 +34,7 @@ router.get("/get-post-titles", (req, res) => {
 });
 
 // UPLOADS
-router.post('/upload', middleware.upload.single('image'), (req, res) => {
+router.post('/upload', middleware.upload, (req, res) => {
   if (!req.file) {
     return res.status(400).send('No files were uploaded.');
   }
