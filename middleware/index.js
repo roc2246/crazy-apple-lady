@@ -18,7 +18,7 @@ function checkSession(req, res, next) {
 function upload() {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "uploads/"); // save uploaded files to uploads directory
+      cb(null, "images/"); // save uploaded files to uploads directory
     },
     filename: function (req, file, cb) {
       cb(
