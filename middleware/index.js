@@ -18,13 +18,10 @@ function checkSession(req, res, next) {
 function upload() {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "images/"); // save uploaded files to uploads directory
+      cb(null, "images/");
     },
     filename: function (req, file, cb) {
-      cb(
-        null,
-        file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-      ); // append timestamp to filename
+      cb(null, file.fieldname);
     },
   });
   return multer({ storage: storage });
