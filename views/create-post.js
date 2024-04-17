@@ -121,7 +121,7 @@ document
     const newPost = {
       type: document.querySelector(".create-post__type").value,
       title: document.querySelector(".create-post__title").value,
-      image: FormHandler.upload() || null,
+      image: await FormHandler.upload() || null,
       content: document.querySelector(".create-post__content").value,
     };
 
