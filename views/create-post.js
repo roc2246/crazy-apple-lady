@@ -15,7 +15,11 @@ class DOM {
 
 class MessageRenderer extends DOM {
   success() {
-    const element = this.createElement("h1", "success", "Post Added");
+    const element = this.createElement(
+      "h1",
+      "success",
+      "Post Added"
+    );
     this.checkElement("success", element);
   }
 
@@ -47,22 +51,19 @@ class FormHandler {
     }
   }
 
-  async upload() {
-    const formData = new FormData();
-    formData.append(
-      "image",
-      document.querySelector(".create-post__img").files[0]
-    );
+  static async upload(){
+      const formData = new FormData();
+      formData.append('image', document.querySelector(".create-post__img").files[0]);
 
-    const response = await fetch("/upload", {
-      method: "POST",
-      body: formData,
-    });
+      const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
 
-    if (!response.ok) {
-      throw Error;
-    }
-    return formData;
+      if (!response.ok) {
+        throw Error;
+      }
+      return formData
   }
 }
 
@@ -117,14 +118,6 @@ document
   .querySelector(".create-post__form")
   .addEventListener("submit", async (e) => {
     e.preventDefault();
-
-    const handler = new FormHandler(
-      newPost.type,
-      newPost.title,
-      newPost.image,
-      newPost.content
-    );
-
     const newPost = {
       type: document.querySelector(".create-post__type").value,
       title: document.querySelector(".create-post__title").value,
@@ -139,8 +132,16 @@ document
       ContentFormatter.addPTags(newPost.content)
     );
 
+    const handler = new FormHandler(
+      newPost.type,
+      newPost.title,
+      newPost.image,
+      newPost.content
+    );
+
     const messageRenderer = new MessageRenderer();
     try {
+
       handler.validate();
       await postReq.add();
       handler.resetForm();
