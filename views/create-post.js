@@ -64,7 +64,7 @@ class FormHandler {
       if (!response.ok) {
         throw Error;
       }
-      return formData
+      return response
   }
 }
 
@@ -119,10 +119,12 @@ document
   .querySelector(".create-post__form")
   .addEventListener("submit", async (e) => {
     e.preventDefault();
+    await FormHandler.upload()
+
     const newPost = {
       type: document.querySelector(".create-post__type").value,
       title: document.querySelector(".create-post__title").value,
-      image: await FormHandler.upload() || null,
+      image:  document.querySelector(".create-post__img").value|| null,
       content: document.querySelector(".create-post__content").value,
     };
 
@@ -136,7 +138,7 @@ document
     const handler = new FormHandler(
       newPost.type,
       newPost.title,
-      newPost.image,
+      newPost.image.match(/[^\\]*$/)[0],
       newPost.content
     );
 

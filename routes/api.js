@@ -36,7 +36,15 @@ router.get("/get-post-titles", (req, res) => {
 // UPLOADS
 (() => {
   const multer = require("multer");
-  const upload = multer({ dest: "./views/images/" });
+  const storage = multer.diskStorage({
+    destination:  (req, file, cb)=> {
+      cb(null, './views/images/')
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.originalname);
+    },
+  });
+  const upload = multer({storage: storage });
   router.post("/upload", upload.single("image"), (req, res) => {
     if (!req.file) {
       return res.status(400).send("No files were uploaded.");
