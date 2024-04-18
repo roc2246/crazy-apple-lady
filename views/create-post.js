@@ -64,7 +64,6 @@ class FormHandler {
       if (!response.ok) {
         throw Error;
       }
-      return response
   }
 }
 
@@ -131,14 +130,14 @@ document
     const postReq = new Post(
       newPost.type,
       newPost.title,
-      newPost.image,
+      newPost.image ? newPost.image.match(/[^\\]*$/)[0] : null,
       ContentFormatter.addPTags(newPost.content)
     );
 
     const handler = new FormHandler(
       newPost.type,
       newPost.title,
-      newPost.image.match(/[^\\]*$/)[0],
+      newPost.image,
       newPost.content
     );
 
