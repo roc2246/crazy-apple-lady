@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const controllers = require("../controllers/index");
-const middleware = require("../middleware/index")
+const middleware = require("../middleware/index");
 
 // LOGIN
 router.post("/login", (req, res) => {
@@ -34,12 +34,15 @@ router.get("/get-post-titles", (req, res) => {
 });
 
 // UPLOADS
-router.post('/upload', middleware.upload, (req, res) => {
-  if (!req.file) {
-    return res.status(400).send('No files were uploaded.');
-  }
-  res.send('File uploaded successfully.');
-});
+(() => {
+  const multer = require("multer");
+  const upload = multer({ dest: "./views/images/" });
+  router.post("/upload", upload.single("image"), (req, res) => {
+    if (!req.file) {
+      return res.status(400).send("No files were uploaded.");
+    }
+    res.send("File uploaded successfully.");
+  });
+})();
 
-
-module.exports = router
+module.exports = router;

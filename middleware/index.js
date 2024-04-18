@@ -1,6 +1,3 @@
-const multer = require("multer");
-const path = require("path");
-
 function requireLogin(req, res, next) {
   if (!req.session.username) {
     return res.redirect("/login");
@@ -15,20 +12,7 @@ function checkSession(req, res, next) {
   next();
 }
 
-function upload() {
-  const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "/images");
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.fieldname);
-    },
-  });
-  return multer({ storage: storage }).single('image');
-}
-
 module.exports = {
   requireLogin,
   checkSession,
-  upload,
 };
