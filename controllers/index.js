@@ -133,6 +133,16 @@ async function manageGetPost(req, res, id) {
   }
 }
 
+async function manageGetPosts(req, res) {
+  try {
+    const posts = await models.getPosts();
+    res.status(200).json(!posts ? { message: "no posts available" } : posts);
+  } catch (error) {
+    res.status(500).json({ message: error });
+    throw error;
+  }
+}
+
 function fillTemplate(req, res, pageName, metaTitle) {
   const viewsDir = path.join(__dirname, '../views');
   const filePath = path.join(viewsDir, `${pageName}.html`);
@@ -166,5 +176,6 @@ module.exports = {
   manageDeletePost,
   manageGetPostNames,
   manageGetPost,
+  manageGetPosts,
   fillTemplate,
 };

@@ -33,6 +33,10 @@ router.get("/get-post-titles", (req, res) => {
   controllers.manageGetPostNames(req, res, blogType);
 });
 
+router.get("/get-posts", (req, res) => {
+  controllers.manageGetPosts(req, res);
+});
+
 // UPLOADS
 (() => {
   const multer = require("multer");

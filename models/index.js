@@ -2,6 +2,7 @@ const path = require("path");
 const { Transform } = require("stream");
 const { MongoClient } = require("mongodb");
 const utilities = require("../utilities/index");
+const { pipeline } = require('stream');
 
 require("dotenv").config({
   path: path.join(__dirname, "../config/.env"),
@@ -142,6 +143,34 @@ async function getPost(postID) {
   }
 }
 
+// Gets posts
+async function getPosts() {
+  try {
+    const { db } = await connectToDB();
+    const collection = db.collection("posts");
+
+    const cursor = collection.find();
+
+    const stream = cursor.stream();
+
+    const pipeline = stream.pipe(
+      new Transform({
+        objectMode: true,
+        transform: function (data, encoding, callback) {
+          callback(null, data);
+        },
+      })
+    );
+
+    const posts = await utilities.pipelineToPromise(pipeline);
+
+    return posts.length > 0 ? posts : null;
+  } catch (error) {
+    console.error("Error while retrieving posts:", error);
+    throw error;
+  }
+}
+
 // Model For finding posts
 
 module.exports = {
@@ -151,4 +180,5 @@ module.exports = {
   deletePost,
   getPostNames,
   getPost,
+  getPosts
 };
