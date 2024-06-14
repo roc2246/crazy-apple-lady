@@ -66,13 +66,38 @@ document
     generateFormData(data);
   });
 
-  
-  // EVENT LISTENER FOR SUBMIT
-    // ASYNC CALLBACK
-      // TRY
-        // STORE INDEX OF POST IN CONSTANT VARIABLE
-        // STORE DATA WITH RETRIEVE DATA FUNCTION
-        // USE FETCH TO UPDATE
-      // CATCH
-        // CONSOLE LOG ERROR
-        // THROW ERROR
+
+document
+  .querySelector(".manage-post__update")
+  .addEventListener("click", async (e) => {
+    e.preventDefault()
+    try {
+      const formData = {
+        title: document.querySelector(".manage-post__title").value,
+        content: document.querySelector(".manage-post__text").value,
+      };
+
+      const updatedPost = {
+        id: document.querySelector(".manage-post__select").selectedIndex,
+        content: document.querySelector(".manage-post__text").value,
+      };
+
+      const response = await fetch("/api/update-post", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedPost),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Success:", result);
+    } catch (error) {
+      console.log(error);
+      throw Error;
+    }
+  });
