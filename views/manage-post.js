@@ -65,3 +65,14 @@ document
     const data = await retrieveData();
     generateFormData(data);
   });
+
+  
+  // EVENT LISTENER FOR SUBMIT
+    // ASYNC CALLBACK
+      // TRY
+        // STORE INDEX OF POST IN CONSTANT VARIABLE
+        // STORE DATA WITH RETRIEVE DATA FUNCTION
+        // USE FETCH TO UPDATE
+      // CATCH
+        // CONSOLE LOG ERROR
+        // THROW ERROR
