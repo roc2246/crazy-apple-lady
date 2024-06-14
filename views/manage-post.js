@@ -51,6 +51,7 @@ async function generateFormData(data) {
 (async () => {
   try {
     const data = await retrieveData();
+    console.log(data)
     setOptions(data);
     generateFormData(data);
   } catch (error) {
@@ -72,13 +73,8 @@ document
   .addEventListener("click", async (e) => {
     e.preventDefault()
     try {
-      const formData = {
-        title: document.querySelector(".manage-post__title").value,
-        content: document.querySelector(".manage-post__text").value,
-      };
-
       const updatedPost = {
-        id: document.querySelector(".manage-post__select").selectedIndex,
+        id: document.querySelector(".manage-post__select").selectedIndex + 1,
         content: document.querySelector(".manage-post__text").value,
       };
 
