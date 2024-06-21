@@ -8,9 +8,8 @@ function createOption(value) {
 
 function setOptions(data) {
   const dropdown = document.querySelector(".manage-post__select");
-  for (let x = 0; x < data.length; x++) {
-    dropdown.append(createOption(data[x].title));
-  }
+  const addOption = (index) => dropdown.append(createOption(data[index].title));
+  for (let x = 0; x < data.length; x++) addOption(x);
 }
 
 function getTextBetweenTags(input) {
