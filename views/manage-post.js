@@ -6,11 +6,17 @@ function createOption(value) {
   return option;
 }
 
+function controls(){
+  return{
+    select: document
+    .querySelector(".manage-post__select")
+  }
+}
+
 function setOptions(data) {
+  const controls = controls()
   for (let x = 0; x < data.length; x++) {
-    document
-      .querySelector(".manage-post__select")
-      .append(createOption(data[x].title));
+      controls.select.append(createOption(data[x].title));
   }
 }
 
