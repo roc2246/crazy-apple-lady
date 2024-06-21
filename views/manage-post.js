@@ -6,17 +6,10 @@ function createOption(value) {
   return option;
 }
 
-function controls(){
-  return{
-    select: document
-    .querySelector(".manage-post__select")
-  }
-}
-
 function setOptions(data) {
-  const controls = controls()
+  const dropdown = document.querySelector(".manage-post__select");
   for (let x = 0; x < data.length; x++) {
-      controls.select.append(createOption(data[x].title));
+    dropdown.append(createOption(data[x].title));
   }
 }
 
@@ -57,7 +50,6 @@ async function generateFormData(data) {
 (async () => {
   try {
     const data = await retrieveData();
-    console.log(data)
     setOptions(data);
     generateFormData(data);
   } catch (error) {
@@ -66,18 +58,18 @@ async function generateFormData(data) {
   }
 })();
 
-document
-  .querySelector(".manage-post__select")
-  .addEventListener("change", async () => {
+(() => {
+  const dropdown = document.querySelector(".manage-post__select");
+  dropdown.addEventListener("change", async () => {
     const data = await retrieveData();
     generateFormData(data);
   });
+})();
 
-
-document
-  .querySelector(".manage-post__update")
-  .addEventListener("click", async (e) => {
-    e.preventDefault()
+(() => {
+  const updateBtn = document.querySelector(".manage-post__update");
+  updateBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
     try {
       const updatedPost = {
         id: document.querySelector(".manage-post__select").selectedIndex + 1,
@@ -103,3 +95,4 @@ document
       throw Error;
     }
   });
+})();
