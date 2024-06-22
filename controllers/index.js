@@ -86,12 +86,12 @@ async function manageNewPost(req, res) {
   }
 }
 
-async function manageUpdatePost(req, res, id, update) {
+async function manageUpdatePost(req, res, updatedPost) {
   try {
-    await models.updatePost(id, update);
+    await models.updatePost(updatedPost);
     res
       .status(200)
-      .json({ message: "Post updated successfully", updatedPost: update });
+      .json({ message: "Post updated successfully", updatedPost: updatedPost });
   } catch (error) {
     res.status(500).json({ message: error });
     throw error;

@@ -18,9 +18,8 @@ router.post("/new-post", (req, res) => {
 });
 
 router.put("/update-post", (req, res) => {
-  const postId = req.body.id;
-  const updatedPost = req.body.content;
-  controllers.manageUpdatePost(req, res, postId, updatedPost);
+  const updatedPost = req.body;
+  controllers.manageUpdatePost(req, res, updatedPost);
 });
 
 router.delete("/delete-post", (req, res) => {

@@ -43,6 +43,7 @@ async function generateFormData(data) {
     content: document.querySelector(".manage-post__text"),
   };
 
+  window.postID = data[index].id
   formData.title.value = data[index].title;
   formData.type.value = data[index].type;
   formData.content.value = getTextBetweenTags(data[index].content);
@@ -73,7 +74,7 @@ async function generateFormData(data) {
     e.preventDefault();
     try {
       const updatedPost = {
-        id: document.querySelector(".manage-post__select").selectedIndex + 1,
+        id: postID,
         type: document.querySelector(".manage-post__type").value,
         title: document.querySelector(".manage-post__title").value,
         // INSERT IMAGE PROPERTY HERE

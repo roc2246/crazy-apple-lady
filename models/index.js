@@ -2,7 +2,7 @@ const path = require("path");
 const { Transform } = require("stream");
 const { MongoClient } = require("mongodb");
 const utilities = require("../utilities/index");
-const { pipeline } = require('stream');
+const { pipeline } = require("stream");
 
 require("dotenv").config({
   path: path.join(__dirname, "../config/.env"),
@@ -69,7 +69,7 @@ async function newPost(post) {
 }
 
 // Updates blogpost
-async function updatePost(postID, update) {
+async function updatePost(updatedPost) {
   try {
     const { db } = await connectToDB();
     const collection = db.collection("posts");
@@ -78,7 +78,7 @@ async function updatePost(postID, update) {
       if (typeof text !== "string") {
         throw new Error("Text must be a string");
       }
-  
+
       text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
       if (!text.startsWith('<p class="post__paragraph">')) {
         text = '<p class="post__paragraph">' + text;
@@ -89,9 +89,16 @@ async function updatePost(postID, update) {
       return text;
     }
 
+    const updates = {
+      type: updatedPost.type,
+      title: updatedPost.title,
+      // INSERT IMAGE PROPERTY HERE
+      content: addPTags(updatedPost.content),
+    };
+
     await collection.findOneAndUpdate(
-      { id: postID },
-      { $set: { content: addPTags(update) } }
+      { id: updatedPost.id },
+      { $set: updates }
     );
   } catch (error) {
     console.error("Error while updating post:", error);
@@ -195,5 +202,5 @@ module.exports = {
   deletePost,
   getPostNames,
   getPost,
-  getPosts
+  getPosts,
 };
