@@ -72,6 +72,9 @@ async function generateFormData(data) {
     try {
       const updatedPost = {
         id: document.querySelector(".manage-post__select").selectedIndex + 1,
+        type: document.querySelector(".manage-post__type").value,
+        title: document.querySelector(".manage-post__title").value,
+        // INSERT IMAGE PROPERTY HERE
         content: document.querySelector(".manage-post__text").value,
       };
 
@@ -101,15 +104,15 @@ async function generateFormData(data) {
   deleteBtn.addEventListener("click", async (e) => {
     e.preventDefault();
     try {
-       const id= document.querySelector(".manage-post__select").selectedIndex + 1
+      const id =
+        document.querySelector(".manage-post__select").selectedIndex + 1;
 
       const response = await fetch(`/api/delete-post?id=${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-        }
+        },
       });
-      
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
