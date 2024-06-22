@@ -1,9 +1,16 @@
 function createLink(id, title) {
   const link = document.createElement("a");
+
   link.classList.add("planty-life__link")
   link.innerText = title;
   link.href = `/post?id=${id}`;
-  return link;
+
+  const listItem = document.createElement("li")
+  link.classList.add("planty-life__list-item")
+
+
+  listItem.append(link)
+  return listItem;
 }
 
 function createError(){
