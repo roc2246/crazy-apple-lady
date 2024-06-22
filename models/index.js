@@ -74,26 +74,11 @@ async function updatePost(updatedPost) {
     const { db } = await connectToDB();
     const collection = db.collection("posts");
 
-    function addPTags(text) {
-      if (typeof text !== "string") {
-        throw new Error("Text must be a string");
-      }
-
-      text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
-      if (!text.startsWith('<p class="post__paragraph">')) {
-        text = '<p class="post__paragraph">' + text;
-      }
-      if (!text.endsWith("</p>")) {
-        text += "</p>";
-      }
-      return text;
-    }
-
     const updates = {
       type: updatedPost.type,
       title: updatedPost.title,
       // INSERT IMAGE PROPERTY HERE
-      content: addPTags(updatedPost.content),
+      content: utilities.addPTags(updatedPost.content),
     };
 
     await collection.findOneAndUpdate(
