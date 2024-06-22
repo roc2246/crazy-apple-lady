@@ -1,5 +1,6 @@
 function createLink(id, title) {
   const link = document.createElement("a");
+  link.classList.add("mushroom-blogs__link")
   link.innerText = title;
   link.href = `/post?id=${id}`;
   return link;
