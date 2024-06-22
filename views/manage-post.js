@@ -21,7 +21,7 @@ function getTextBetweenTags(input) {
     matches.push(match[1]); // Capture group 1 contains the text between > and <
   }
 
-  return matches;
+  return matches.join("\n");
 }
 
 async function retrieveData() {
