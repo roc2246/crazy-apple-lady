@@ -95,3 +95,31 @@ async function generateFormData(data) {
     }
   });
 })();
+
+(() => {
+  const deleteBtn = document.querySelector(".manage-post__delete");
+  deleteBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    try {
+       const id= document.querySelector(".manage-post__select").selectedIndex + 1
+
+      const response = await fetch(`/api/delete-post?id=${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Success:", result);
+    } catch (error) {
+      console.log(error);
+      throw Error;
+    }
+  });
+})();
