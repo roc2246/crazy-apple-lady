@@ -39,10 +39,12 @@ async function generateFormData(data) {
   const index = document.querySelector(".manage-post__select").selectedIndex;
   const formData = {
     title: document.querySelector(".manage-post__title"),
+    type: document.querySelector(".manage-post__type"),
     content: document.querySelector(".manage-post__text"),
   };
 
   formData.title.value = data[index].title;
+  formData.type.value = data[index].type;
   formData.content.value = getTextBetweenTags(data[index].content);
 }
 
