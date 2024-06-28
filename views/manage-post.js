@@ -44,6 +44,7 @@ async function generateFormData(data) {
   };
 
   window.postID = data[index].id
+  window.postImg = data[index].image
   formData.title.value = data[index].title;
   formData.type.value = data[index].type;
   formData.content.value = getTextBetweenTags(data[index].content);
@@ -77,7 +78,7 @@ async function generateFormData(data) {
         id: postID,
         type: document.querySelector(".manage-post__type").value,
         title: document.querySelector(".manage-post__title").value,
-        // INSERT IMAGE PROPERTY HERE
+        image: document.querySelector(".manage-post__image").value || postImg,
         content: document.querySelector(".manage-post__text").value,
       };
 

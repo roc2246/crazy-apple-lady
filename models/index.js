@@ -77,7 +77,7 @@ async function updatePost(updatedPost) {
     const updates = {
       type: updatedPost.type,
       title: updatedPost.title,
-      // INSERT IMAGE PROPERTY HERE
+      image: updatedPost.image,
       content: utilities.addPTags(updatedPost.content),
     };
 
