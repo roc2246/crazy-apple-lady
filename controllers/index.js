@@ -22,7 +22,6 @@ async function hashString(inputString) {
   }
 }
 
-// const inputString = 'donna2246';
 // hashString(inputString)
 //   .then(hashedString => {
 //     console.log('Hashed string:', hashedString);
