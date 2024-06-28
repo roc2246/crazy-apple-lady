@@ -77,7 +77,7 @@ async function updatePost(updatedPost) {
     const updates = {
       type: updatedPost.type,
       title: updatedPost.title,
-      image: updatedPost.image,
+      image: `./images/${updatedPost.image}`,
       content: utilities.addPTags(updatedPost.content),
     };
 
