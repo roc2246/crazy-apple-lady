@@ -18,7 +18,7 @@ async function connectToDB() {
       await client.connect();
     }
 
-    const db = client.db("crazy-apply-lady");
+    const db = client.db("crazy-apple-lady");
 
     return { db: db, client: client };
   } catch (error) {
