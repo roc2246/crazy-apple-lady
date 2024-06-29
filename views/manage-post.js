@@ -35,6 +35,53 @@ async function retrieveData() {
   }
 }
 
+function imgInQue(img) {
+  const url = document.createElement("h4");
+  url.innerText = img;
+  url.classList.add("manage-post__qued-img");
+  return url;
+}
+
+function deleteBtn() {
+  const btn = document.createElement("button");
+  btn.innerText = "X";
+  btn.classList.add("manage-post__delete-img-url");
+
+  return btn;
+}
+
+function loadImgURLS(data, index) {
+  const pulledImgs = document.querySelector(".manage-post__images");
+  const images = data[index].image;
+
+  pulledImgs.innerHTML = " ";
+  for (let x = 0; x < images.length; x++) {
+    const quedImg = imgInQue(images[x]);
+    const deleteTag = deleteBtn(quedImg);
+
+    pulledImgs.append(quedImg);
+    pulledImgs.append(deleteTag);
+    deleteTag.addEventListener("click", (e) => {
+      e.preventDefault();
+      quedImg.remove();
+      deleteTag.remove();
+    });
+
+    const br = document.createElement("br");
+    pulledImgs.append(br);
+    pulledImgs.append(br);
+  }
+}
+
+function storeImgURLS() {
+  const images = document.getElementsByClassName("manage-post__qued-img");
+  let imgs = [];
+  for (let x = 0; x < images.length; x++) {
+    imgs.push(images[x].innerText);
+  }
+  return imgs;
+}
+
 async function generateFormData(data) {
   const index = document.querySelector(".manage-post__select").selectedIndex;
   const formData = {
@@ -43,8 +90,11 @@ async function generateFormData(data) {
     content: document.querySelector(".manage-post__text"),
   };
 
-  window.postID = data[index].id
-  window.postImg = data[index].image
+  window.postID = data[index].id;
+  window.postImg = data[index].image;
+
+  loadImgURLS(data, index);
+
   formData.title.value = data[index].title;
   formData.type.value = data[index].type;
   formData.content.value = getTextBetweenTags(data[index].content);
@@ -74,11 +124,13 @@ async function generateFormData(data) {
   updateBtn.addEventListener("click", async (e) => {
     e.preventDefault();
     try {
+      const imgs = storeImgURLS()
+      console.log(imgs)
       const updatedPost = {
         id: postID,
         type: document.querySelector(".manage-post__type").value,
         title: document.querySelector(".manage-post__title").value,
-        image: document.querySelector(".manage-post__image").value || postImg,
+        image: imgs.length > 0 ? imgs : postImg,
         content: document.querySelector(".manage-post__text").value,
       };
 

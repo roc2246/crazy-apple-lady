@@ -6,29 +6,42 @@
     <select name="select" class="manage-post__select">
       &nbsp;
     </select>
-    <br>
-    <br>
+    <br />
+    <br />
     <label for="type" class="manage-post__label">Type of Post:</label>
     <select name="type" class="manage-post__type">
-      <option value="plantyLife" class="manage-post__category">Planty Life</option>
-      <option value="mushroomBlog" class="manage-post__category">Mushroom Blog</option>
+      <option value="plantyLife" class="manage-post__category">
+        Planty Life
+      </option>
+      <option value="mushroomBlog" class="manage-post__category">
+        Mushroom Blog
+      </option>
     </select>
-    <br>
-    <br>
+    <br />
+    <br />
     <label for="image" class="manage-post__label">Image:</label>
-    <input name="image" class="manage-post__img" type="file" accept="image/*" />
-    <br>
-    <br>
+    <input
+      name="image"
+      class="manage-post__img"
+      type="file"
+      accept="image/*"
+      multiple
+    />
+    <br />
+    <br />
+    <div class="manage-post__images">&nbsp;</div>
+    <br />
+    <br />
     <label for="title" class="manage-post__label">Title:</label>
     <input name="title" class="manage-post__title" type="text" />
-    <br>
-    <br>
+    <br />
+    <br />
     <label for="content" class="manage-post__label">Content:</label>
     <textarea name="content" cols="30" rows="10" class="manage-post__text">
 &nbsp;</textarea
     >
-    <br>
-    <br>
+    <br />
+    <br />
     <input class="manage-post__update" type="submit" value="Update Post" />
     <input class="manage-post__delete" type="submit" value="Delete Post" />
   </form>
