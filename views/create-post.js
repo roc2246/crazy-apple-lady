@@ -49,10 +49,13 @@ class FormHandler {
 
   static async upload() {
     const formData = new FormData();
-    formData.append(
-      "image",
-      document.querySelector(".create-post__img").files[0]
-    );
+    const uploadObject = document.querySelector(".create-post__img").files;
+
+    let images = [];
+    for (let x = 0; x < uploadObject.length; x++) {
+      images.push(uploadObject[x].name);
+    }
+    formData.append("image", images);
 
     const response = await fetch("/api/upload", {
       method: "POST",
@@ -117,17 +120,26 @@ document
   .addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const uploadObject = document.querySelector(".create-post__img").files;
+
+    let images = [];
+    for (let x = 0; x < uploadObject.length; x++) {
+      if(uploadObject[x].name.match(/[^\\]*$/)[0]){
+        images.push(uploadObject[x].name);
+      }
+    }
+
     const newPost = {
       type: document.querySelector(".create-post__type").value,
       title: document.querySelector(".create-post__title").value,
-      image: document.querySelector(".create-post__img").value || null,
+      image: images || null,
       content: document.querySelector(".create-post__content").value,
     };
 
     const postReq = new Post(
       newPost.type,
       newPost.title,
-      newPost.image ? newPost.image.match(/[^\\]*$/)[0] : null,
+      newPost.image ? newPost.image: null,
       ContentFormatter.addPTags(newPost.content)
     );
 

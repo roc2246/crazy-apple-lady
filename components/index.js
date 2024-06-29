@@ -54,12 +54,19 @@ function blogPost(blogTitle, blogContent, blogImg) {
   return `${top(blogTitle)}
   ${hero()}
   <main class="post">
-  <img src="${blogImg}" alt="" class="post__img" />
-        <h1 class="post__heading">${blogTitle}</h1>
-        <section class="post__content">
-            ${blogContent}
-        </section>
-    </main>
+    ${blogImg
+      .map(
+        (img, index) =>
+          `<img src="${img}" alt="${blogTitle}-${
+            index + 1
+          }" class="post__img" />`
+      )
+      .join("")}
+    <h1 class="post__heading">${blogTitle}</h1>
+    <section class="post__content">
+        ${blogContent}
+    </section>
+  </main>
   ${bottom("post.js")}`;
 }
 
