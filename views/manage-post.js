@@ -125,7 +125,6 @@ async function generateFormData(data) {
     e.preventDefault();
     try {
       const imgs = storeImgURLS()
-      console.log(imgs)
       const updatedPost = {
         id: postID,
         type: document.querySelector(".manage-post__type").value,
