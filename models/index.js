@@ -45,16 +45,23 @@ async function findUser(username) {
 }
 
 // Add blogpost
+async function generatePostID() {
+  const { db } = await connectToDB();
+  const collection = db.collection("posts");
+
+  const posts = await collection.find().toArray();
+  posts.sort((a, b) => a.id - b.id);
+  const ID = posts.length > 0 ? posts[posts.length - 1].id + 1 : 1;
+  return ID;
+}
+
 async function newPost(post) {
   try {
     const { db } = await connectToDB();
     const collection = db.collection("posts");
 
-    const posts = await collection.find().toArray();
-    posts.sort((a, b) => a.id - b.id);
-
     const newPost = {
-      id: posts.length > 0 ? posts[posts.length - 1].id + 1 : 1,
+      id: await generatePostID(),
       type: post.type,
       title: post.title,
       image: post.image.map((img) => `./images/${img}`),
@@ -182,6 +189,7 @@ async function getPosts() {
 
 module.exports = {
   findUser,
+  generatePostID,
   newPost,
   updatePost,
   deletePost,
