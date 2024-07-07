@@ -112,10 +112,10 @@ async function manageGetPostNames(req, res, type) {
     const match = { type: type };
     const project = { _id: 0, id: 1, title: 1 };
     const posts = await models.postRetrieval(match, project);
-    res.status(200).json(posts);
+    if(posts.length > 0) res.status(200).json(posts);
   } catch (error) {
-    res.status(500).json({ message: error });
-    throw error;
+    res.status(404).json({ message: error });
+    console.log(error)
   }
 }
 
@@ -129,8 +129,13 @@ async function manageGetPost(req, res, id) {
     );
     res.status(200).send(postTemplate);
   } catch (error) {
-    res.status(404).send(`<h1><${error}</h1>`);
-    throw error;
+    const postTemplate = components.blogPost(
+      "404: Post Not Found",
+      "Try looking at other posts",
+      [""]
+    );
+    res.status(404).send(postTemplate);
+    console.log(error)
   }
 }
 

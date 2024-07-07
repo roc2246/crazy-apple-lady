@@ -30,9 +30,9 @@ function generateRandomString(length) {
   function checkDataLength(data) {
     if (data.length > 0) {
       return data;
-    } else {
+    } /* else {
       throw new Error("Post not found");
-    }
+    } */
   }
 
   async function uploadImage(imageData) {

@@ -23,17 +23,17 @@ describe("Retrieving Post Names", () => {
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
-  it("should throw error if no post names are found", async () => {
+  it("should give 404 error", async () => {
     // Arrange
     const req = {};
     const res = createMockResponse();
     const type = "error";
 
     // Act
-    const post = manageGetPostNames(req, res, type);
+    await manageGetPostNames(req, res, type);
 
     // Assert
-    await expect(post).rejects.toThrowError();
+    expect(res.status).toHaveBeenCalledWith(404);
   });
 });
 
@@ -51,16 +51,16 @@ describe("Retrieving Post", () => {
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
-  it("should throw error if no post names are found", async () => {
+  it("should give 404 error", async () => {
     // Arrange
     const req = {};
     const res = createMockResponse();
     const id = "error";
 
     // Act
-    const post = manageGetPost(req, res, id);
+    await manageGetPost(req, res, id);
 
     // Assert
-    await expect(post).rejects.toThrowError();
+    expect(res.status).toHaveBeenCalledWith(404);
   });
 });
