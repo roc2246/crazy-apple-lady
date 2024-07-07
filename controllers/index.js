@@ -109,7 +109,10 @@ async function manageDeletePost(req, res, id) {
 
 async function manageGetPostNames(req, res, type) {
   try {
-    const posts = await models.getPostNames(type);
+    const posts = await models.postRetrieval(
+      { $match: { type: type } },
+      { $project: { _id: 0, id: 1, title: 1 } }
+    );
     res.status(200).json(!posts ? { message: "no posts available" } : posts);
   } catch (error) {
     res.status(500).json({ message: error });
@@ -119,7 +122,7 @@ async function manageGetPostNames(req, res, type) {
 
 async function manageGetPost(req, res, id) {
   try {
-    const postData = await models.getPost(id);
+    const postData = await models.postRetrieval({ $match: { id: id } });
     const postTemplate = components.blogPost(
       postData[0].title,
       postData[0].content,
@@ -134,7 +137,7 @@ async function manageGetPost(req, res, id) {
 
 async function manageGetPosts(req, res) {
   try {
-    const posts = await models.getPosts();
+    const posts = await models.postRetrieval({});
     res.status(200).json(!posts ? { message: "no posts available" } : posts);
   } catch (error) {
     res.status(500).json({ message: error });
@@ -143,25 +146,25 @@ async function manageGetPosts(req, res) {
 }
 
 function fillTemplate(req, res, pageName, metaTitle) {
-  const viewsDir = path.join(__dirname, '../views');
+  const viewsDir = path.join(__dirname, "../views");
   const filePath = path.join(viewsDir, `${pageName}.html`);
 
-  const stream = fs.createReadStream(filePath, 'utf8');
+  const stream = fs.createReadStream(filePath, "utf8");
 
-  stream.on('error', (err) => {
-    res.status(500).send('Error reading file');
+  stream.on("error", (err) => {
+    res.status(500).send("Error reading file");
   });
 
-  stream.on('open', () => {
-    let modifiedHTML = '';
-    stream.on('data', (chunk) => {
+  stream.on("open", () => {
+    let modifiedHTML = "";
+    stream.on("data", (chunk) => {
       modifiedHTML += chunk
-        .replace('{{top}}', components.top(metaTitle))
-        .replace('{{hero}}', components.hero())
-        .replace('{{bottom}}', components.bottom(`${pageName}.js`));
+        .replace("{{top}}", components.top(metaTitle))
+        .replace("{{hero}}", components.hero())
+        .replace("{{bottom}}", components.bottom(`${pageName}.js`));
     });
 
-    stream.on('end', () => {
+    stream.on("end", () => {
       res.send(modifiedHTML);
     });
   });

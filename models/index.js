@@ -112,9 +112,7 @@ async function deletePost(postID) {
   }
 }
 
-// Retrieve Post Names
-
-// One function to rule them all
+// Retrieve Posts
 async function postRetrieval(match, project) {
   try {
     const { db } = await connectToDB();
