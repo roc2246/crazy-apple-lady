@@ -1,7 +1,6 @@
-import { expect, test } from "vitest";
+import { expect, test, describe } from "vitest";
 import { connectToDB, findUser, generatePostID, postRetrieval } from ".";
-import { describe } from "node:test";
-import { match } from "node:assert";
+
 
 describe("Test Connection", () => {
   test("No Error", async () => {
@@ -46,7 +45,7 @@ describe("Post Retrieval", () => {
   test("Get Post Names", async () => {
     const plantyLifeMatch = { type: "plantyLife" };
     const mushroomBlogsMatch = { type: "mushroomBlog" };
-    const project = { _id: 0, id: 1, title: 1 }; // Note: No $project needed
+    const project = { _id: 0, id: 1, title: 1 }; 
 
     const plantyLifePosts = await postRetrieval(plantyLifeMatch, project);
     const mushroomBlogsPosts = await postRetrieval(mushroomBlogsMatch, project);
