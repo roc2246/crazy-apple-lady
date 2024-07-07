@@ -8,7 +8,7 @@ require("dotenv").config({
   path: path.join(__dirname, "../config/.env"),
 });
 
-// Create a function to connect to the MongoDB database
+// CONNECT
 let client;
 
 async function connectToDB() {
@@ -27,7 +27,7 @@ async function connectToDB() {
   }
 }
 
-// Login user
+// LOGIN
 async function findUser(username) {
   try {
     const { db } = await connectToDB();
@@ -44,7 +44,7 @@ async function findUser(username) {
   }
 }
 
-// Add blogpost
+// UTIL
 async function generatePostID() {
   const { db } = await connectToDB();
   const collection = db.collection("posts");
@@ -55,6 +55,7 @@ async function generatePostID() {
   return ID;
 }
 
+// CRUD
 async function newPost(post) {
   try {
     const { db } = await connectToDB();
@@ -112,6 +113,45 @@ async function deletePost(postID) {
 }
 
 // Retrieve Post Names
+
+// One function to rule them all
+async function getData(match, project) {
+  try {
+    const { db } = await connectToDB();
+    const collection = db.collection("posts");
+
+    let params;
+    if (!project) {
+      params = [];
+    } else {
+      params = [{ $match: match }, { $project: project }];
+    }
+
+    const cursor = collection.aggregate(params);
+
+    const stream = cursor.stream();
+
+    const pipeline = stream.pipe(
+      new Transform({
+        objectMode: true,
+        transform: function (data, encoding, callback) {
+          callback(null, data);
+        },
+      })
+    );
+
+    const namesAndIDs = await utilities.pipelineToPromise(pipeline);
+
+    if (namesAndIDs.length > 0) {
+      return namesAndIDs;
+    } else {
+      throw new Error("Post not found");
+    }
+  } catch (error) {
+    console.error("Error while retrieving post names:", error);
+    throw error;
+  }
+}
 async function getPostNames(type) {
   try {
     const { db } = await connectToDB();
@@ -150,7 +190,11 @@ async function getPost(postID) {
 
     const post = await collection.find({ id: postID }).toArray();
 
-    return post;
+    if (post.length !== 0) {
+      return post;
+    } else {
+      throw new Error("Post not found");
+    }
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;
@@ -188,11 +232,13 @@ async function getPosts() {
 // Model For finding posts
 
 module.exports = {
+  connectToDB,
   findUser,
   generatePostID,
   newPost,
   updatePost,
   deletePost,
+  getData,
   getPostNames,
   getPost,
   getPosts,
