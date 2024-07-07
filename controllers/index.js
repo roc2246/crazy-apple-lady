@@ -130,7 +130,7 @@ async function manageGetPost(req, res, id) {
     );
     res.status(200).send(postTemplate);
   } catch (error) {
-    res.status(404).send(`<h1><${error}/h1>`);
+    res.status(404).send(`<h1><${error}</h1>`);
     throw error;
   }
 }
