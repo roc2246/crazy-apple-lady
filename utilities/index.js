@@ -17,6 +17,24 @@ function generateRandomString(length) {
     });
   }
 
+  function generateParams(match, project) {
+    let params;
+    if (!project) {
+      params = [{ $match: match }];
+    } else {
+      params = [{ $match: match }, { $project: project }];
+    }
+    return params;
+  }
+  
+  function checkDataLength(data) {
+    if (data.length > 0) {
+      return data;
+    } else {
+      throw new Error("Post not found");
+    }
+  }
+
   async function uploadImage(imageData) {
     try {
       // For local storage
@@ -48,6 +66,8 @@ function generateRandomString(length) {
   module.exports = {
     generateRandomString,
     pipelineToPromise,
+    generateParams,
+    checkDataLength,
     uploadImage,
     addPTags
   }

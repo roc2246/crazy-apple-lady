@@ -115,121 +115,33 @@ async function deletePost(postID) {
 // Retrieve Post Names
 
 // One function to rule them all
-async function getData(match, project) {
+async function postRetrieval(match, project) {
   try {
     const { db } = await connectToDB();
     const collection = db.collection("posts");
 
-    let params;
-    if (!project) {
-      params = [];
-    } else {
-      params = [{ $match: match }, { $project: project }];
-    }
-
+    const params = utilities.generateParams(match, project);
     const cursor = collection.aggregate(params);
 
     const stream = cursor.stream();
+    const transformParam = {
+      objectMode: true,
+      transform: (data, encoding, cb) => {
+        cb(null, data);
+      },
+    };
 
-    const pipeline = stream.pipe(
-      new Transform({
-        objectMode: true,
-        transform: function (data, encoding, callback) {
-          callback(null, data);
-        },
-      })
-    );
+    const transformStream = new Transform(transformParam);
+    const pipeline = stream.pipe(transformStream);
+    const data = await utilities.pipelineToPromise(pipeline);
 
-    const namesAndIDs = await utilities.pipelineToPromise(pipeline);
-
-    if (namesAndIDs.length > 0) {
-      return namesAndIDs;
-    } else {
-      throw new Error("Post not found");
-    }
-  } catch (error) {
-    console.error("Error while retrieving post names:", error);
-    throw error;
-  }
-}
-async function getPostNames(type) {
-  try {
-    const { db } = await connectToDB();
-    const collection = db.collection("posts");
-
-    const cursor = collection.aggregate([
-      { $match: { type: type } },
-      { $project: { _id: 0, id: 1, title: 1 } },
-    ]);
-
-    const stream = cursor.stream();
-
-    const pipeline = stream.pipe(
-      new Transform({
-        objectMode: true,
-        transform: function (data, encoding, callback) {
-          callback(null, data);
-        },
-      })
-    );
-
-    const namesAndIDs = await utilities.pipelineToPromise(pipeline);
-
-    return namesAndIDs.length > 0 ? namesAndIDs : null;
+    return utilities.checkDataLength(data);
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;
   }
 }
 
-// Gets post
-async function getPost(postID) {
-  try {
-    const { db } = await connectToDB();
-    const collection = db.collection("posts");
-
-    const post = await collection.find({ id: postID }).toArray();
-
-    if (post.length !== 0) {
-      return post;
-    } else {
-      throw new Error("Post not found");
-    }
-  } catch (error) {
-    console.error("Error while retrieving post names:", error);
-    throw error;
-  }
-}
-
-// Gets posts
-async function getPosts() {
-  try {
-    const { db } = await connectToDB();
-    const collection = db.collection("posts");
-
-    const cursor = collection.find();
-
-    const stream = cursor.stream();
-
-    const pipeline = stream.pipe(
-      new Transform({
-        objectMode: true,
-        transform: function (data, encoding, callback) {
-          callback(null, data);
-        },
-      })
-    );
-
-    const posts = await utilities.pipelineToPromise(pipeline);
-
-    return posts.length > 0 ? posts : null;
-  } catch (error) {
-    console.error("Error while retrieving posts:", error);
-    throw error;
-  }
-}
-
-// Model For finding posts
 
 module.exports = {
   connectToDB,
@@ -238,8 +150,5 @@ module.exports = {
   newPost,
   updatePost,
   deletePost,
-  getData,
-  getPostNames,
-  getPost,
-  getPosts,
+  postRetrieval,
 };

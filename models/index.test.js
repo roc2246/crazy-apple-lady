@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
-import { connectToDB, findUser, generatePostID, getData } from ".";
+import { connectToDB, findUser, generatePostID, postRetrieval } from ".";
 import { describe } from "node:test";
+import { match } from "node:assert";
 
 describe("Test Connection", () => {
   test("No Error", async () => {
@@ -26,14 +27,31 @@ describe("Post ID Management", () => {
 });
 
 describe("Post Retrieval", () => {
-  //   test("Retrieve Post", async () => {
-  //     const post = await getPost(0);
-  //     expect(post).toMatchObject(post);
-  //   });
   test("Throw Post Retrieval Error", async () => {
     const match = { id: "Invalid ID" };
-    const post = getData(match);
+    const post = postRetrieval(match);
     const errorMssg = "Post not found";
     await expect(post).rejects.toThrowError(errorMssg);
+  });
+  test("Get Post", async () => {
+    const match = { id: 1 };
+    const post = await postRetrieval(match);
+    expect(post).toBeInstanceOf(Array);
+  });
+  test("Get Posts", async () => {
+    const match = { };
+    const post = await postRetrieval(match);
+    expect(post).toBeInstanceOf(Array);
+  });
+  test("Get Post Names", async () => {
+    const plantyLifeMatch = { type: "plantyLife" };
+    const mushroomBlogsMatch = { type: "mushroomBlog" };
+    const project = { _id: 0, id: 1, title: 1 }; // Note: No $project needed
+
+    const plantyLifePosts = await postRetrieval(plantyLifeMatch, project);
+    const mushroomBlogsPosts = await postRetrieval(mushroomBlogsMatch, project);
+
+    expect(plantyLifePosts).toBeInstanceOf(Array);
+    expect(mushroomBlogsPosts).toBeInstanceOf(Array);
   });
 });
