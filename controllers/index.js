@@ -110,8 +110,8 @@ async function manageDeletePost(req, res, id) {
 async function manageGetPostNames(req, res, type) {
   try {
     const posts = await models.postRetrieval(
-      { $match: { type: type } },
-      { $project: { _id: 0, id: 1, title: 1 } }
+      {  type: type  },
+      {  _id: 0, id: 1, title: 1  }
     );
     res.status(200).json(!posts ? { message: "no posts available" } : posts);
   } catch (error) {
@@ -122,7 +122,7 @@ async function manageGetPostNames(req, res, type) {
 
 async function manageGetPost(req, res, id) {
   try {
-    const postData = await models.postRetrieval({ $match: { id: id } });
+    const postData = await models.postRetrieval({  id: id  });
     const postTemplate = components.blogPost(
       postData[0].title,
       postData[0].content,
