@@ -1,10 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { manageGetPostNames } from ".";
 
-// Helper function to create a mock response object
 function createMockResponse (){
   const res = {};
-  res.status = vi.fn().mockReturnThis(); // `mockReturnThis` allows chaining
+  res.status = vi.fn().mockReturnThis(); 
   res.json = vi.fn();
   return res;
 };
