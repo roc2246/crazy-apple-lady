@@ -30,7 +30,6 @@ describe("Post Retrieval", () => {
 
     // Act
     const post =  manageGetPostNames(req, res, type);
-    console.log(res.status)
 
     // Assert
     await expect(post).rejects.toThrowError();
