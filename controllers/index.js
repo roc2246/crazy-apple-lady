@@ -112,10 +112,10 @@ async function manageGetPostNames(req, res, type) {
     const match = { type: type };
     const project = { _id: 0, id: 1, title: 1 };
     const posts = await models.postRetrieval(match, project);
-    if(posts.length > 0) res.status(200).json(posts);
+    if (posts.length > 0) res.status(200).json(posts);
   } catch (error) {
     res.status(404).json({ message: error });
-    console.log(error)
+    console.log(error);
   }
 }
 
@@ -135,7 +135,7 @@ async function manageGetPost(req, res, id) {
       [""]
     );
     res.status(404).send(postTemplate);
-    console.log(error)
+    console.log(error);
   }
 }
 
@@ -147,6 +147,67 @@ async function manageGetPosts(req, res) {
     res.status(500).json({ message: error });
     throw error;
   }
+}
+
+function manageImageUpload(req, res) {
+  let bucket;
+
+  let rawData = "";
+  const boundary =
+    "--" + req.headers["content-type"].split("; ")[1].replace("boundary=", "");
+
+  req.on("data", (chunk) => {
+    rawData += chunk;
+  });
+
+  req.on("end", () => {
+    const parts = rawData
+      .split(boundary)
+      .filter((part) => part.includes("filename="));
+    const promises = parts.map((part) => {
+      return new Promise((resolve, reject) => {
+        const headerEnd = part.indexOf("\r\n\r\n") + 4;
+        const header = part.substring(0, headerEnd);
+        const content = part.substring(headerEnd, part.length - 4);
+
+        const fileNameMatch = header.match(/filename="(.+?)"/);
+        const fileName = fileNameMatch
+          ? fileNameMatch[1]
+          : `upload_${Date.now()}`;
+
+        const tempFilePath = path.join(
+          __dirname,
+          "uploads",
+          path.basename(fileName)
+        );
+
+        fs.writeFile(tempFilePath, content, "binary", (err) => {
+          if (err) {
+            return reject(new Error("File upload failed"));
+          }
+
+          const uploadStream = bucket.openUploadStream(fileName);
+          fs.createReadStream(tempFilePath)
+            .pipe(uploadStream)
+            .on("error", (err) => {
+              return reject(new Error("File upload to MongoDB failed"));
+            })
+            .on("finish", () => {
+              fs.unlink(tempFilePath, () => {}); // Clean up temporary file
+              resolve({ filename: fileName, fileId: uploadStream.id });
+            });
+        });
+      });
+    });
+
+    Promise.all(promises)
+      .then((results) => {
+        res.status(200).json(results);
+      })
+      .catch((error) => {
+        res.status(500).json({ error: error.message });
+      });
+  });
 }
 
 function fillTemplate(req, res, pageName, metaTitle) {
@@ -183,5 +244,6 @@ module.exports = {
   manageGetPostNames,
   manageGetPost,
   manageGetPosts,
+  manageImageUpload,
   fillTemplate,
 };

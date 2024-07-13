@@ -36,24 +36,8 @@ router.get("/get-posts", (req, res) => {
   controllers.manageGetPosts(req, res);
 });
 
-// UPLOADS
-(() => {
-  const multer = require("multer");
-  const storage = multer.diskStorage({
-    destination:  (req, file, cb)=> {
-      cb(null, './views/images/')
-    },
-    filename: (req, file, cb) => {
-      cb(null, file.originalname);
-    },
-  });
-  const upload = multer({storage: storage });
-  router.post("/upload", upload.array("image"), (req, res) => {
-    if (!req.files) {
-      return res.status(400).send("No files were uploaded.");
-    }
-    res.send("File uploaded successfully.");
-  });
-})();
+router.post("/upload", (req, res) => {
+  controllers.manageImageUpload(req, res);
+});
 
 module.exports = router;
