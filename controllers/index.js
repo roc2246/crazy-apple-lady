@@ -150,51 +150,34 @@ async function manageGetPosts(req, res) {
 }
 
 async function manageImageUpload(req, res) {
-  let rawData = "";
-  const boundary =
-    "--" + req.headers["content-type"].split("; ")[1].replace("boundary=", "");
+  let filename = req.headers["filename"];
+  if (filename == null) {
+    filename = "file." + req.headers["content-type"].split("/")[1];
+  }
 
-  req.on("data", (chunk) => (rawData += chunk));
+  const filestream = fs.createWriteStream( path.join(
+    path.resolve(__dirname, '..'),
+    "views\/images",
+    path.basename(filename)
+  ));
 
-  req.on("end", async () => {
-    try {
-      const parts = rawData
-        .split(boundary)
-        .filter((part) => part.includes('name="image"'));
+  filestream.on("error", (error) => {
+    console.error(error);
+    res.statusCode = 400;
+    res.write(JSON.stringify({ status: "error", description: error }));
+    res.end();
+  });
 
-      const promises = parts.map(async (part) => {
-        const headerEnd = part.indexOf("\r\n\r\n") + 4;
-        const header = part.substring(0, headerEnd);
-        const content = part.substring(headerEnd, part.length);
+  // Write data as it comes
+  req.pipe(filestream);
 
-        const fileName = content
-
-        const tempFilePath = path.join(
-          path.resolve(__dirname, '..'),
-          "views\/images",
-          path.basename(fileName)
-        );
-        console.log(tempFilePath)
-
-        await fs.promises.writeFile(tempFilePath, content, "binary");
-
-        const fileContent = await fs.promises.readFile(tempFilePath);
-
-        const uploadResult = await models.uploadImage(fileName, fileContent);
-
-        // await fs.promises.unlink(tempFilePath); // Clean up temporary file
-
-        return uploadResult;
-      });
-
-      const results = await Promise.all(promises);
-      res.status(200).json(results);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-      console.log(error.message)
-    }
+  req.on("end", () => {
+    filestream.close(() => {
+      res.status(200).end(JSON.stringify({ status: "success" }));
+    });
   });
 }
+
 function fillTemplate(req, res, pageName, metaTitle) {
   const viewsDir = path.join(__dirname, "../views");
   const filePath = path.join(viewsDir, `${pageName}.html`);

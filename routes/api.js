@@ -37,7 +37,6 @@ router.get("/get-posts", (req, res) => {
 });
 
 router.post("/upload", (req, res) => {
-  console.log(req.body)
   controllers.manageImageUpload(req, res);
 });
 
