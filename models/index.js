@@ -1,6 +1,6 @@
 const path = require("path");
 const { Transform } = require("stream");
-const { MongoClient } = require("mongodb");
+const { MongoClient, GridFSBucket } = require("mongodb");
 const utilities = require("../utilities/index");
 const { pipeline } = require("stream");
 
@@ -9,23 +9,22 @@ require("dotenv").config({
 });
 
 // CONNECT
-let client;
+let client, bucket;
 
 async function connectToDB() {
   try {
     if (!client) {
       client = new MongoClient(process.env.MONGODB_URI);
       await client.connect();
+      const db = client.db("crazy-apple-lady");
+      bucket = new GridFSBucket(db, { bucketName: "uploads" });
     }
 
-    const db = client.db("crazy-apple-lady");
-
-    return { db: db, client: client };
+    return { db: client.db("crazy-apple-lady"), client: client, bucket: bucket };
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     throw error;
-  }
-}
+  }}
 
 // LOGIN
 async function findUser(username) {
@@ -140,6 +139,24 @@ async function postRetrieval(match, project) {
   }
 }
 
+async function uploadImage(fileName, fileContent) {
+  try {
+    const { bucket } = await connectToDB();
+    console.log(bucket)
+    return new Promise((resolve, reject) => {
+      const uploadStream = bucket.openUploadStream(fileName);
+      uploadStream.end(fileContent, (error) => {
+        if (error) {
+          return reject(new Error("File upload to MongoDB failed"));
+        }
+        resolve({ filename: fileName, fileId: uploadStream.id });
+      });
+    });
+  } catch (error) {
+    console.error("Error while uploading image:", error);
+    throw error;
+  }
+}
 
 module.exports = {
   connectToDB,
@@ -149,4 +166,5 @@ module.exports = {
   updatePost,
   deletePost,
   postRetrieval,
+  uploadImage,
 };

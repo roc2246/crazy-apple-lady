@@ -151,15 +151,16 @@ async function manageGetPosts(req, res) {
 
 async function manageImageUpload(req, res) {
   let rawData = "";
-  const boundary = "--" + req.headers["content-type"].split("; ")[1].replace("boundary=", "");
+  const boundary =
+    "--" + req.headers["content-type"].split("; ")[1].replace("boundary=", "");
 
-  req.on("data", (chunk) => {
-    rawData += chunk;
-  });
+  req.on("data", (chunk) => (rawData += chunk));
 
   req.on("end", async () => {
     try {
-      const parts = rawData.split(boundary).filter((part) => part.includes("filename="));
+      const parts = rawData
+        .split(boundary)
+        .filter((part) => part.includes("filename="));
 
       const promises = parts.map(async (part) => {
         const headerEnd = part.indexOf("\r\n\r\n") + 4;
@@ -167,9 +168,15 @@ async function manageImageUpload(req, res) {
         const content = part.substring(headerEnd, part.length - 4);
 
         const fileNameMatch = header.match(/filename="(.+?)"/);
-        const fileName = fileNameMatch ? fileNameMatch[1] : `upload_${Date.now()}`;
+        const fileName = fileNameMatch
+          ? fileNameMatch[1]
+          : `upload_${Date.now()}`;
 
-        const tempFilePath = path.join(__dirname, "uploads", path.basename(fileName));
+        const tempFilePath = path.join(
+          __dirname,
+          "uploads",
+          path.basename(fileName)
+        );
 
         await fs.promises.writeFile(tempFilePath, content, "binary");
 
