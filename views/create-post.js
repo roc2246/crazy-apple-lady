@@ -59,7 +59,7 @@ class FormHandler {
 
     const response = await fetch("/api/upload", {
       headers:{
-        'filename': uploadObject[0].name
+        'filename': images
       },
       method: "POST",
       body: formData,

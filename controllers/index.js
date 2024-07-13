@@ -150,32 +150,33 @@ async function manageGetPosts(req, res) {
 }
 
 async function manageImageUpload(req, res) {
-  let filename = req.headers["filename"];
-  if (filename == null) {
-    filename = "file." + req.headers["content-type"].split("/")[1];
-  }
+  let filename = req.headers["filename"].split(",");
 
-  const filestream = fs.createWriteStream( path.join(
-    path.resolve(__dirname, '..'),
-    "views\/images",
-    path.basename(filename)
-  ));
+  for (let x = 0; x < filename.length; x++) {
+    const filestream = fs.createWriteStream(
+      path.join(
+        path.resolve(__dirname, ".."),
+        "views/images",
+        path.basename(filename[x])
+      )
+    );
 
-  filestream.on("error", (error) => {
-    console.error(error);
-    res.statusCode = 400;
-    res.write(JSON.stringify({ status: "error", description: error }));
-    res.end();
-  });
-
-  // Write data as it comes
-  req.pipe(filestream);
-
-  req.on("end", () => {
-    filestream.close(() => {
-      res.status(200).end(JSON.stringify({ status: "success" }));
+    filestream.on("error", (error) => {
+      console.error(error);
+      res.statusCode = 400;
+      res.write(JSON.stringify({ status: "error", description: error }));
+      res.end();
     });
-  });
+
+    // Write data as it comes
+    req.pipe(filestream);
+
+    req.on("end", () => {
+      filestream.close(() => {
+        res.status(200).end(JSON.stringify({ status: "success" }));
+      });
+    });
+  }
 }
 
 function fillTemplate(req, res, pageName, metaTitle) {
