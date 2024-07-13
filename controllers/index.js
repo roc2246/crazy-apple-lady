@@ -164,20 +164,17 @@ async function manageImageUpload(req, res) {
 
       const promises = parts.map(async (part) => {
         const headerEnd = part.indexOf("\r\n\r\n") + 4;
-        console.log(part)
         const header = part.substring(0, headerEnd);
-        const content = part.substring(headerEnd, part.length - 4);
+        const content = part.substring(headerEnd, part.length);
 
-        const fileNameMatch = header.match(/filename="(.+?)"/);
-        const fileName = fileNameMatch
-          ? fileNameMatch[1]
-          : `upload_${Date.now()}`;
+        const fileName = content
 
         const tempFilePath = path.join(
-          __dirname,
-          "uploads",
+          path.resolve(__dirname, '..'),
+          "views\/images",
           path.basename(fileName)
         );
+        console.log(tempFilePath)
 
         await fs.promises.writeFile(tempFilePath, content, "binary");
 
@@ -185,7 +182,7 @@ async function manageImageUpload(req, res) {
 
         const uploadResult = await models.uploadImage(fileName, fileContent);
 
-        await fs.promises.unlink(tempFilePath); // Clean up temporary file
+        // await fs.promises.unlink(tempFilePath); // Clean up temporary file
 
         return uploadResult;
       });
@@ -194,6 +191,7 @@ async function manageImageUpload(req, res) {
       res.status(200).json(results);
     } catch (error) {
       res.status(500).json({ error: error.message });
+      console.log(error.message)
     }
   });
 }

@@ -55,7 +55,8 @@ class FormHandler {
     for (let x = 0; x < uploadObject.length; x++) {
       images.push(uploadObject[x].name);
     }
-    formData.append("image", images);
+    formData.image =  images
+    console.log(formData)
 
     const response = await fetch("/api/upload", {
       method: "POST",
