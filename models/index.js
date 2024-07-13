@@ -142,7 +142,6 @@ async function postRetrieval(match, project) {
 async function uploadImage(fileName, fileContent) {
   try {
     const { bucket } = await connectToDB();
-    console.log(bucket)
     return new Promise((resolve, reject) => {
       const uploadStream = bucket.openUploadStream(fileName);
       uploadStream.end(fileContent, (error) => {
