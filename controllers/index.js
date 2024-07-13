@@ -150,13 +150,13 @@ async function manageGetPosts(req, res) {
 }
 
 function processImage(req, res, file) {
-  const filestream = fs.createWriteStream(
-    path.join(
-      path.resolve(__dirname, ".."),
-      "views/images",
-      path.basename(file)
-    )
+  const filePath = path.join(
+    path.resolve(__dirname, ".."),
+    "views/images",
+    path.basename(file)
   );
+
+  const filestream = fs.createWriteStream(filePath);
 
   filestream.on("error", (error) => {
     console.error(error);
@@ -166,7 +166,7 @@ function processImage(req, res, file) {
   });
 
   // Write data as it comes
- req.pipe(filestream);
+  req.pipe(filestream);
 
   req.on("end", () => {
     filestream.close(() => {
