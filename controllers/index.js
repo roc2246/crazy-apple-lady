@@ -160,10 +160,11 @@ async function manageImageUpload(req, res) {
     try {
       const parts = rawData
         .split(boundary)
-        .filter((part) => part.includes("filename="));
+        .filter((part) => part.includes('name="image"'));
 
       const promises = parts.map(async (part) => {
         const headerEnd = part.indexOf("\r\n\r\n") + 4;
+        console.log(part)
         const header = part.substring(0, headerEnd);
         const content = part.substring(headerEnd, part.length - 4);
 
