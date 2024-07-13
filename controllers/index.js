@@ -149,67 +149,46 @@ async function manageGetPosts(req, res) {
   }
 }
 
-function manageImageUpload(req, res) {
-  let bucket;
-
+async function manageImageUpload(req, res) {
   let rawData = "";
-  const boundary =
-    "--" + req.headers["content-type"].split("; ")[1].replace("boundary=", "");
+  const boundary = "--" + req.headers["content-type"].split("; ")[1].replace("boundary=", "");
 
   req.on("data", (chunk) => {
     rawData += chunk;
   });
 
-  req.on("end", () => {
-    const parts = rawData
-      .split(boundary)
-      .filter((part) => part.includes("filename="));
-    const promises = parts.map((part) => {
-      return new Promise((resolve, reject) => {
+  req.on("end", async () => {
+    try {
+      const parts = rawData.split(boundary).filter((part) => part.includes("filename="));
+
+      const promises = parts.map(async (part) => {
         const headerEnd = part.indexOf("\r\n\r\n") + 4;
         const header = part.substring(0, headerEnd);
         const content = part.substring(headerEnd, part.length - 4);
 
         const fileNameMatch = header.match(/filename="(.+?)"/);
-        const fileName = fileNameMatch
-          ? fileNameMatch[1]
-          : `upload_${Date.now()}`;
+        const fileName = fileNameMatch ? fileNameMatch[1] : `upload_${Date.now()}`;
 
-        const tempFilePath = path.join(
-          __dirname,
-          "uploads",
-          path.basename(fileName)
-        );
+        const tempFilePath = path.join(__dirname, "uploads", path.basename(fileName));
 
-        fs.writeFile(tempFilePath, content, "binary", (err) => {
-          if (err) {
-            return reject(new Error("File upload failed"));
-          }
+        await fs.promises.writeFile(tempFilePath, content, "binary");
 
-          const uploadStream = bucket.openUploadStream(fileName);
-          fs.createReadStream(tempFilePath)
-            .pipe(uploadStream)
-            .on("error", (err) => {
-              return reject(new Error("File upload to MongoDB failed"));
-            })
-            .on("finish", () => {
-              fs.unlink(tempFilePath, () => {}); // Clean up temporary file
-              resolve({ filename: fileName, fileId: uploadStream.id });
-            });
-        });
+        const fileContent = await fs.promises.readFile(tempFilePath);
+
+        const uploadResult = await models.uploadImage(fileName, fileContent);
+
+        await fs.promises.unlink(tempFilePath); // Clean up temporary file
+
+        return uploadResult;
       });
-    });
 
-    Promise.all(promises)
-      .then((results) => {
-        res.status(200).json(results);
-      })
-      .catch((error) => {
-        res.status(500).json({ error: error.message });
-      });
+      const results = await Promise.all(promises);
+      res.status(200).json(results);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   });
 }
-
 function fillTemplate(req, res, pageName, metaTitle) {
   const viewsDir = path.join(__dirname, "../views");
   const filePath = path.join(viewsDir, `${pageName}.html`);
