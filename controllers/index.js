@@ -230,6 +230,8 @@ function modifyImages(req, res) {
   }
 }
 
+// CREATE FUNCTION FOR REMOVING IMAGES HERE
+
 function fillTemplate(req, res, pageName, metaTitle) {
   const viewsDir = path.join(__dirname, "../views");
   const filePath = path.join(viewsDir, `${pageName}.html`);
