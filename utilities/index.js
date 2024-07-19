@@ -1,85 +1,90 @@
 const crypto = require("crypto");
-const fs = require('fs').promises;
+const fs = require("fs").promises;
 const path = require("path");
-
-
 
 // LOGINS
 function generateRandomString(length) {
-    return crypto
-      .randomBytes(Math.ceil(length / 2))
-      .toString("hex") // Convert to hexadecimal representation
-      .slice(0, length); // Trim to desired length
-  }
+  return crypto
+    .randomBytes(Math.ceil(length / 2))
+    .toString("hex") // Convert to hexadecimal representation
+    .slice(0, length); // Trim to desired length
+}
 
-  // DATA UPLOADING
-  function pipelineToPromise(pipeline) {
-    return new Promise((resolve, reject) => {
-      const data = [];
-      pipeline.on("data", (chunk) => data.push(chunk));
-      pipeline.on("end", () => resolve(data));
-      pipeline.on("error", reject);
-    });
-  }
+// DATA UPLOADING
+function pipelineToPromise(pipeline) {
+  return new Promise((resolve, reject) => {
+    const data = [];
+    pipeline.on("data", (chunk) => data.push(chunk));
+    pipeline.on("end", () => resolve(data));
+    pipeline.on("error", reject);
+  });
+}
 
-  function generateParams(match, project) {
-    let params;
-    if (!project) {
-      params = [{ $match: match }];
-    } else {
-      params = [{ $match: match }, { $project: project }];
-    }
-    return params;
+function generateParams(match, project) {
+  let params;
+  if (!project) {
+    params = [{ $match: match }];
+  } else {
+    params = [{ $match: match }, { $project: project }];
   }
-  
-  function checkDataLength(data) {
-    if (data.length > 0) {
-      return data;
-    } else {
-      throw new Error("Post not found");
-    }
-  }
+  return params;
+}
 
-  function manageImageUploads(file, form, processedCount, totalFiles){
+function checkDataLength(data) {
+  if (data.length > 0) {
+    return data;
+  } else {
+    throw new Error("Post not found");
+  }
+}
+
+function uploadStatusHandling(err, res, code) {
+  if (err) {
+    res.status(code).json({ message: err });
+    return;
+  }
+}
+
+function processImageUploads(res, imageFiles, uploadDir, totalFiles) {
+  let processedCount = 0;
+
+  imageFiles.forEach((file) => {
     const oldPath = file.filepath;
-    const newPath = path.join(form.uploadDir, file.originalFilename);
+    const newPath = path.join(uploadDir, file.originalFilename);
 
-    fs.rename(oldPath, newPath, err => {
-      if (err) {
-        console.error(`Error saving file ${file.originalFilename}:`, err);
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Error saving one or more files');
+    fs.rename(oldPath, newPath, (err) => {
+      try {
+        processedCount++;
+        processedCount === totalFiles ? res.status(200).end() : null;
+      } catch (error) {
+        res.status(500).json({ message: err });
         return;
       }
-
-      processedCount++;
-      if (processedCount === totalFiles) {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ status: 'success', files: imageFiles.map(file => file.originalFilename) }));
-      }
     });
+  });
+}
+
+// TEXT FORMATTING
+function addPTags(text) {
+  if (typeof text !== "string") {
+    throw new Error("Text must be a string");
   }
 
-  // TEXT FORMATTING
-  function addPTags(text) {
-    if (typeof text !== "string") {
-      throw new Error("Text must be a string");
-    }
-
-    text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
-    if (!text.startsWith('<p class="post__paragraph">')) {
-      text = '<p class="post__paragraph">' + text;
-    }
-    if (!text.endsWith("</p>")) {
-      text += "</p>";
-    }
-    return text;
+  text = text.replace(/\n\n+/g, '</p><p class="post__paragraph">');
+  if (!text.startsWith('<p class="post__paragraph">')) {
+    text = '<p class="post__paragraph">' + text;
   }
-  module.exports = {
-    generateRandomString,
-    pipelineToPromise,
-    generateParams,
-    checkDataLength,
-    manageImageUploads,
-    addPTags
+  if (!text.endsWith("</p>")) {
+    text += "</p>";
   }
+  return text;
+}
+module.exports = {
+  generateRandomString,
+  pipelineToPromise,
+  generateParams,
+  checkDataLength,
+  processImageUploads,
+  uploadStatusHandling,
+  addPTags,
+};
