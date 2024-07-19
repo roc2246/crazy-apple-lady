@@ -51,11 +51,9 @@ class FormHandler {
     const formData = new FormData();
     const uploadObject = document.querySelector(".create-post__img").files;
 
-    let images = [];
-    for (let x = 0; x < uploadObject.length; x++) {
-      images.push(uploadObject[x]);
+    for (let i = 0; i < uploadObject.length; i++) {
+      formData.append("images", uploadObject[i]); // Append each file
     }
-    formData.image =  images
 
     const response = await fetch("/api/upload", {
       method: "POST",
@@ -124,7 +122,7 @@ document
 
     let images = [];
     for (let x = 0; x < uploadObject.length; x++) {
-      if(uploadObject[x].name.match(/[^\\]*$/)[0]){
+      if (uploadObject[x].name.match(/[^\\]*$/)[0]) {
         images.push(uploadObject[x].name);
       }
     }
@@ -139,7 +137,7 @@ document
     const postReq = new Post(
       newPost.type,
       newPost.title,
-      newPost.image ? newPost.image: null,
+      newPost.image ? newPost.image : null,
       ContentFormatter.addPTags(newPost.content)
     );
 
