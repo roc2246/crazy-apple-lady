@@ -183,12 +183,10 @@ function manageImageUpload(req, res) {
 
         processedCount++;
         if (processedCount === totalFiles) {
-          res
-            .status(200)
-            .JSON({
-              status: "success",
-              files: imageFiles.map((file) => file.originalFilename),
-            });
+          res.status(200).JSON({
+            status: "success",
+            files: imageFiles.map((file) => file.originalFilename),
+          });
         }
       });
     });
@@ -196,16 +194,40 @@ function manageImageUpload(req, res) {
 }
 
 function modifyImages(req, res) {
+  const form = new formidable.IncomingForm();
   // const for holding modified image list
+  const modifiedImgs = form.parse(req, (err, fields, files) => {
+    return [fields.name];
+  });
   // const for holding images
+  const uploadedImgsPath = path.join(path.resolve(__dirname, ".."), "views/images");
+  const uploadedImgs = fs.readdirSync(uploadedImgsPath);
 
   // loop through  images
-  // if image isnt in modified image list
-    // remove image
-    
+  for(let x = 0; x < uploadedImgs.length; x++){
+    if(!modifiedImgs.includes(uploadedImgs[x])){
+      fs.unlink(uploadedImgs[x], (err) => {
+        if (err) {
+          console.error('Error removing file:', err);
+        } else {
+          console.log('File removed successfully');
+        }
+      });
+    }
+  }
+
   // loop thgrough modifiedimages
-  // if modified image is not in image
-    // upload image
+  for(let x = 0; x < modifiedImgs.length; x++){
+    if(!uploadedImgs.includes(modifiedImgs[x])){
+      fs.rename(oldPath, newPath, (err) => { /* Fix this */
+        if (err) {
+          console.error(`Error saving file ${file.originalFilename}:`, err);
+          res.status(500).end("Error saving one or more files");
+          return;
+        }
+      });
+    }
+  }
 }
 
 function fillTemplate(req, res, pageName, metaTitle) {
@@ -243,5 +265,6 @@ module.exports = {
   manageGetPost,
   manageGetPosts,
   manageImageUpload,
+  modifyImages,
   fillTemplate,
 };

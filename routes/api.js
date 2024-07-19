@@ -40,4 +40,8 @@ router.post("/upload", (req, res) => {
   controllers.manageImageUpload(req, res);
 });
 
+router.put('/update-images', (req, res)=>{
+  controllers.modifyImages(req, res)
+})
+
 module.exports = router;
