@@ -1,4 +1,5 @@
 const path = require("path");
+const formidable = require('formidable');
 const models = require("../models/index");
 const utilities = require("../utilities/index");
 const components = require("../components/index");
@@ -175,12 +176,58 @@ function processImage(req, res, file) {
   });
 }
 
-async function manageImageUpload(req, res) {
-  const filename = req.headers["filename"].split(",");
+function manageImageUpload(req, res) {
+  const form = new formidable.IncomingForm();
 
-  for (let x = 0; x < filename.length; x++) {
-    processImage(req, res, filename[x]);
-  }
+  // Set the directory where files will be saved
+  form.uploadDir = path.join(
+    path.resolve(__dirname, ".."),
+    "views/images"
+  );
+  form.keepExtensions = true; // Preserve file extensions
+
+  form.parse(req, (err, fields, files) => {
+    if (err) {
+      console.log(err);
+      res.writeHead(400, { 'Content-Type': 'text/plain' });
+      res.end('Error parsing form data');
+      return;
+    }
+
+    // Handle files
+    console.log('Fields:', fields); // Log form fields
+    console.log('Files:', files);   // Log file details
+
+    // Ensure files.images is an array
+    const imageFiles = Array.isArray(files.images) ? files.images : [files.images];
+    
+    // Track the number of processed files
+    let processedCount = 0;
+    const totalFiles = imageFiles.length;
+
+    // Function to handle moving each file
+    imageFiles.forEach(file => {
+      const oldPath = file.filepath;
+      const newPath = path.join(form.uploadDir, file.originalFilename);
+
+      fs.rename(oldPath, newPath, err => {
+        if (err) {
+          console.error(`Error saving file ${file.originalFilename}:`, err);
+          // Respond with an error if any file fails
+          res.writeHead(500, { 'Content-Type': 'text/plain' });
+          res.end('Error saving one or more files');
+          return;
+        }
+
+        processedCount++;
+        if (processedCount === totalFiles) {
+          // Respond when all files are processed
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ status: 'success', files: imageFiles.map(file => file.originalFilename) }));
+        }
+      });
+    });
+  });
 }
 
 function fillTemplate(req, res, pageName, metaTitle) {
