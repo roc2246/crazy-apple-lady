@@ -38,10 +38,8 @@ function checkDataLength(data) {
   }
 }
 
-
 function processImageUploads(res, files, uploadDir) {
-  const imageFiles =[files.images];
-      const totalFiles = imageFiles.length;
+  const imageFiles = [files.images];
   let processedCount = 0;
 
   imageFiles.forEach((file) => {
@@ -51,7 +49,7 @@ function processImageUploads(res, files, uploadDir) {
     fs.rename(oldPath, newPath, (err) => {
       try {
         processedCount++;
-        processedCount === totalFiles ? res.status(200).end() : null;
+        processedCount === imageFiles.length ? res.status(200).end() : null;
       } catch (error) {
         res.status(500).json({ message: err });
         return;
