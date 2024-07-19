@@ -38,25 +38,6 @@ function checkDataLength(data) {
   }
 }
 
-function processImageUploads(res, files, uploadDir) {
-  const imageFiles = [files.images];
-  let processedCount = 0;
-
-  imageFiles.forEach((file) => {
-    const oldPath = file.filepath;
-    const newPath = path.join(uploadDir, file.originalFilename);
-
-    fs.rename(oldPath, newPath, (err) => {
-      try {
-        processedCount++;
-        processedCount === imageFiles.length ? res.status(200).end() : null;
-      } catch (error) {
-        res.status(500).json({ message: err });
-        return;
-      }
-    });
-  });
-}
 
 // TEXT FORMATTING
 function addPTags(text) {
@@ -78,6 +59,5 @@ module.exports = {
   pipelineToPromise,
   generateParams,
   checkDataLength,
-  processImageUploads,
   addPTags,
 };

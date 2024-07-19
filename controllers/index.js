@@ -152,30 +152,59 @@ async function manageGetPosts(req, res) {
 
 function manageImageUpload(req, res) {
   const form = new formidable.IncomingForm();
+
   form.uploadDir = path.join(path.resolve(__dirname, ".."), "views/images");
   form.keepExtensions = true;
 
-  form.parse(req, (err, files) => {
-    try {
-      utilities.processImageUploads(res, files, form.uploadDir);
-    } catch (error) {
-      res.status(500).json({ message: err });
+  form.parse(req, (err, fields, files) => {
+    if (err) {
+      console.log(err);
+      res.status(400).end("Error parsing form data");
+      return;
     }
+
+    const imageFiles = Array.isArray(files.images)
+      ? files.images
+      : [files.images];
+
+    let processedCount = 0;
+    const totalFiles = imageFiles.length;
+
+    imageFiles.forEach((file) => {
+      const oldPath = file.filepath;
+      const newPath = path.join(form.uploadDir, file.originalFilename);
+
+      fs.rename(oldPath, newPath, (err) => {
+        if (err) {
+          console.error(`Error saving file ${file.originalFilename}:`, err);
+          res.status(500).end("Error saving one or more files");
+          return;
+        }
+
+        processedCount++;
+        if (processedCount === totalFiles) {
+          res
+            .status(200)
+            .JSON({
+              status: "success",
+              files: imageFiles.map((file) => file.originalFilename),
+            });
+        }
+      });
+    });
   });
 }
 
-function modifyImages(req, res){
+function modifyImages(req, res) {
   // constant for hodling removed images
   // const for holding new images
   // const for holding images
-
-  // loop through  images 
-    // if image matches
-      // remove image 
-
+  // loop through  images
+  // if image matches
+  // remove image
   // loop thgrough images
-    // if image is not uploaded
-    // upload image
+  // if image is not uploaded
+  // upload image
 }
 
 function fillTemplate(req, res, pageName, metaTitle) {
