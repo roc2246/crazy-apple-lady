@@ -164,6 +164,20 @@ function manageImageUpload(req, res) {
   });
 }
 
+function modifyImages(req, res){
+  // constant for hodling removed images
+  // const for holding new images
+  // const for holding images
+
+  // loop through  images 
+    // if image matches
+      // remove image 
+
+  // loop thgrough images
+    // if image is not uploaded
+    // upload image
+}
+
 function fillTemplate(req, res, pageName, metaTitle) {
   const viewsDir = path.join(__dirname, "../views");
   const filePath = path.join(viewsDir, `${pageName}.html`);
