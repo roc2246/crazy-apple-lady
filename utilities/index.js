@@ -39,7 +39,9 @@ function checkDataLength(data) {
 }
 
 
-function processImageUploads(res, imageFiles, uploadDir, totalFiles) {
+function processImageUploads(res, files, uploadDir) {
+  const imageFiles =[files.images];
+      const totalFiles = imageFiles.length;
   let processedCount = 0;
 
   imageFiles.forEach((file) => {

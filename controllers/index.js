@@ -157,16 +157,7 @@ function manageImageUpload(req, res) {
 
   form.parse(req, (err, files) => {
     try {
-      const imageFiles =[files.images];
-      const totalFiles = imageFiles.length;
-
-      utilities.processImageUploads(
-        res,
-        imageFiles,
-        form.uploadDir,
-        totalFiles
-      );
-
+      utilities.processImageUploads(res, files, form.uploadDir);
     } catch (error) {
       res.status(500).json({ message: err });
     }
