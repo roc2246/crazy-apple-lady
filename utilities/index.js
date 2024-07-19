@@ -1,6 +1,10 @@
 const crypto = require("crypto");
 const fs = require('fs').promises;
+const path = require("path");
 
+
+
+// LOGINS
 function generateRandomString(length) {
     return crypto
       .randomBytes(Math.ceil(length / 2))
@@ -8,6 +12,7 @@ function generateRandomString(length) {
       .slice(0, length); // Trim to desired length
   }
 
+  // DATA UPLOADING
   function pipelineToPromise(pipeline) {
     return new Promise((resolve, reject) => {
       const data = [];
@@ -35,20 +40,27 @@ function generateRandomString(length) {
     }
   }
 
-  async function uploadImage(imageData) {
-    try {
-      // For local storage
-      const imagePath = `uploads/${Date.now()}_image.jpg`; // Assuming it's a JPG image
-      // Write the image buffer to the specified path asynchronously
-      await fs.writeFile(imagePath, imageData);
-  
-      return imagePath;
-    } catch (error) {
-      console.error("Error while uploading image:", error);
-      throw error;
-    }
+  function manageImageUploads(file, form, processedCount, totalFiles){
+    const oldPath = file.filepath;
+    const newPath = path.join(form.uploadDir, file.originalFilename);
+
+    fs.rename(oldPath, newPath, err => {
+      if (err) {
+        console.error(`Error saving file ${file.originalFilename}:`, err);
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Error saving one or more files');
+        return;
+      }
+
+      processedCount++;
+      if (processedCount === totalFiles) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ status: 'success', files: imageFiles.map(file => file.originalFilename) }));
+      }
+    });
   }
 
+  // TEXT FORMATTING
   function addPTags(text) {
     if (typeof text !== "string") {
       throw new Error("Text must be a string");
@@ -68,6 +80,6 @@ function generateRandomString(length) {
     pipelineToPromise,
     generateParams,
     checkDataLength,
-    uploadImage,
+    manageImageUploads,
     addPTags
   }

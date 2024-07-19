@@ -150,31 +150,6 @@ async function manageGetPosts(req, res) {
   }
 }
 
-function processImage(req, res, file) {
-  const filePath = path.join(
-    path.resolve(__dirname, ".."),
-    "views/images",
-    path.basename(file)
-  );
-
-  const filestream = fs.createWriteStream(filePath);
-
-  filestream.on("error", (error) => {
-    console.error(error);
-    res.statusCode = 400;
-    res.write(JSON.stringify({ status: "error", description: error }));
-    res.end();
-  });
-
-  // Write data as it comes
-  req.pipe(filestream);
-
-  req.on("end", () => {
-    filestream.close(() => {
-      res.status(200).end(JSON.stringify({ status: "success" }));
-    });
-  });
-}
 
 function manageImageUpload(req, res) {
   const form = new formidable.IncomingForm();

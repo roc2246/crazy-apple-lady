@@ -139,23 +139,6 @@ async function postRetrieval(match, project) {
   }
 }
 
-async function uploadImage(fileName, fileContent) {
-  try {
-    const { bucket } = await connectToDB();
-    return new Promise((resolve, reject) => {
-      const uploadStream = bucket.openUploadStream(fileName);
-      uploadStream.end(fileContent, (error) => {
-        if (error) {
-          return reject(new Error("File upload to MongoDB failed"));
-        }
-        resolve({ filename: fileName, fileId: uploadStream.id });
-      });
-    });
-  } catch (error) {
-    console.error("Error while uploading image:", error);
-    throw error;
-  }
-}
 
 module.exports = {
   connectToDB,
@@ -165,5 +148,4 @@ module.exports = {
   updatePost,
   deletePost,
   postRetrieval,
-  uploadImage,
 };
