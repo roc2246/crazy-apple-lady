@@ -196,15 +196,16 @@ function manageImageUpload(req, res) {
 }
 
 function modifyImages(req, res) {
-  // constant for hodling removed images
-  // const for holding new images
+  // const for holding modified image list
   // const for holding images
+
   // loop through  images
-  // if image matches
-  // remove image
-  // loop thgrough images
-  // if image is not uploaded
-  // upload image
+  // if image isnt in modified image list
+    // remove image
+    
+  // loop thgrough modifiedimages
+  // if modified image is not in image
+    // upload image
 }
 
 function fillTemplate(req, res, pageName, metaTitle) {
