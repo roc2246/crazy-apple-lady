@@ -38,12 +38,6 @@ function checkDataLength(data) {
   }
 }
 
-function uploadStatusHandling(err, res, code) {
-  if (err) {
-    res.status(code).json({ message: err });
-    return;
-  }
-}
 
 function processImageUploads(res, imageFiles, uploadDir, totalFiles) {
   let processedCount = 0;
@@ -85,6 +79,5 @@ module.exports = {
   generateParams,
   checkDataLength,
   processImageUploads,
-  uploadStatusHandling,
   addPTags,
 };
