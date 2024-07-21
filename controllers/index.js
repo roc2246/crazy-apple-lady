@@ -183,7 +183,7 @@ function manageImageUpload(req, res) {
 
         processedCount++;
         if (processedCount === totalFiles) {
-          res.status(200).JSON({
+          res.status(200).json({
             status: "success",
             files: imageFiles.map((file) => file.originalFilename),
           });
