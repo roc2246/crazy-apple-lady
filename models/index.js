@@ -9,18 +9,16 @@ require("dotenv").config({
 });
 
 // CONNECT
-let client, bucket;
+let client;
 
 async function connectToDB() {
   try {
     if (!client) {
       client = new MongoClient(process.env.MONGODB_URI);
       await client.connect();
-      const db = client.db("crazy-apple-lady");
-      bucket = new GridFSBucket(db, { bucketName: "uploads" });
     }
 
-    return { db: client.db("crazy-apple-lady"), client: client, bucket: bucket };
+    return { db:  client.db("crazy-apple-lady"), client: client };
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     throw error;
