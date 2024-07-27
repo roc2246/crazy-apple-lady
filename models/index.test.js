@@ -32,6 +32,10 @@ describe("Login", () => {
     const user = await findUser("Mindy");
     expect(user.username).toBe("Mindy");
   });
+  it("should return null", async () => {
+    const user = await findUser("Test");
+    expect(user).toBe(null);
+  });
 });
 
 describe("Post ID Management", () => {
