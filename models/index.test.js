@@ -1,9 +1,21 @@
-import { expect, test, describe } from "vitest";
+import { expect, it, test, describe, vi } from "vitest";
 import { connectToDB, findUser, generatePostID, postRetrieval } from ".";
+import { MongoClient } from "mongodb";
 
+vi.mock("mongodb", () => {
+  return {
+    MongoClient: {
+      db: {
+        collection(name) {
+          if (name) return {};
+        },
+      },
+    },
+  };
+});
 
 describe("Test Connection", () => {
-  test("No Error", async () => {
+  it("should return connection data", async () => {
     const connection = await connectToDB();
     expect(connection).toHaveProperty("db");
     expect(connection).toHaveProperty("client");
@@ -11,7 +23,7 @@ describe("Test Connection", () => {
 });
 
 describe("Login", () => {
-  test("Find user", async () => {
+  it("should find a user", async () => {
     const user = await findUser("Mindy");
     expect(user.username).toBe("Mindy");
   });
@@ -38,14 +50,14 @@ describe("Post Retrieval", () => {
     expect(post).toBeInstanceOf(Array);
   });
   test("Get Posts", async () => {
-    const match = { };
+    const match = {};
     const post = await postRetrieval(match);
     expect(post).toBeInstanceOf(Array);
   });
   test("Get Post Names", async () => {
     const plantyLifeMatch = { type: "plantyLife" };
     const mushroomBlogsMatch = { type: "mushroomBlog" };
-    const project = { _id: 0, id: 1, title: 1 }; 
+    const project = { _id: 0, id: 1, title: 1 };
 
     const plantyLifePosts = await postRetrieval(plantyLifeMatch, project);
     const mushroomBlogsPosts = await postRetrieval(mushroomBlogsMatch, project);
