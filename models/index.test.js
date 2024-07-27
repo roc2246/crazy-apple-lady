@@ -5,19 +5,20 @@ import { MongoClient } from "mongodb";
 vi.mock("mongodb", () => {
   return {
     MongoClient: {
-      db: {
-        collection(name) {
-          if (name) return {};
-        },
-      },
+      mocked: true,
     },
   };
 });
 
+it("should mock mongodb", () => {
+  expect(MongoClient.mocked).toBe(true);
+});
+
 describe("Test Connection", () => {
   it("should return connection data", async () => {
-    const connection = await connectToDB();
+    const connection = await connectToDB(MongoClient);
     expect(connection).toHaveProperty("db");
+
     expect(connection).toHaveProperty("client");
   });
 });
