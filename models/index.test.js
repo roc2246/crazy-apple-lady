@@ -7,13 +7,15 @@ vi.mock("mongodb", () => {
     MongoClient: {
       connect: vi.fn().mockResolvedValue("success"),
       db: vi.fn().mockReturnValue({}),
-      mocked: true,
     },
   };
 });
 
-it("should mock mongodb", () => {
-  expect(MongoClient.mocked).toBe(true);
+describe("Test MongoClient", () => {
+  it("should call connect", async ()=>{
+    expect(MongoClient.connect()).toBeCalled
+    expect(await MongoClient.connect()).toBe("success")
+  })
 });
 
 describe("Test Connection", () => {
