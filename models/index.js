@@ -1,8 +1,7 @@
 const path = require("path");
 const { Transform } = require("stream");
-const { MongoClient, GridFSBucket } = require("mongodb");
+const { MongoClient } = require("mongodb");
 const utilities = require("../utilities/index");
-const { pipeline } = require("stream");
 
 require("dotenv").config({
   path: path.join(__dirname, "../config/.env"),
@@ -18,7 +17,7 @@ async function connectToDB() {
       await client.connect();
     }
 
-    return { db:  client.db("crazy-apple-lady"), client: client };
+    return { db:  client.db("crazy-apple-lady"), client };
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     throw error;

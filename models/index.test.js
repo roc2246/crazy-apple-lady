@@ -5,6 +5,8 @@ import { MongoClient } from "mongodb";
 vi.mock("mongodb", () => {
   return {
     MongoClient: {
+      connect: vi.fn().mockResolvedValue("success"),
+      db: vi.fn().mockReturnValue({}),
       mocked: true,
     },
   };
@@ -16,7 +18,7 @@ it("should mock mongodb", () => {
 
 describe("Test Connection", () => {
   it("should return connection data", async () => {
-    const connection = await connectToDB(MongoClient);
+    const connection = await connectToDB();
     expect(connection).toHaveProperty("db");
 
     expect(connection).toHaveProperty("client");
