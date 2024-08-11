@@ -7,7 +7,10 @@ import {
   newPost,
   postRetrieval,
 } from ".";
-let posts = []
+
+const users = [{ username: "Mindy" }];
+let posts = [];
+
 // Mock only specific functions
 vi.mock(".", async (importOriginal) => {
   const originalModule = await importOriginal();
@@ -20,7 +23,11 @@ vi.mock(".", async (importOriginal) => {
         }),
       },
     }),
-    newPost: vi.fn((post)=> posts = [...posts, post])
+    findUser: vi.fn((name) => {
+      const user = users.find((user) => user.username === name);
+      return user || null;
+    }),
+    newPost: vi.fn((post) => (posts = [...posts, post])),
   };
 });
 
@@ -45,7 +52,7 @@ describe("Login", () => {
 describe("CRUD", async () => {
   it("should add new post", async () => {
     const post = {
-      title: "Blkarg",
+      title: "test",
       type: "plantyLife",
       image: ["img1.jpg"],
     };
@@ -53,6 +60,6 @@ describe("CRUD", async () => {
 
     // Verify that `connectToDB` was called
     expect(connectToDB).toHaveBeenCalled();
-    expect(posts.length).toBeGreaterThan(0)
+    expect(posts.length).toBeGreaterThan(0);
   });
 });
