@@ -4,19 +4,23 @@ import {
   findUser,
   generatePostID,
   newPost,
+  newPost,
   postRetrieval,
 } from ".";
 
 // Mock only specific functions
 vi.mock(".", async (importOriginal) => {
-  const originalModule =  await importOriginal()
+  const originalModule = await importOriginal();
   return {
     ...originalModule,
     connectToDB: vi.fn().mockReturnValue({
       db: {
-        collection: vi.fn(),
+        collection: vi.fn().mockReturnValue({
+          insertOne: vi.fn(),
+        }),
       },
-    })
+    }),
+    newPost: vi.fn()
   };
 });
 
@@ -27,7 +31,6 @@ describe("Connectiong to DB", () => {
   });
 });
 
-
 describe("Login", () => {
   it("should find a user", async () => {
     const user = await findUser("Mindy");
@@ -35,7 +38,20 @@ describe("Login", () => {
   });
   it("should return null", async () => {
     const user = await findUser("Test");
-    expect(user).toBeNull()
+    expect(user).toBeNull();
   });
 });
 
+describe("CRUD", async () => {
+  it("should add new post", async () => {
+    const post = {
+      title: "Blkarg",
+      type: "plantyLife",
+      image: ["img1.jpg"],
+    };
+    await newPost(post);
+
+    // Verify that `connectToDB` was called
+    expect(connectToDB).toHaveBeenCalled();
+  });
+});
