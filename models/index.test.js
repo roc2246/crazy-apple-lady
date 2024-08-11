@@ -7,7 +7,7 @@ import {
   newPost,
   postRetrieval,
 } from ".";
-
+let posts = []
 // Mock only specific functions
 vi.mock(".", async (importOriginal) => {
   const originalModule = await importOriginal();
@@ -20,7 +20,7 @@ vi.mock(".", async (importOriginal) => {
         }),
       },
     }),
-    newPost: vi.fn()
+    newPost: vi.fn((post)=> posts = [...posts, post])
   };
 });
 
@@ -53,5 +53,6 @@ describe("CRUD", async () => {
 
     // Verify that `connectToDB` was called
     expect(connectToDB).toHaveBeenCalled();
+    expect(posts.length).toBeGreaterThan(0)
   });
 });
