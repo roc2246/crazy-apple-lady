@@ -33,7 +33,7 @@ async function findUser(username) {
 
     const user = await collection.findOne(query);
 
-    return user ? user : null;
+    return user || null;
   } catch (error) {
     console.error("Error while finding user:", error);
     throw error;
