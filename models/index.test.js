@@ -1,65 +1,38 @@
-import { expect, it, test, describe, vi } from "vitest";
-import {
-  connectToDB,
-  findUser,
-  generatePostID,
-  newPost,
-  newPost,
-  postRetrieval,
-} from ".";
+import { vi, describe, it, expect } from "vitest";
+import { connectToDB } from "."; 
 
-const users = [{ username: "Mindy" }];
-let posts = [];
 
-// Mock only specific functions
-vi.mock(".", async (importOriginal) => {
-  const originalModule = await importOriginal();
-  return {
-    ...originalModule,
-    connectToDB: vi.fn().mockReturnValue({
-      db: {
-        collection: vi.fn().mockReturnValue({
-          insertOne: vi.fn(),
-        }),
-      },
-    }),
-    findUser: vi.fn((name) => {
-      const user = users.find((user) => user.username === name);
-      return user || null;
-    }),
-    newPost: vi.fn((post) => (posts = [...posts, post])),
-  };
-});
-
-describe("Connectiong to DB", () => {
-  it("should return db property", async () => {
-    const db = await connectToDB();
-    expect(db).toHaveProperty("db");
-  });
-});
-
-describe("Login", () => {
-  it("should find a user", async () => {
-    const user = await findUser("Mindy");
-    expect(user.username).toBe("Mindy");
-  });
-  it("should return null", async () => {
-    const user = await findUser("Test");
-    expect(user).toBeNull();
-  });
-});
-
-describe("CRUD", async () => {
-  it("should add new post", async () => {
-    const post = {
-      title: "test",
-      type: "plantyLife",
-      image: ["img1.jpg"],
+describe("connectToDB", () => {
+  it("should return db and client", async () => {
+    // Mock the MongoClient and its methods
+    const mockConnect = vi.fn().mockResolvedValue({});
+    const mockDb = vi.fn().mockReturnThis();
+    const mockClient = {
+      connect: mockConnect,
+      db: mockDb,
     };
-    await newPost(post);
 
-    // Verify that `connectToDB` was called
-    expect(connectToDB).toHaveBeenCalled();
-    expect(posts.length).toBeGreaterThan(0);
+    // Mock the MongoClient constructor to return our mocked client
+    const MongoClientInstance = vi.fn().mockReturnValue(mockClient);
+
+    // Call the function
+    const result = await connectToDB(MongoClientInstance, "mock-uri");
+
+    // Assertions
+    expect(MongoClientInstance).toHaveBeenCalledWith("mock-uri");
+    expect(mockConnect).toHaveBeenCalled();
+    expect(result).toEqual({ db: mockClient, client: mockClient });
+  });
+
+  it("should throw an error if connection fails", async () => {
+    // Mock the MongoClient and force it to throw an error
+    const mockConnect = vi.fn().mockRejectedValue(new Error("Connection failed"));
+    const mockClient = {
+      connect: mockConnect,
+    };
+    const MongoClientInstance = vi.fn().mockReturnValue(mockClient);
+
+    // Expect the function to throw
+    await expect(connectToDB(MongoClientInstance, "mock-uri")).rejects.toThrow("Connection failed");
   });
 });

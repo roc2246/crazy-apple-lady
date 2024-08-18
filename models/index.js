@@ -8,20 +8,20 @@ require("dotenv").config({
 });
 
 // CONNECT
-let client;
+async function connectToDB(MongoClientInstance = MongoClient, uri = process.env.MONGODB_URI) {
+  let client;
 
-async function connectToDB() {
   try {
-    if (!client) {
-      client = new MongoClient(process.env.MONGODB_URI);
-      await client.connect();
-    }
+    client = new MongoClientInstance(uri);
+    await client.connect();
 
-    return { db:  client.db("crazy-apple-lady"), client };
+    return { db: client.db("crazy-apple-lady"), client };
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     throw error;
-  }}
+  }
+}
+
 
 // LOGIN
 async function findUser(username) {
