@@ -24,15 +24,12 @@ async function connectToDB(MongoClientInstance = MongoClient, uri = process.env.
 
 
 // LOGIN
-async function findUser(username) {
+async function findUser(username, connection = connectToDB) {
   try {
-    const { db } = await connectToDB();
+    const { db } = await connection();
     const collection = db.collection("users");
-
-    const query = { username: username };
-
+    const query = { username};
     const user = await collection.findOne(query);
-
     return user || null;
   } catch (error) {
     console.error("Error while finding user:", error);
