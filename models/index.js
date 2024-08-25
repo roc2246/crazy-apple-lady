@@ -38,8 +38,8 @@ async function findUser(username, connection = connectToDB) {
 }
 
 // UTIL
-async function generatePostID() {
-  const { db } = await connectToDB();
+async function generatePostID(connection = connectToDB) {
+  const { db } = await connection();
   const collection = db.collection("posts");
 
   const posts = await collection.find().toArray();

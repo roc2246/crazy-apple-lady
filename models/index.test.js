@@ -82,3 +82,7 @@ describe('findUser', () => {
     await expect(findUser(username, mockConnectToDB)).rejects.toThrow(error);
   });
 });
+
+describe("generatePostID", () =>{
+  // Wait untill new post is created
+})
