@@ -49,13 +49,13 @@ async function generatePostID(connection = connectToDB) {
 }
 
 // CRUD
-async function newPost(post) {
+async function newPost(post, connection = connectToDB) {
   try {
-    const { db } = await connectToDB();
+    const { db } = await connection();
     const collection = db.collection("posts");
 
     const newPost = {
-      id: await generatePostID(),
+      id: post.id || await generatePostID(),
       type: post.type,
       title: post.title,
       image: post.image.map((img) => `./images/${img}`),

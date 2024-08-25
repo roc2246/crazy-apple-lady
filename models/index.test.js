@@ -1,12 +1,15 @@
 import { vi, describe, it, expect } from "vitest";
-import { connectToDB, findUser } from ".";
+import { connectToDB, findUser, newPost } from ".";
+
+let db = []
 
 // Create a mock for the connectToDB function
 const mockConnectToDB = vi.fn();
 
 // Create a mock for the MongoDB collection
 const mockFindOne = vi.fn();
-const mockCollection = { findOne: mockFindOne };
+const mockInsertOne = vi.fn((post) => db = [...db, post])
+const mockCollection = { findOne: mockFindOne, insertOne: mockInsertOne };
 
 // Create a mock for the database instance
 const mockDb = { collection: vi.fn(() => mockCollection) };
@@ -83,6 +86,21 @@ describe('findUser', () => {
   });
 });
 
-describe("generatePostID", () =>{
-  // Wait untill new post is created
-})
+describe("newPost", () => {
+  const post = {
+    id: 0,
+    type: "plantyLife",
+    title: "TEST",
+    image: ["test.jpg"],
+    content: "TEST",
+  };
+  it("should add new post", async () => {
+    const priorLength = db.length;
+    await newPost(post, mockConnectToDB);
+    expect(db.length).toBeGreaterThan(priorLength);
+  });
+});
+
+// describe("generatePostID", () => {
+//   // Wait untill new post is created
+// });
