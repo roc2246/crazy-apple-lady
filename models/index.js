@@ -70,9 +70,9 @@ async function newPost(post, connection = connectToDB) {
 }
 
 // Updates blogpost
-async function updatePost(updatedPost) {
+async function updatePost(updatedPost, connection = connectToDB) {
   try {
-    const { db } = await connectToDB();
+    const { db } = await connection();
     const collection = db.collection("posts");
 
     const updates = {

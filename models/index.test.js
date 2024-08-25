@@ -1,15 +1,31 @@
 import { vi, describe, it, expect } from "vitest";
-import { connectToDB, findUser, newPost } from ".";
+import { connectToDB, findUser, newPost, updatePost } from ".";
 
-let db = []
+let db = [];
 
 // Create a mock for the connectToDB function
 const mockConnectToDB = vi.fn();
 
 // Create a mock for the MongoDB collection
 const mockFindOne = vi.fn();
-const mockInsertOne = vi.fn((post) => db = [...db, post])
-const mockCollection = { findOne: mockFindOne, insertOne: mockInsertOne };
+const mockInsertOne = vi.fn((post) => (db = [...db, post]));
+const mockFindOneAndUpdate = vi.fn((id, update) => {
+  
+  update['$set'].id = id.id
+  update = update['$set']
+  console.log(update)
+
+  db[id.id].id = id.id;
+  db[id.id].type = update.type || db[id.id].type;
+  db[id.id].title = update.title || db[id.id].title;
+  db[id.id].image = update.image || db[id.id].image;
+  db[id.id].content = update.content || db[id.id].content;
+});
+const mockCollection = {
+  findOne: mockFindOne,
+  insertOne: mockInsertOne,
+  findOneAndUpdate: mockFindOneAndUpdate,
+};
 
 // Create a mock for the database instance
 const mockDb = { collection: vi.fn(() => mockCollection) };
@@ -56,11 +72,10 @@ describe("connectToDB", () => {
   });
 });
 
-
-describe('findUser', () => {
-  it('should return a user if found', async () => {
-    const username = 'testuser';
-    const mockUser = { username: 'testuser', email: 'test@example.com' };
+describe("findUser", () => {
+  it("should return a user if found", async () => {
+    const username = "testuser";
+    const mockUser = { username: "testuser", email: "test@example.com" };
     mockFindOne.mockResolvedValue(mockUser);
 
     const user = await findUser(username, mockConnectToDB);
@@ -68,8 +83,8 @@ describe('findUser', () => {
     expect(mockFindOne).toHaveBeenCalledWith({ username });
   });
 
-  it('should return null if no user is found', async () => {
-    const username = 'testuser';
+  it("should return null if no user is found", async () => {
+    const username = "testuser";
     mockFindOne.mockResolvedValue(null);
 
     const user = await findUser(username, mockConnectToDB);
@@ -77,9 +92,9 @@ describe('findUser', () => {
     expect(mockFindOne).toHaveBeenCalledWith({ username });
   });
 
-  it('should handle errors gracefully', async () => {
-    const username = 'testuser';
-    const error = new Error('Test error');
+  it("should handle errors gracefully", async () => {
+    const username = "testuser";
+    const error = new Error("Test error");
     mockFindOne.mockRejectedValue(error);
 
     await expect(findUser(username, mockConnectToDB)).rejects.toThrow(error);
@@ -98,6 +113,21 @@ describe("newPost", () => {
     const priorLength = db.length;
     await newPost(post, mockConnectToDB);
     expect(db.length).toBeGreaterThan(priorLength);
+  });
+});
+
+describe("updatePost", () => {
+  it("should update post", async () => {
+    const updatedPost = {
+      id: 0,
+      type: "mushroomBlog",
+      title: "test2",
+      image: ["test.jpg"],
+      content: "<p class=\"post__paragraph\">TEST2</p>",
+    };
+    await updatePost(updatedPost, mockConnectToDB);
+    const newPost = db[0];
+    expect(newPost).toEqual(updatedPost);
   });
 });
 
