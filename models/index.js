@@ -93,9 +93,9 @@ async function updatePost(updatedPost, connection = connectToDB) {
 }
 
 // Deletes blogpost
-async function deletePost(postID) {
+async function deletePost(postID, connection=connectToDB) {
   try {
-    const { db } = await connectToDB();
+    const { db } = await connection();
     const collection = db.collection("posts");
 
     await collection.findOneAndDelete({ id: postID });

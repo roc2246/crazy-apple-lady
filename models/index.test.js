@@ -1,5 +1,5 @@
 import { vi, describe, it, expect } from "vitest";
-import { connectToDB, findUser, newPost, updatePost } from ".";
+import { connectToDB, deletePost, findUser, newPost, updatePost } from ".";
 import { addPTags } from "../utilities";
 
 let db = [];
@@ -21,10 +21,12 @@ const mockFindOneAndUpdate = vi.fn(({id}, update) => {
   db[id].image = update.image || db[id].image;
   db[id].content = update.content || db[id].content;
 });
+const mockFindOneAndDelete = vi.fn((id) => db.splice(id))
 const mockCollection = {
   findOne: mockFindOne,
   insertOne: mockInsertOne,
   findOneAndUpdate: mockFindOneAndUpdate,
+  findOneAndDelete: mockFindOneAndDelete
 };
 
 // Create a mock for the database instance
@@ -63,6 +65,17 @@ describe("updatePost", () => {
     expect(newPost).toEqual(updatedPost);
   });
 });
+
+describe("deletePost", ()=>{
+  it("should delete post", async()=>{
+    await deletePost(0, mockConnectToDB)
+    expect(db.length).toBe(0)
+  })
+  it("should throw error", async()=>{
+    const result = await deletePost(100, mockConnectToDB)
+    expect(result).toThrowError
+  })
+})
 
 // describe("generatePostID", () => {
 //   // Wait untill new post is created
