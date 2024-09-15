@@ -8,7 +8,10 @@ require("dotenv").config({
 });
 
 // CONNECT
-async function connectToDB(MongoClientInstance = MongoClient, uri = process.env.MONGODB_URI) {
+async function connectToDB(
+  MongoClientInstance = MongoClient,
+  uri = process.env.MONGODB_URI
+) {
   let client;
 
   try {
@@ -22,13 +25,12 @@ async function connectToDB(MongoClientInstance = MongoClient, uri = process.env.
   }
 }
 
-
 // LOGIN
 async function findUser(username, connection = connectToDB) {
   try {
     const { db } = await connection();
     const collection = db.collection("users");
-    const query = { username};
+    const query = { username };
     const user = await collection.findOne(query);
     return user || null;
   } catch (error) {
@@ -55,7 +57,7 @@ async function newPost(post, connection = connectToDB) {
     const collection = db.collection("posts");
 
     const newPost = {
-      id: post.id || await generatePostID(),
+      id: post.id || (await generatePostID()),
       type: post.type,
       title: post.title,
       image: post.image.map((img) => `./images/${img}`),
@@ -93,7 +95,7 @@ async function updatePost(updatedPost, connection = connectToDB) {
 }
 
 // Deletes blogpost
-async function deletePost(postID, connection=connectToDB) {
+async function deletePost(postID, connection = connectToDB) {
   try {
     const { db } = await connection();
     const collection = db.collection("posts");
@@ -111,7 +113,9 @@ async function postRetrieval(match, project, connection = connectToDB) {
     const { db } = await connection();
     const collection = db.collection("posts");
 
-    const params = utilities.generateParams(match, project);
+    const params = !project
+      ? [{ $match: match }]
+      : [{ $match: match }, { $project: project }];
     const cursor = collection.aggregate(params);
 
     const stream = cursor.stream();
@@ -126,13 +130,12 @@ async function postRetrieval(match, project, connection = connectToDB) {
     const pipeline = stream.pipe(transformStream);
     const data = await utilities.pipelineToPromise(pipeline);
 
-    return utilities.checkDataLength(data);
+    return data.length > 0 ? data : Error("Post Not found");
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;
   }
 }
-
 
 module.exports = {
   connectToDB,
