@@ -1,5 +1,5 @@
 import { vi, describe, it, expect } from "vitest";
-import { connectToDB, deletePost, findUser, newPost, updatePost } from ".";
+import { connectToDB, deletePost, findUser, newPost, postRetrieval, updatePost } from ".";
 import { addPTags } from "../utilities";
 
 let db = [];
@@ -74,6 +74,16 @@ describe("deletePost", ()=>{
   it("should throw error", async()=>{
     const result = await deletePost(100, mockConnectToDB)
     expect(result).toThrowError
+  })
+})
+
+// FIX LATER TO ACCOMIDATE MOCK DB
+describe("postRetrieval", ()=>{
+  it("should retrieve planty life posts", async ()=>{
+    const match = {type: 'plantyLife'}
+
+    const results = await postRetrieval(match)
+    console.log(results)
   })
 })
 
