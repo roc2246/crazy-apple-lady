@@ -106,9 +106,9 @@ async function deletePost(postID, connection=connectToDB) {
 }
 
 // Retrieve Posts
-async function postRetrieval(match, project) {
+async function postRetrieval(match, project, connection = connectToDB) {
   try {
-    const { db } = await connectToDB();
+    const { db } = await connection();
     const collection = db.collection("posts");
 
     const params = utilities.generateParams(match, project);
