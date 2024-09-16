@@ -108,14 +108,12 @@ async function deletePost(postID, connection = connectToDB) {
 }
 
 // Retrieve Posts
-async function postRetrieval(match, project, connection = connectToDB) {
+async function postRetrieval(match, project = {_id: 0}, connection = connectToDB) {
   try {
     const { db } = await connection();
     const collection = db.collection("posts");
 
-    const params = !project
-      ? [{ $match: match }]
-      : [{ $match: match }, { $project: project }];
+    const params = [{ $match: match }, { $project: project}];
     const cursor = collection.aggregate(params);
 
     const stream = cursor.stream();
@@ -130,7 +128,7 @@ async function postRetrieval(match, project, connection = connectToDB) {
     const pipeline = stream.pipe(transformStream);
     const data = await utilities.pipelineToPromise(pipeline);
 
-    return data.length > 0 ? data : Error("Post Not found");
+    return data;
   } catch (error) {
     console.error("Error while retrieving post names:", error);
     throw error;
