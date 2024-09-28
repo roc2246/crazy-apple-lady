@@ -138,6 +138,24 @@ describe("postRetrieval", ()=>{
 
     expect(results).toEqual(expectedResults); // Use toEqual to match the expected structure
   })
+  it("should retrieve pmushroom blog posts", async ()=>{
+    const match = {type: 'mushroomBlog'}
+    const project = {_id: 0}
+
+    const results = await postRetrieval(match, project , mockConnectToDB)
+     // Adjust the expected result to match the actual structure you expect
+     const expectedResults = [
+      {
+        id: 1,
+        type: "mushroomBlog",
+        title: "Mushroom Blog Post",
+        image: ["mushroom.jpg"],
+        content: "This is a post about mushrooms.",
+      },
+    ];
+
+    expect(results).toEqual(expectedResults); // Use toEqual to match the expected structure
+  })
 })
 
 // describe("generatePostID", () => {
