@@ -54,15 +54,17 @@ const mockAggregate = vi.fn((pipeline) => {
 
   // $match operator
   const match = pipeline.find((array) => array.hasOwnProperty("$match"));
-  const matches = match.$match;
+  const matchArgs = match.$match;
 
-  const key = Object.keys(matches)[0];
-  const value = matches[key]
+  const key = Object.keys(matchArgs)[0];
+  const value = matchArgs[key]
 
   const filtered = mockPosts.filter((data) => data[key] === value);
   results = filtered
 
-  // If pipeline contains $project
+  // $project operator
+  const project = pipeline.find((array) => array.hasOwnProperty("$project"));
+  console.log(project)
   // loop through filtered mock db
   // filter data so only properties of 1 appear and properties of zero dissapear
   return results
