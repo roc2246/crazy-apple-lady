@@ -14,6 +14,7 @@ let db = [];
 
 const mockPosts = [
   {
+    _id: 21312313413,
     id: 0,
     type: "plantyLife",
     title: "Plant Blog Post",
@@ -21,6 +22,7 @@ const mockPosts = [
     content: "This is a post about plants.",
   },
   {
+    _id: 2131231341323542345,
     id: 1,
     type: "mushroomBlog",
     title: "Mushroom Blog Post",
