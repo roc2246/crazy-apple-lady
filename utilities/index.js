@@ -10,16 +10,6 @@ function generateRandomString(length) {
     .slice(0, length); // Trim to desired length
 }
 
-// DATA UPLOADING
-function pipelineToPromise(pipeline) {
-  return new Promise((resolve, reject) => {
-    const data = [];
-    pipeline.on("data", (chunk) => data.push(chunk));
-    pipeline.on("end", () => resolve(data));
-    pipeline.on("error", reject);
-  });
-}
-
 // TEXT FORMATTING
 function addPTags(text) {
   if (typeof text !== "string") {
@@ -38,6 +28,5 @@ function addPTags(text) {
 
 module.exports = {
   generateRandomString,
-  pipelineToPromise,
   addPTags,
 };

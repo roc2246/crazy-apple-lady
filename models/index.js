@@ -126,7 +126,12 @@ async function postRetrieval(match, project = {_id: 0}, connection = connectToDB
 
     const transformStream = new Transform(transformParam);
     const pipeline = stream.pipe(transformStream);
-    const data = await utilities.pipelineToPromise(pipeline);
+    const data = await new Promise((resolve, reject) => {
+      const data = [];
+      pipeline.on("data", (chunk) => data.push(chunk));
+      pipeline.on("end", () => resolve(data));
+      pipeline.on("error", reject);
+    });
 
     return data;
   } catch (error) {
