@@ -1,8 +1,28 @@
 import { vi, describe, it, expect } from "vitest";
 import { connectToDB, deletePost, findUser, newPost, postRetrieval, updatePost } from ".";
 import { addPTags } from "../utilities";
+import { Readable } from "stream"; // Import Readable for creating a stream
+
 
 let db = [];
+
+const mockPosts = [
+  {
+    id: 0,
+    type: "plantyLife",
+    title: "Plant Blog Post",
+    image: ["plant.jpg"],
+    content: "This is a post about plants.",
+  },
+  {
+    id: 1,
+    type: "mushroomBlog",
+    title: "Mushroom Blog Post",
+    image: ["mushroom.jpg"],
+    content: "This is a post about mushrooms.",
+  },
+];
+
 
 // Create a mock for the connectToDB function
 const mockConnectToDB = vi.fn();
@@ -22,11 +42,32 @@ const mockFindOneAndUpdate = vi.fn(({id}, update) => {
   db[id].content = update.content || db[id].content;
 });
 const mockFindOneAndDelete = vi.fn((id) => db.splice(id))
+const mockAggregate = vi.fn((params) => {
+  const cursor = {
+    stream: () => {
+      const stream = new Readable({
+        objectMode: true,
+        read() {
+          for (const post of mockPosts) {
+            // Filter posts based on the params (if any)
+            if (params[0].$match.type === post.type) {
+              this.push(post);
+            }
+          }
+          this.push(null); // Signal the end of the stream
+        },
+      });
+      return stream;
+    },
+  };
+  return cursor;
+});
 const mockCollection = {
   findOne: mockFindOne,
   insertOne: mockInsertOne,
   findOneAndUpdate: mockFindOneAndUpdate,
-  findOneAndDelete: mockFindOneAndDelete
+  findOneAndDelete: mockFindOneAndDelete,
+  aggregate: mockAggregate
 };
 
 // Create a mock for the database instance
@@ -81,9 +122,21 @@ describe("deletePost", ()=>{
 describe("postRetrieval", ()=>{
   it("should retrieve planty life posts", async ()=>{
     const match = {type: 'plantyLife'}
+    const project = {_id: 0}
 
-    const results = await postRetrieval(match)
-    console.log(results)
+    const results = await postRetrieval(match, project , mockConnectToDB)
+     // Adjust the expected result to match the actual structure you expect
+     const expectedResults = [
+      {
+        id: 0,
+        type: "plantyLife",
+        title: "Plant Blog Post",
+        image: ["plant.jpg"],
+        content: "This is a post about plants.",
+      },
+    ];
+
+    expect(results).toEqual(expectedResults); // Use toEqual to match the expected structure
   })
 })
 
