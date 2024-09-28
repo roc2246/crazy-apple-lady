@@ -118,8 +118,7 @@ describe("deletePost", ()=>{
   })
 })
 
-// FIX LATER TO ACCOMIDATE MOCK DB
-describe("postRetrieval", ()=>{
+describe("retrieving post names", ()=>{
   it("should retrieve planty life posts", async ()=>{
     const match = {type: 'plantyLife'}
     const project = {_id: 0}
@@ -138,7 +137,7 @@ describe("postRetrieval", ()=>{
 
     expect(results).toEqual(expectedResults); // Use toEqual to match the expected structure
   })
-  it("should retrieve pmushroom blog posts", async ()=>{
+  it("should retrieve mushroom blog posts", async ()=>{
     const match = {type: 'mushroomBlog'}
     const project = {_id: 0}
 
