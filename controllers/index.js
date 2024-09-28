@@ -32,6 +32,7 @@ async function hashString(inputString) {
 //   });
 // ___________________________________________________
 
+// LOGIN
 function logout(req, res) {
   // Destroy the session or clear specific session properties
   req.session.destroy((err) => {
@@ -75,6 +76,7 @@ async function login(req, res) {
   }
 }
 
+// CREATE, UPDATE, DELETE
 async function manageNewPost(req, res) {
   try {
     const post = req.body;
@@ -108,6 +110,7 @@ async function manageDeletePost(req, res, id) {
   }
 }
 
+// DATA RETRIEVAL
 async function manageGetPostNames(req, res, type) {
   try {
     const match = { type: type };
