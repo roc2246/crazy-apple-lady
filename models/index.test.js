@@ -42,26 +42,18 @@ const mockFindOneAndUpdate = vi.fn(({id}, update) => {
   db[id].content = update.content || db[id].content;
 });
 const mockFindOneAndDelete = vi.fn((id) => db.splice(id))
-const mockAggregate = vi.fn((params) => {
-  const cursor = {
-    stream: () => {
-      const stream = new Readable({
-        objectMode: true,
-        read() {
-          for (const post of mockPosts) {
-            // Filter posts based on the params (if any)
-            if (params[0].$match.type === post.type) {
-              this.push(post);
-            }
-          }
-          this.push(null); // Signal the end of the stream
-        },
-      });
-      return stream;
-    },
-  };
-  return cursor;
+
+const mockAggregate = vi.fn((pipeline) => {
+  // If pipeline contains $match
+  // Loop through mockdb
+  // return data with matches
+
+
+  // If pipeline contains $project
+  // loop through filtered mock db
+  // filter data so only properties of 1 appear and properties of zero dissapear
 });
+
 const mockCollection = {
   findOne: mockFindOne,
   insertOne: mockInsertOne,
@@ -121,17 +113,14 @@ describe("deletePost", ()=>{
 describe("retrieving post names", ()=>{
   it("should retrieve planty life posts", async ()=>{
     const match = {type: 'plantyLife'}
-    const project = {_id: 0}
+    const project = {_id: 0, id: 1, title: 1}
 
     const results = await postRetrieval(match, project , mockConnectToDB)
      // Adjust the expected result to match the actual structure you expect
      const expectedResults = [
       {
         id: 0,
-        type: "plantyLife",
-        title: "Plant Blog Post",
-        image: ["plant.jpg"],
-        content: "This is a post about plants.",
+        title: "Plant Blog Post"
       },
     ];
 
@@ -139,17 +128,14 @@ describe("retrieving post names", ()=>{
   })
   it("should retrieve mushroom blog posts", async ()=>{
     const match = {type: 'mushroomBlog'}
-    const project = {_id: 0}
+    const project = {_id: 0, id: 1, title: 1}
 
     const results = await postRetrieval(match, project , mockConnectToDB)
      // Adjust the expected result to match the actual structure you expect
      const expectedResults = [
       {
         id: 1,
-        type: "mushroomBlog",
-        title: "Mushroom Blog Post",
-        image: ["mushroom.jpg"],
-        content: "This is a post about mushrooms.",
+        title: "Mushroom Blog Post"
       },
     ];
 
