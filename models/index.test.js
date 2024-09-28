@@ -59,7 +59,7 @@ const mockAggregate = vi.fn((pipeline) => {
   const key = Object.keys(matchArgs)[0];
   const value = matchArgs[key]
 
-  const filtered = mockPosts.filter((data) => data[key] === value);
+  const filtered = mockPosts.filter((post) => post[key] === value);
   results = filtered
 
   // $project operator
