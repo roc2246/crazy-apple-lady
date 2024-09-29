@@ -55,39 +55,35 @@ const mockAggregate = vi.fn((pipeline) => {
   // $match operator
   const match = pipeline.find((array) => array.hasOwnProperty("$match"));
   if (match) {
-      const matchArgs = match.$match;
-      const key = Object.keys(matchArgs)[0];
-      const value = matchArgs[key];
+    const matchArgs = match.$match;
+    const key = Object.keys(matchArgs)[0];
+    const value = matchArgs[key];
 
-      // Filter posts in a single pass
-      results = mockPosts.reduce((acc, post) => {
-          if (post[key] === value) {
-              acc.push(post); // Add matching post to results
-          }
-          return acc;
-      }, []);
+    // Filter posts in a single pass
+    results = mockPosts.reduce((acc, post) => {
+      if (post[key] === value) acc.push(post);
+      return acc;
+    }, []);
   }
 
   // $project operator
   const project = pipeline.find((array) => array.hasOwnProperty("$project"));
   if (project) {
-      const projectArgs = project.$project;
-      // Loop through results
-        // If results contain same key that has value of 0 in projectArgs
-          // Remove Key value pairs in results that have 0 in projectArgs
-      
-      // Loop through results
-         // If results contain same key that has value of 1 in projectArgs
-        // Include key value pair into new result
+    const projectArgs = project.$project;
+    // Loop through results
+    // If results contain same key that has value of 0 in projectArgs
+    // Remove Key value pairs in results that have 0 in projectArgs
 
+    // Loop through results
+    // If results contain same key that has value of 1 in projectArgs
+    // Include key value pair into new result
   }
 
-    // Return an object with a stream method
-    return {
-      stream: () => Readable.from(results),
-    };
+  // Return an object with a stream method
+  return {
+    stream: () => Readable.from(results),
+  };
 });
-
 
 const mockCollection = {
   findOne: mockFindOne,
@@ -177,16 +173,15 @@ describe("retrieving post names", () => {
   });
 });
 
-describe('Get full post', ()=>{
-  it("should retrieve a post", async()=>{
-    const match = {id: 0}
-    const project = { _id: 0};
+describe("Get full post", () => {
+  it("should retrieve a post", async () => {
+    const match = { id: 0 };
+    const project = { _id: 0 };
 
     const results = await postRetrieval(match, project, mockConnectToDB);
-    console.log(results)
-
-  })
-})
+    console.log(results);
+  });
+});
 
 // describe("generatePostID", () => {
 //   // Wait untill new post is created
