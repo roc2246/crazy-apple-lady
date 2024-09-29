@@ -50,27 +50,49 @@ const mockFindOneAndUpdate = vi.fn(({ id }, update) => {
 const mockFindOneAndDelete = vi.fn((id) => db.splice(id));
 
 const mockAggregate = vi.fn((pipeline) => {
-  let results = []
+  let results = [];
 
   // $match operator
   const match = pipeline.find((array) => array.hasOwnProperty("$match"));
-  const matchArgs = match.$match;
+  if (match) {
+      const matchArgs = match.$match;
+      const key = Object.keys(matchArgs)[0];
+      const value = matchArgs[key];
 
-  const key = Object.keys(matchArgs)[0];
-  const value = matchArgs[key]
-
-  const filtered = mockPosts.filter((post) => post[key] === value);
-  results = filtered
+      // Filter posts in a single pass
+      results = mockPosts.reduce((acc, post) => {
+          if (post[key] === value) {
+              acc.push(post); // Add matching post to results
+          }
+          return acc;
+      }, []);
+  }
 
   // $project operator
   const project = pipeline.find((array) => array.hasOwnProperty("$project"));
-  const projectArgs = project.$project
-  console.log(projectArgs)
-  // loop through filtered mock db
-  // filter data so only properties of 1 appear and properties of zero dissapear
-  
-  return results
+  if (project) {
+      const projectArgs = project.$project;
+      const keysToProject = Object.keys(projectArgs).filter(
+          (key) => projectArgs[key] === 1
+      );
+
+      // Create a new array with projected results
+      results = results.reduce((acc, result) => {
+          const newResult = {};
+
+          // Only include projected keys
+          keysToProject.forEach((key) => {
+              newResult[key] = result[key]; // Assign projected property
+          });
+
+          acc.push(newResult); // Add new result to the accumulator
+          return acc;
+      }, []);
+  }
+
+  return results;
 });
+
 
 const mockCollection = {
   findOne: mockFindOne,
