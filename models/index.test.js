@@ -185,6 +185,17 @@ describe("retrieving post names", () => {
   });
 });
 
+describe('Get full post', ()=>{
+  it("should retrieve a post", async()=>{
+    const match = {id: 0}
+    const project = { _id: 0};
+
+    const results = await postRetrieval(match, project, mockConnectToDB);
+    console.log(results)
+
+  })
+})
+
 // describe("generatePostID", () => {
 //   // Wait untill new post is created
 // });
