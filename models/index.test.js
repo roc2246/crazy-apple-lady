@@ -70,9 +70,13 @@ const mockAggregate = vi.fn((pipeline) => {
   const project = pipeline.find((array) => array.hasOwnProperty("$project"));
   if (project) {
     const projectArgs = project.$project;
-    // Loop through results
-    // If results contain same key that has value of 0 in projectArgs
-    // Remove Key value pairs in results that have 0 in projectArgs
+    for (let x = 0; x < results.length; x++) {
+      const key = Object.keys(projectArgs)[x];
+      if (results[x].hasOwnProperty(key) && projectArgs[key] === 0){
+        console.log(projectArgs[key])
+        delete results[x][key];
+      } 
+    }
 
     // Loop through results
     // If results contain same key that has value of 1 in projectArgs
