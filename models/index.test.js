@@ -90,7 +90,10 @@ const mockAggregate = vi.fn((pipeline) => {
       }, []);
   }
 
-  return results;
+    // Return an object with a stream method
+    return {
+      stream: () => Readable.from(results),
+    };
 });
 
 
