@@ -72,22 +72,14 @@ const mockAggregate = vi.fn((pipeline) => {
   const project = pipeline.find((array) => array.hasOwnProperty("$project"));
   if (project) {
       const projectArgs = project.$project;
-      const keysToProject = Object.keys(projectArgs).filter(
-          (key) => projectArgs[key] === 1
-      );
+      // Loop through results
+        // If results contain same key that has value of 0 in projectArgs
+          // Remove Key value pairs in results that have 0 in projectArgs
+      
+      // Loop through results
+         // If results contain same key that has value of 1 in projectArgs
+        // Include key value pair into new result
 
-      // Create a new array with projected results
-      results = results.reduce((acc, result) => {
-          const newResult = {};
-
-          // Only include projected keys
-          keysToProject.forEach((key) => {
-              newResult[key] = result[key]; // Assign projected property
-          });
-
-          acc.push(newResult); // Add new result to the accumulator
-          return acc;
-      }, []);
   }
 
     // Return an object with a stream method
