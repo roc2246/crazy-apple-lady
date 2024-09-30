@@ -70,17 +70,24 @@ const mockAggregate = vi.fn((pipeline) => {
   const project = pipeline.find((array) => array.hasOwnProperty("$project"));
   if (project) {
     const projectArgs = project.$project;
-    for (let x = 0; x < results.length; x++) {
-      const key = Object.keys(projectArgs)[x];
-      if (results[x].hasOwnProperty(key) && projectArgs[key] === 0){
-        console.log(projectArgs[key])
-        delete results[x][key];
-      } 
-    }
+    const keys = Object.keys(projectArgs);
 
-    // Loop through results
-    // If results contain same key that has value of 1 in projectArgs
-    // Include key value pair into new result
+    let keyCount = 0
+    let resultsCount = 0
+   while (keyCount < keys.length){
+    if(resultsCount === results.length){
+      resultsCount = 0
+      keyCount++
+    }
+    if(results[resultsCount].hasOwnProperty(keys[keyCount]) && projectArgs[keys[keyCount]] === 0){
+      delete results[resultsCount][keys[keyCount]]
+      resultsCount++
+      // MODIFY TO ELSE IF TO ACCOMIDATE projectArgs[keys[keyCount]] === 1
+    } else {
+      resultsCount = 0
+      keyCount++
+    }
+   }
   }
 
   // Return an object with a stream method
