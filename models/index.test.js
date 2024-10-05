@@ -72,22 +72,46 @@ const mockAggregate = vi.fn((pipeline) => {
     const projectArgs = project.$project;
     const keys = Object.keys(projectArgs);
 
-    let keyCount = 0
-    let resultsCount = 0
-   while (keyCount < keys.length){
-    if(resultsCount === results.length){
-      resultsCount = 0
-      keyCount++
+    let keyCount = 0;
+    let resultsCount = 0;
+    while (keyCount < keys.length) {
+      if (resultsCount === results.length) {
+        resultsCount = 0;
+        keyCount++;
+      }
+      if (
+        results[resultsCount].hasOwnProperty(keys[keyCount]) &&
+        projectArgs[keys[keyCount]] === 0
+      ) {
+        delete results[resultsCount][keys[keyCount]];
+        resultsCount++;
+      } else {
+        resultsCount = 0;
+        keyCount++;
+      }
     }
-    if(results[resultsCount].hasOwnProperty(keys[keyCount]) && projectArgs[keys[keyCount]] === 0){
-      delete results[resultsCount][keys[keyCount]]
-      resultsCount++
-      // MODIFY TO ELSE IF TO ACCOMIDATE projectArgs[keys[keyCount]] === 1
-    } else {
-      resultsCount = 0
-      keyCount++
+    if (keyCount >= keys.length) keyCount = 0;
+
+    let newResults = [];
+
+    while (keyCount < keys.length) {
+      if (resultsCount === results.length) {
+        resultsCount = 0;
+        keyCount++;
+      }
+      if (
+        results[resultsCount].hasOwnProperty(keys[keyCount]) &&
+        projectArgs[keys[keyCount]] === 1
+      ) {
+        console.log("Key: "+keys[keyCount])
+        console.log("Value: "+JSON.stringify(results[resultsCount][keys[keyCount]]))
+        resultsCount++;
+      } else {
+        resultsCount = 0;
+        keyCount++;
+      }
     }
-   }
+    if (newResults.length > 0) results = newResults;
   }
 
   // Return an object with a stream method
