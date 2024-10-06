@@ -93,6 +93,7 @@ const mockAggregate = vi.fn((pipeline) => {
     if (keyCount >= keys.length) keyCount = 0;
 
     let newResults = [];
+    results.forEach(obj  => newResults.push({}))
 
     while (keyCount < keys.length) {
       if (resultsCount === results.length) {
@@ -103,15 +104,14 @@ const mockAggregate = vi.fn((pipeline) => {
         results[resultsCount].hasOwnProperty(keys[keyCount]) &&
         projectArgs[keys[keyCount]] === 1
       ) {
-        console.log("Key: "+keys[keyCount])
-        console.log("Value: "+JSON.stringify(results[resultsCount][keys[keyCount]]))
+        newResults[resultsCount][keys[keyCount]] = results[resultsCount][keys[keyCount]]
         resultsCount++;
       } else {
         resultsCount = 0;
         keyCount++;
       }
     }
-    if (newResults.length > 0) results = newResults;
+    if (!newResults.some(obj => Object.keys(obj).length === 0)) results = newResults;
   }
 
   // Return an object with a stream method
@@ -214,7 +214,14 @@ describe("Get full post", () => {
     const project = { _id: 0 };
 
     const results = await postRetrieval(match, project, mockConnectToDB);
-    console.log(results);
+    const expectedResults = [{
+      id: 0,
+      type: 'plantyLife',
+      title: 'Plant Blog Post',
+      image: [ 'plant.jpg' ],
+      content: 'This is a post about plants.'
+    }]
+    expect(results).toStrictEqual(expectedResults)
   });
 });
 
