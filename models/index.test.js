@@ -22,8 +22,14 @@ describe("newPost", () => {
   it("should add new post", async () => {
     const priorLength = mongo.db.length;
     await newPost(post, mongo.mockConnectToDB);
-    expect(mongo.db.length).toBeGreaterThan(priorLength);
+    const newLength = mongo.db.length
+    expect(newLength).toBeGreaterThan(priorLength);
   });
+
+  it("should throw errors", async () => {
+    await expect(newPost({}, "failedConnection")).rejects.toThrow();
+    await expect(newPost({}, mongo.mockConnectToDB)).rejects.toThrow();
+  });  
 });
 
 describe("updatePost", () => {
