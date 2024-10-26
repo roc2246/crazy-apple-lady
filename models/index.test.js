@@ -126,7 +126,3 @@ describe("Get full post", () => {
     await expect(results).rejects.toThrow();
   });  
 });
-
-// describe("generatePostID", () => {
-//   // Wait untill new post is created
-// });
