@@ -45,6 +45,9 @@ describe("updatePost", () => {
     const newPost = mongo.db[0];
     expect(newPost).toEqual(updatedPost);
   });
+  it("should throw error", async () => {
+    await expect(updatePost({}, mongo.mockConnectToDB)).rejects.toThrow();
+  });  
 });
 
 describe("deletePost", () => {
@@ -89,6 +92,14 @@ describe("retrieving post names", () => {
 
     expect(results).toEqual(expectedResults); // Use toEqual to match the expected structure
   });
+
+  it("should throw error", async () => {
+    const match = { type: "fail" };
+    const project = { _id: 0, id: 1, title: 1 };
+
+    const results = postRetrieval(match, project, mongo.mockConnectToDB);
+    await expect(results).rejects.toThrow();
+  });  
 });
 
 describe("Get full post", () => {
@@ -106,6 +117,14 @@ describe("Get full post", () => {
     }]
     expect(results).toStrictEqual(expectedResults)
   });
+  it("should throw error", async () => {
+    const match = { id: 1000000};
+    const project = { _id: 0 };
+
+    const results = postRetrieval(match, project, mongo.mockConnectToDB);
+
+    await expect(results).rejects.toThrow();
+  });  
 });
 
 // describe("generatePostID", () => {
