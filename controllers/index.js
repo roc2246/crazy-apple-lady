@@ -77,10 +77,10 @@ async function login(req, res) {
 }
 
 // CREATE, UPDATE, DELETE
-async function manageNewPost(req, res) {
+async function manageNewPost(req, res, model = models.newPost) {
   try {
     const post = req.body;
-    await models.newPost(post);
+    await model(post);
     res.status(201).json({ message: "Post added" });
   } catch (error) {
     res.status(401).json({ message: error });
