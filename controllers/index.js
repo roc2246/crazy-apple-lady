@@ -6,6 +6,7 @@ const components = require("../components/index");
 const fs = require("fs");
 
 const bcrypt = require("bcrypt");
+const { verify } = require("crypto");
 
 require("dotenv").config({
   path: path.join(__dirname, "../config/.env"),
@@ -79,6 +80,7 @@ async function login(req, res) {
 // CREATE, UPDATE, DELETE
 async function manageNewPost(req, res, model = models.newPost) {
   try {
+    utilities.verifyFunction(model);
     const post = req.body;
     await model(post);
     res.status(201).json({ message: "Post added" });
@@ -203,26 +205,30 @@ function modifyImages(req, res) {
     return [fields.name];
   });
   // const for holding images
-  const uploadedImgsPath = path.join(path.resolve(__dirname, ".."), "views/images");
+  const uploadedImgsPath = path.join(
+    path.resolve(__dirname, ".."),
+    "views/images"
+  );
   const uploadedImgs = fs.readdirSync(uploadedImgsPath);
 
   // loop through  images
-  for(let x = 0; x < uploadedImgs.length; x++){
-    if(!modifiedImgs.includes(uploadedImgs[x])){
+  for (let x = 0; x < uploadedImgs.length; x++) {
+    if (!modifiedImgs.includes(uploadedImgs[x])) {
       fs.unlink(uploadedImgs[x], (err) => {
         if (err) {
-          console.error('Error removing file:', err);
+          console.error("Error removing file:", err);
         } else {
-          console.log('File removed successfully');
+          console.log("File removed successfully");
         }
       });
     }
   }
 
   // loop thgrough modifiedimages
-  for(let x = 0; x < modifiedImgs.length; x++){
-    if(!uploadedImgs.includes(modifiedImgs[x])){
-      fs.rename(oldPath, newPath, (err) => { /* Fix this */
+  for (let x = 0; x < modifiedImgs.length; x++) {
+    if (!uploadedImgs.includes(modifiedImgs[x])) {
+      fs.rename(oldPath, newPath, (err) => {
+        /* Fix this */
         if (err) {
           console.error(`Error saving file ${file.originalFilename}:`, err);
           res.status(500).end("Error saving one or more files");

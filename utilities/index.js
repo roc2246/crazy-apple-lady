@@ -26,7 +26,15 @@ function addPTags(text) {
   return text;
 }
 
+// ERROR HANDLING
+function verifyFunction(callback) {
+  if (typeof callback !== "function") {
+    throw new Error("Invalid Function");
+  }
+}
+
 module.exports = {
   generateRandomString,
   addPTags,
+  verifyFunction,
 };

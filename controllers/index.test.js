@@ -24,11 +24,17 @@ describe("manageNewPost", () => {
       json: vi.fn(),
     };
   });
-
+  const model = (post) => vi.fn(() => (mongo.db = [...mongo.db, post]));
   it("should return a 201", async () => {
-    const model = await models.newPost(req.body, mongo.mockConnectToDB);
     await controllers.manageNewPost(req, res, model);
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ message: "Post added" });
+  });
+
+  it("should return a 401", async () => {
+  const result = controllers.manageNewPost(req, res, "BLA")
+  await expect(result).rejects.toThrow("Invalid Function");
+
+  expect(res.status).toHaveBeenCalledWith(401);
   });
 });
