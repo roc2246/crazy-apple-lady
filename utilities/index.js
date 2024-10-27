@@ -27,7 +27,7 @@ function addPTags(text) {
 }
 
 // ERROR HANDLING
-function verifyFunction(callback) {
+function verifyCallback(callback) {
   if (typeof callback !== "function") {
     throw new Error("Invalid Function");
   }
@@ -36,5 +36,5 @@ function verifyFunction(callback) {
 module.exports = {
   generateRandomString,
   addPTags,
-  verifyFunction,
+  verifyCallback,
 };
