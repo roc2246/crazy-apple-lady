@@ -24,9 +24,8 @@ describe("manageNewPost", () => {
       json: vi.fn(),
     };
   });
-  const model = (post) => vi.fn(() => (mongo.db = [...mongo.db, post]));
   it("should return a 201", async () => {
-    await controllers.manageNewPost(req, res, model);
+    await controllers.manageNewPost(req, res, mongo.mockInsertOne);
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ message: "Post added" });
   });
