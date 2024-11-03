@@ -78,3 +78,14 @@ describe("manageDeletePost", ()=>{
     expect(res.status).toHaveBeenCalledWith(500);
   });
 })
+
+describe("manageGetPostNames", ()=>{
+  it("should return a 200", async ()=>{
+    await controllers.manageGetPostNames(req, res, "plantyLife", mongo.mockAggregate)
+    expect(res.status).toHaveBeenCalledWith(200);
+  })
+  it("should return a 404", async ()=>{
+    await controllers.manageGetPostNames(req, res, "FAIL", mongo.mockAggregate)
+    expect(res.status).toHaveBeenCalledWith(404);
+  })
+})

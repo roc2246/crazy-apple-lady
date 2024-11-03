@@ -116,11 +116,11 @@ async function manageDeletePost(req, res, id, model = models.deletePost) {
 }
 
 // DATA RETRIEVAL
-async function manageGetPostNames(req, res, type) {
+async function manageGetPostNames(req, res, type, model = models.postRetrieval) {
   try {
     const match = { type: type };
     const project = { _id: 0, id: 1, title: 1 };
-    const posts = await models.postRetrieval(match, project);
+    const posts = await model(match, project);
     if (posts.length > 0) res.status(200).json(posts);
   } catch (error) {
     res.status(404).json({ message: error });
