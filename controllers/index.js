@@ -118,6 +118,7 @@ async function manageDeletePost(req, res, id, model = models.deletePost) {
 // DATA RETRIEVAL
 async function manageGetPostNames(req, res, type, model = models.postRetrieval) {
   try {
+    utilities.verifyCallback(model);
     const match = { type: type };
     const project = { _id: 0, id: 1, title: 1 };
     const posts = await model(match, project);
@@ -130,6 +131,7 @@ async function manageGetPostNames(req, res, type, model = models.postRetrieval) 
 
 async function manageGetPost(req, res, id, model = models.postRetrieval) {
   try {
+    utilities.verifyCallback(model);
     const postData = await model({ id: id });
     const postTemplate = components.blogPost(
       postData[0].title,
@@ -148,10 +150,11 @@ async function manageGetPost(req, res, id, model = models.postRetrieval) {
   }
 }
 
-async function manageGetPosts(req, res) {
+async function manageGetPosts(req, res, model = models.postRetrieval) {
   try {
-    const posts = await models.postRetrieval({});
-    res.status(200).json(!posts ? { message: "no posts available" } : posts);
+    utilities.verifyCallback(model);
+    const posts = await model({});
+    res.status(200).json(!posts ? new Error("No posts available") : posts);
   } catch (error) {
     res.status(500).json({ message: error });
     throw error;

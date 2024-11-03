@@ -44,8 +44,15 @@ export const mockAggregate = vi.fn((pipeline) => {
   let results = [];
 
   // $match operator
-  const match = pipeline.find((array) => array.hasOwnProperty("$match"));
-  if (match) {
+  let match;
+  if (Object.keys(pipeline).length !== 0) {
+    match = pipeline.find((array) => array.hasOwnProperty("$match"));
+  } else {
+    match = null;
+    results = mockCollection;
+  }
+
+  if (match !== null) {
     const matchArgs = match.$match;
     const key = Object.keys(matchArgs)[0];
     const value = matchArgs[key];
@@ -58,8 +65,15 @@ export const mockAggregate = vi.fn((pipeline) => {
   }
 
   // $project operator
-  const project = pipeline.find((array) => array.hasOwnProperty("$project"));
-  if (project) {
+  let project;
+  if (Object.keys(pipeline).length !== 0) {
+    project = pipeline.find((array) => array.hasOwnProperty("$project"));
+  } else {
+    project = null;
+    results = mockCollection;
+  }
+
+  if (project !== null) {
     const projectArgs = project.$project;
     const keys = Object.keys(projectArgs);
 
@@ -84,7 +98,7 @@ export const mockAggregate = vi.fn((pipeline) => {
     if (keyCount >= keys.length) keyCount = 0;
 
     let newResults = [];
-    results.forEach(obj  => newResults.push({}))
+    results.forEach((obj) => newResults.push({}));
 
     while (keyCount < keys.length) {
       if (resultsCount === results.length) {
@@ -95,14 +109,16 @@ export const mockAggregate = vi.fn((pipeline) => {
         results[resultsCount].hasOwnProperty(keys[keyCount]) &&
         projectArgs[keys[keyCount]] === 1
       ) {
-        newResults[resultsCount][keys[keyCount]] = results[resultsCount][keys[keyCount]]
+        newResults[resultsCount][keys[keyCount]] =
+          results[resultsCount][keys[keyCount]];
         resultsCount++;
       } else {
         resultsCount = 0;
         keyCount++;
       }
     }
-    if (!newResults.some(obj => Object.keys(obj).length === 0)) results = newResults;
+    if (!newResults.some((obj) => Object.keys(obj).length === 0))
+      results = newResults;
   }
 
   // Return an object with a stream method

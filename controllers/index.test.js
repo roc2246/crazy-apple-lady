@@ -101,3 +101,15 @@ describe("manageGetPost", ()=>{
     expect(res.status).toHaveBeenCalledWith(404);
   })
 })
+
+describe("manageGetPosts", ()=>{
+  it("should return a 200", async()=>{
+    await controllers.manageGetPosts(req, res, mongo.mockAggregate)
+    expect(res.status).toHaveBeenCalledWith(200);
+  })
+  it("should return a 500", async ()=>{
+    const results = controllers.manageGetPosts(req, res, "FAIL")
+    await expect(results).rejects.toThrow();
+    expect(res.status).toHaveBeenCalledWith(500);
+  })
+})
