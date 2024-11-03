@@ -93,7 +93,7 @@ describe("manageGetPostNames", ()=>{
 
 describe("manageGetPost", ()=>{
   it("should return a 200", async()=>{
-    await controllers.manageGetPost(req, res, mongo.mockCollection[0], mongo.mockAggregate)
+    await controllers.manageGetPost(req, res, 0, mongo.mockAggregate)
     expect(res.status).toHaveBeenCalledWith(200);
   })
   it("should return a 404", async ()=>{
