@@ -65,3 +65,16 @@ describe("manageUpdatePost", () => {
     expect(res.status).toHaveBeenCalledWith(500);
   });
 });
+
+describe("manageDeletePost", ()=>{
+  it("should return a 200", async() =>{
+    await controllers.manageDeletePost(req, res, 0, mongo.mockFindOneAndDelete)
+    expect(res.status).toHaveBeenCalledWith(200);
+  })
+  it("should return a 500", async () => {
+    const result = controllers.manageDeletePost(req, res, 0, "BLA");
+    await expect(result).rejects.toThrow("Invalid Function");
+
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
+})
