@@ -1,14 +1,13 @@
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { vi, describe, it, expect, beforeEach, beforeAll } from "vitest";
 import * as controllers from ".";
 import * as models from "../models";
 import { addPTags } from "../utilities";
 import * as mongo from "../mocks/mongodb.js";
 
-describe("manageNewPost", () => {
-  let req;
+let req;
   let res;
 
-  beforeEach(() => {
+  beforeAll(() => {
     // Reset req and res before each test
     req = {
       body: {
@@ -24,6 +23,8 @@ describe("manageNewPost", () => {
       json: vi.fn(),
     };
   });
+
+describe("manageNewPost", () => {
   it("should return a 201", async () => {
     await controllers.manageNewPost(req, res, mongo.mockInsertOne);
     expect(res.status).toHaveBeenCalledWith(201);
