@@ -128,9 +128,9 @@ async function manageGetPostNames(req, res, type, model = models.postRetrieval) 
   }
 }
 
-async function manageGetPost(req, res, id) {
+async function manageGetPost(req, res, id, model = models.postRetrieval) {
   try {
-    const postData = await models.postRetrieval({ id: id });
+    const postData = await model({ id: id });
     const postTemplate = components.blogPost(
       postData[0].title,
       postData[0].content,

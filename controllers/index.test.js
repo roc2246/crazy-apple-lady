@@ -21,6 +21,7 @@ beforeAll(() => {
   res = {
     status: vi.fn().mockReturnThis(), // Enables chaining, e.g., res.status(201).json(...)
     json: vi.fn(),
+    send: vi.fn()
   };
 });
 
@@ -86,6 +87,17 @@ describe("manageGetPostNames", ()=>{
   })
   it("should return a 404", async ()=>{
     await controllers.manageGetPostNames(req, res, "FAIL", mongo.mockAggregate)
+    expect(res.status).toHaveBeenCalledWith(404);
+  })
+})
+
+describe("manageGetPost", ()=>{
+  it("should return a 200", async()=>{
+    await controllers.manageGetPost(req, res, mongo.mockCollection[0], mongo.mockAggregate)
+    expect(res.status).toHaveBeenCalledWith(200);
+  })
+  it("should return a 404", async ()=>{
+    await controllers.manageGetPost(req, res, "FAIL", mongo.mockAggregate)
     expect(res.status).toHaveBeenCalledWith(404);
   })
 })
