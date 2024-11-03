@@ -90,9 +90,10 @@ async function manageNewPost(req, res, model = models.newPost) {
   }
 }
 
-async function manageUpdatePost(req, res, updatedPost) {
+async function manageUpdatePost(req, res, updatedPost, model = models.updatePost) {
   try {
-    await models.updatePost(updatedPost);
+    utilities.verifyCallback(model);
+    await model(updatedPost);
     res
       .status(200)
       .json({ message: "Post updated successfully", updatedPost: updatedPost });
