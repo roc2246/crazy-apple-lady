@@ -161,6 +161,7 @@ async function manageGetPosts(req, res, model = models.postRetrieval) {
   }
 }
 
+// IMAGE MANAGEMENT
 function manageImageUpload(req, res) {
   const form = new formidable.IncomingForm();
 
@@ -247,6 +248,7 @@ function modifyImages(req, res) {
 
 // CREATE FUNCTION FOR REMOVING IMAGES HERE
 
+// TEMPLATE MANAGEMENT
 function fillTemplate(req, res, pageName, metaTitle) {
   const viewsDir = path.join(__dirname, "../views");
   const filePath = path.join(viewsDir, `${pageName}.html`);
