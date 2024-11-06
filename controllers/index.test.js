@@ -167,7 +167,7 @@ describe("Image management", () => {
     return {
       parse: (req, cb) => {
         const err = null; // or an error object, if you want to simulate an error
-        const fields = { title: "Test Title", content: "Test Content" }; // Mock data for fields
+        const fields = { name:[] }; // Mock data for fields
         const files = { images: [] };
 
         for (let x = 0; x < fs.readdirSync(mockImagesPath).length; x++) {
@@ -179,6 +179,7 @@ describe("Image management", () => {
             originalFilename: fs.readdirSync(mockImagesPath)[x],
           };
           files.images.push(obj);
+          fields.name.push(obj.originalFilename)
         }
 
         cb(err, fields, files);
@@ -193,6 +194,24 @@ describe("Image management", () => {
     });
     
   });
+  it("should modify specific images", async ()=>{
+    const filesToCreate = [
+      { name: "file1.txt", content: "This is the first file." },
+      { name: "file8.txt", content: "This is the third file." },
+    ];
+    
+    filesToCreate.forEach(({ name, content }) => {
+      const filePath = path.join(mockImagesPath, name);
+      fs.writeFileSync(filePath, content);
+      console.log(`File ${name} created successfully.`);
+    });
+
+    await controllers.modifyImages(req, res, mockForm, "controllers/mockUploads")
+    fs.readdirSync(mockUploadsPath, (err, files)=>{
+      expect(files).not.toContain("file2.txt")
+      expect(files).toContain("file8.txt")
+    });
+  })
 
   afterAll(() => {
     deleteDirectory(mockImagesPath);
