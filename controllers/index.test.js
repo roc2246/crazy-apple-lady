@@ -187,7 +187,7 @@ describe("Image management", () => {
   });
 
   it("should move all files to new directory", async () => {
-    await controllers.manageImageUpload(req, res, mockForm, mockForm.parse, "controllers/mockUploads");
+    await controllers.manageImageUpload(req, res, mockForm, "controllers/mockUploads");
     fs.readdirSync(mockUploadsPath, (err, files)=>{
       expect(files.length).toBe(3)
     });
