@@ -19,7 +19,7 @@ function newDirectory(directory) {
 }
 
 async function deleteDirectory(directory) {
-  fs.rm(directory, { recursive: true, force: true }, (err) => {});
+  fs.rmSync(directory, { recursive: true, force: true });
 }
 
 let req;
@@ -187,9 +187,11 @@ describe("Image management", () => {
   });
 
   it("should move all files to new directory", async () => {
-    await controllers.manageImageUpload(req, res, mockForm, mockForm.parse, "controllers/mockImgs");
-    const files = fs.readdirSync(mockUploadsPath);
-    console.log(files);
+    await controllers.manageImageUpload(req, res, mockForm, mockForm.parse, "controllers/mockUploads");
+    fs.readdirSync(mockUploadsPath, (err, files)=>{
+      expect(files.length).toBe(3)
+    });
+    
   });
 
   afterAll(() => {
