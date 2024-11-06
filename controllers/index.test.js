@@ -166,19 +166,30 @@ describe("Image management", () => {
   const mockForm = vi.fn(() => {
     return {
       parse: (req, cb) => {
-        fs.readdir(mockImagesPath, (err, fields) => {
-          fs.readFile(mockImagesPath, {}, (err, files)=>{
-            cb(err, fields, files);
-          })
-          
-        });
+        const err = null; // or an error object, if you want to simulate an error
+        const fields = { title: "Test Title", content: "Test Content" }; // Mock data for fields
+        const files = { images: [] };
+
+        for (let x = 0; x < fs.readdirSync(mockImagesPath).length; x++) {
+          const obj = {
+            filepath: path.join(
+              mockImagesPath,
+              fs.readdirSync(mockImagesPath)[x]
+            ),
+            originalFilename: fs.readdirSync(mockImagesPath)[x],
+          };
+          files.images.push(obj);
+        }
+
+        cb(err, fields, files);
       },
     };
   });
 
   it("should move all files to new directory", async () => {
-    await controllers.manageImageUpload(req, res, mockForm, mockForm.parse);
-    fs.readdir(mockUploadsPath, (err, files) => console.log(files.length));
+    await controllers.manageImageUpload(req, res, mockForm, mockForm.parse, "controllers/mockImgs");
+    const files = fs.readdirSync(mockUploadsPath);
+    console.log(files);
   });
 
   afterAll(() => {

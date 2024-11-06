@@ -172,12 +172,12 @@ async function manageGetPosts(req, res, model = models.postRetrieval) {
 }
 
 // IMAGE MANAGEMENT
-async function manageImageUpload(req, res, library = new formidable.IncomingForm, method = "parse") {
+async function manageImageUpload(req, res, library = new formidable.IncomingForm, method = "parse", dir = "views/images") {
   // CREATE NEW FORM OBJECT
   const form = library();
 
   // SET PARAMETERS FOR FILES TO UPLOAD
-  form.uploadDir = path.join(path.resolve(__dirname, ".."), "views/images");
+  form.uploadDir = path.join(path.resolve(__dirname, ".."), `${dir}`);
   form.keepExtensions = true;
 
   // UPLOAD AND PARSE FILES
