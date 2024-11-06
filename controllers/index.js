@@ -172,7 +172,12 @@ async function manageGetPosts(req, res, model = models.postRetrieval) {
 }
 
 // IMAGE MANAGEMENT
-async function manageImageUpload(req, res, library = new formidable.IncomingForm, dir = "views/images") {
+async function manageImageUpload(
+  req,
+  res,
+  library = new formidable.IncomingForm(),
+  dir = "views/images"
+) {
   // CREATE NEW FORM OBJECT
   const form = library();
 
@@ -207,25 +212,32 @@ async function manageImageUpload(req, res, library = new formidable.IncomingForm
         }
       });
     });
-
   });
   res.status(200).end("All files uploaded");
 }
 
-function modifyImages(req, res) {
-  const form = new formidable.IncomingForm();
+async function modifyImages(
+  req,
+  res,
+  library = new formidable.IncomingForm(),
+  dir = "views/images"
+) {
+
+  const form = library();
+  form.uploadDir = path.join(path.resolve(__dirname, ".."), `${dir}`);
+  form.keepExtensions = true;
+
   // const for holding modified image list
-  const modifiedImgs = form.parse(req, (err, fields, files) => {
-    return [fields.name];
+  let modifiedImgs
+  form.parse(req, (err, fields, files) => {
+    modifiedImgs = fields.name;
   });
+  
   // const for holding images
-  const uploadedImgsPath = path.join(
-    path.resolve(__dirname, ".."),
-    "views/images"
-  );
+  const uploadedImgsPath = path.join(path.resolve(__dirname, ".."), dir);
   const uploadedImgs = fs.readdirSync(uploadedImgsPath);
 
-  // loop through  images
+  // removes images not in modifiedImages
   for (let x = 0; x < uploadedImgs.length; x++) {
     if (!modifiedImgs.includes(uploadedImgs[x])) {
       fs.unlink(uploadedImgs[x], (err) => {
@@ -237,12 +249,15 @@ function modifyImages(req, res) {
       });
     }
   }
-
-  // loop thgrough modifiedimages
+  
+  /* Fix this */
+  const oldPath = file.filepath;
+  const newPath = path.join(form.uploadDir, file.originalFilename);
+  // Adds images not in uploadedImgs
   for (let x = 0; x < modifiedImgs.length; x++) {
     if (!uploadedImgs.includes(modifiedImgs[x])) {
       fs.rename(oldPath, newPath, (err) => {
-        /* Fix this */
+      
         if (err) {
           console.error(`Error saving file ${file.originalFilename}:`, err);
           res.status(500).end("Error saving one or more files");
