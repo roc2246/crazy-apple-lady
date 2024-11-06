@@ -90,7 +90,12 @@ async function manageNewPost(req, res, model = models.newPost) {
   }
 }
 
-async function manageUpdatePost(req, res, updatedPost, model = models.updatePost) {
+async function manageUpdatePost(
+  req,
+  res,
+  updatedPost,
+  model = models.updatePost
+) {
   try {
     utilities.verifyCallback(model);
     await model(updatedPost);
@@ -110,13 +115,18 @@ async function manageDeletePost(req, res, id, model = models.deletePost) {
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
     console.error("Error while deleting post:", error);
-    res.status(500).json({ message: error});
+    res.status(500).json({ message: error });
     throw error;
   }
 }
 
 // DATA RETRIEVAL
-async function manageGetPostNames(req, res, type, model = models.postRetrieval) {
+async function manageGetPostNames(
+  req,
+  res,
+  type,
+  model = models.postRetrieval
+) {
   try {
     utilities.verifyCallback(model);
     const match = { type: type };
@@ -162,47 +172,44 @@ async function manageGetPosts(req, res, model = models.postRetrieval) {
 }
 
 // IMAGE MANAGEMENT
-function manageImageUpload(req, res) {
-  const form = new formidable.IncomingForm();
+async function manageImageUpload(req, res, library = new formidable.IncomingForm, method = "parse") {
+  // CREATE NEW FORM OBJECT
+  const form = library();
 
+  // SET PARAMETERS FOR FILES TO UPLOAD
   form.uploadDir = path.join(path.resolve(__dirname, ".."), "views/images");
   form.keepExtensions = true;
 
-  form.parse(req, (err, fields, files) => {
+  // UPLOAD AND PARSE FILES
+  form[method](req, (err, fields, files) => {
+    // THROW ERROR
     if (err) {
-      console.log(err);
-      res.status(400).end("Error parsing form data");
+      res.status(400).end(`Error parsing form data: ${err}`);
       return;
     }
 
+    // CHECK IF FILES ARE IN AN ARRAY
     const imageFiles = Array.isArray(files.images)
       ? files.images
       : [files.images];
 
-    let processedCount = 0;
-    const totalFiles = imageFiles.length;
-
+    // RENAME FILES
     imageFiles.forEach((file) => {
       const oldPath = file.filepath;
       const newPath = path.join(form.uploadDir, file.originalFilename);
-
       fs.rename(oldPath, newPath, (err) => {
+        // THROW ERROR
         if (err) {
-          console.error(`Error saving file ${file.originalFilename}:`, err);
-          res.status(500).end("Error saving one or more files");
+          res.status(500).end(`Error saving one or more files 
+            \n File: ${file.originalFilename} 
+            \n Error: ${err}`);
           return;
-        }
-
-        processedCount++;
-        if (processedCount === totalFiles) {
-          res.status(200).json({
-            status: "success",
-            files: imageFiles.map((file) => file.originalFilename),
-          });
         }
       });
     });
+
   });
+  res.status(200).end("All files uploaded");
 }
 
 function modifyImages(req, res) {

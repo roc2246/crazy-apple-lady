@@ -1,8 +1,26 @@
-import { vi, describe, it, expect, beforeEach, beforeAll } from "vitest";
+import {
+  vi,
+  describe,
+  it,
+  expect,
+  beforeEach,
+  beforeAll,
+  afterAll,
+} from "vitest";
 import * as controllers from ".";
 import * as models from "../models";
 import { addPTags } from "../utilities";
 import * as mongo from "../mocks/mongodb.js";
+const fs = require("fs");
+const path = require("path");
+
+function newDirectory(directory) {
+  fs.mkdir(directory, { recursive: true }, (err) => {});
+}
+
+async function deleteDirectory(directory) {
+  fs.rm(directory, { recursive: true, force: true }, (err) => {});
+}
 
 let req;
 let res;
@@ -21,7 +39,8 @@ beforeAll(() => {
   res = {
     status: vi.fn().mockReturnThis(), // Enables chaining, e.g., res.status(201).json(...)
     json: vi.fn(),
-    send: vi.fn()
+    send: vi.fn(),
+    end: vi.fn(),
   };
 });
 
@@ -56,7 +75,10 @@ describe("manageUpdatePost", () => {
       mongo.mockFindOneAndUpdate({ id: update.id }, { $set: update })
     );
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ message: "Post updated successfully", updatedPost: update });
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Post updated successfully",
+      updatedPost: update,
+    });
   });
 
   it("should return a 401", async () => {
@@ -67,49 +89,100 @@ describe("manageUpdatePost", () => {
   });
 });
 
-describe("manageDeletePost", ()=>{
-  it("should return a 200", async() =>{
-    await controllers.manageDeletePost(req, res, 0, mongo.mockFindOneAndDelete)
+describe("manageDeletePost", () => {
+  it("should return a 200", async () => {
+    await controllers.manageDeletePost(req, res, 0, mongo.mockFindOneAndDelete);
     expect(res.status).toHaveBeenCalledWith(200);
-  })
+  });
   it("should return a 500", async () => {
     const result = controllers.manageDeletePost(req, res, 0, "BLA");
     await expect(result).rejects.toThrow("Invalid Function");
 
     expect(res.status).toHaveBeenCalledWith(500);
   });
-})
+});
 
-describe("manageGetPostNames", ()=>{
-  it("should return a 200", async ()=>{
-    await controllers.manageGetPostNames(req, res, "plantyLife", mongo.mockAggregate)
+describe("manageGetPostNames", () => {
+  it("should return a 200", async () => {
+    await controllers.manageGetPostNames(
+      req,
+      res,
+      "plantyLife",
+      mongo.mockAggregate
+    );
     expect(res.status).toHaveBeenCalledWith(200);
-  })
-  it("should return a 404", async ()=>{
-    await controllers.manageGetPostNames(req, res, "FAIL", mongo.mockAggregate)
+  });
+  it("should return a 404", async () => {
+    await controllers.manageGetPostNames(req, res, "FAIL", mongo.mockAggregate);
     expect(res.status).toHaveBeenCalledWith(404);
-  })
-})
+  });
+});
 
-describe("manageGetPost", ()=>{
-  it("should return a 200", async()=>{
-    await controllers.manageGetPost(req, res, 0, mongo.mockAggregate)
+describe("manageGetPost", () => {
+  it("should return a 200", async () => {
+    await controllers.manageGetPost(req, res, 0, mongo.mockAggregate);
     expect(res.status).toHaveBeenCalledWith(200);
-  })
-  it("should return a 404", async ()=>{
-    await controllers.manageGetPost(req, res, "FAIL", mongo.mockAggregate)
+  });
+  it("should return a 404", async () => {
+    await controllers.manageGetPost(req, res, "FAIL", mongo.mockAggregate);
     expect(res.status).toHaveBeenCalledWith(404);
-  })
-})
+  });
+});
 
-describe("manageGetPosts", ()=>{
-  it("should return a 200", async()=>{
-    await controllers.manageGetPosts(req, res, mongo.mockAggregate)
+describe("manageGetPosts", () => {
+  it("should return a 200", async () => {
+    await controllers.manageGetPosts(req, res, mongo.mockAggregate);
     expect(res.status).toHaveBeenCalledWith(200);
-  })
-  it("should return a 500", async ()=>{
-    const results = controllers.manageGetPosts(req, res, "FAIL")
+  });
+  it("should return a 500", async () => {
+    const results = controllers.manageGetPosts(req, res, "FAIL");
     await expect(results).rejects.toThrow();
     expect(res.status).toHaveBeenCalledWith(500);
-  })
-})
+  });
+});
+
+describe("Image management", () => {
+  const mockImagesPath = path.join(__dirname, "mockImgs");
+  const mockUploadsPath = path.join(__dirname, "mockUploads");
+  const filesToCreate = [
+    { name: "file1.txt", content: "This is the first file." },
+    { name: "file2.txt", content: "This is the second file." },
+    { name: "file3.txt", content: "This is the third file." },
+  ];
+
+  beforeAll(() => {
+    // Create a folder asynchronously
+    newDirectory(mockImagesPath);
+    newDirectory(mockUploadsPath);
+
+    // Iterate through the array and create each file
+    filesToCreate.forEach(({ name, content }) => {
+      const filePath = path.join(mockImagesPath, name);
+      fs.writeFileSync(filePath, content);
+      console.log(`File ${name} created successfully.`);
+    });
+  });
+
+  const mockForm = vi.fn(() => {
+    return {
+      parse: (req, cb) => {
+        fs.readdir(mockImagesPath, (err, fields) => {
+          fs.readFile(mockImagesPath, {}, (err, files)=>{
+            cb(err, fields, files);
+          })
+          
+        });
+      },
+    };
+  });
+
+  it("should move all files to new directory", async () => {
+    await controllers.manageImageUpload(req, res, mockForm, mockForm.parse);
+    fs.readdir(mockUploadsPath, (err, files) => console.log(files.length));
+  });
+
+  afterAll(() => {
+    deleteDirectory(mockImagesPath);
+    deleteDirectory(mockUploadsPath);
+  });
+});
