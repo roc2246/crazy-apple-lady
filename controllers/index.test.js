@@ -19,7 +19,7 @@ function newDirectory(directory) {
 }
 
 async function deleteDirectory(directory) {
-  fs.rmSync(directory, { recursive: true, force: true });
+  fs.rm(directory, { recursive: true, force: true }, (err) => {});
 }
 
 let req;
@@ -159,7 +159,6 @@ describe("Image management", () => {
     filesToCreate.forEach(({ name, content }) => {
       const filePath = path.join(mockImagesPath, name);
       fs.writeFileSync(filePath, content);
-      console.log(`File ${name} created successfully.`);
     });
   });
 
@@ -207,18 +206,26 @@ describe("Image management", () => {
     filesToCreate.forEach(({ name, content }) => {
       const filePath = path.join(mockImagesPath, name);
       fs.writeFileSync(filePath, content);
-      console.log(`File ${name} created successfully.`);
     });
 
     await controllers.modifyImages(req, res, mockForm, "controllers/mockUploads")
     fs.readdirSync(mockUploadsPath, (err, files)=>{
+         console.log(files)
       expect(files).not.toContain("file2.txt")
       expect(files).toContain("file8.txt")
-    });
+    })
+ 
   })
-
+  
+it("should delete images", async()=>{
+  await controllers.manageDeleteImages(["file1.txt", "file8.txt"], "controllers/mockUploads")
+  fs.readdir(mockUploadsPath, (err, files)=>{
+    expect(files.length).toBe(0)
+  });
+})
+  
   afterAll(() => {
     deleteDirectory(mockImagesPath);
-    deleteDirectory(mockUploadsPath);
+    // deleteDirectory(mockUploadsPath);
   });
 });

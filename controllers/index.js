@@ -241,14 +241,7 @@ async function modifyImages(
   // removes images not in modifiedImages
   for (let x = 0; x < uploadedImgs.length; x++) {
     if (!modifiedImgs.includes(uploadedImgs[x])) {
-      console.log(uploadedImgs[x]);
-      fs.unlink(path.join(uploadedImgsPath, uploadedImgs[x]), (err) => {
-        if (err) {
-          console.error("Error removing file:", err);
-        } else {
-          console.log("File removed successfully");
-        }
-      });
+      fs.unlinkSync(path.join(uploadedImgsPath, uploadedImgs[x]));
     }
   }
 
@@ -269,23 +262,12 @@ async function modifyImages(
 }
 
 async function manageDeleteImages(imgs, dir = "views/images") {
-  // CONST FOR IMAGES TO BE DELETED
   const imgsToDelete = imgs
-  // CONST FOR IMAGES IN THE UPLOADS DIRECTORY
   const uploadsPath = path.join(path.resolve(__dirname, ".."), `${dir}`);
-  const uploadedImgs = fs.readdirSync(uploadsPath)
 
   for (let x = 0; x < imgsToDelete.length; x++) {
-    if (!uploadedImgs.includes(imgsToDelete[x])) {
-      const deletedImg = path.join(uploadsPath, uploadedImgs[x])
-      fs.unlink(deletedImg, (err) => {
-        if (err) {
-          console.error("Error removing file:", err);
-        } else {
-          console.log("File removed successfully");
-        }
-      });
-    }
+      const deletedImg = path.join(uploadsPath, imgsToDelete[x])
+      fs.unlinkSync(deletedImg);
   }
 }
 
