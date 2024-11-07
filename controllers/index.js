@@ -222,16 +222,15 @@ async function modifyImages(
   library = new formidable.IncomingForm(),
   dir = "views/images"
 ) {
-
   const form = library();
   form.uploadDir = path.join(path.resolve(__dirname, ".."), `${dir}`);
   form.keepExtensions = true;
 
   // const for holding modified image list
-  let modifiedImgs
-  let initialFiles
+  let modifiedImgs;
+  let initialFiles;
   form.parse(req, (err, fields, files) => {
-    initialFiles = files.images
+    initialFiles = files.images;
     modifiedImgs = fields.name;
   });
 
@@ -242,8 +241,8 @@ async function modifyImages(
   // removes images not in modifiedImages
   for (let x = 0; x < uploadedImgs.length; x++) {
     if (!modifiedImgs.includes(uploadedImgs[x])) {
-      console.log(uploadedImgs[x])
-      fs.unlink(path.join(uploadedImgsPath,uploadedImgs[x]), (err) => {
+      console.log(uploadedImgs[x]);
+      fs.unlink(path.join(uploadedImgsPath, uploadedImgs[x]), (err) => {
         if (err) {
           console.error("Error removing file:", err);
         } else {
@@ -252,14 +251,13 @@ async function modifyImages(
       });
     }
   }
-  
+
   // Adds images not in uploadedImgs
   for (let x = 0; x < modifiedImgs.length; x++) {
-  const oldPath = initialFiles[x].filepath;
-  const newPath = path.join(form.uploadDir, modifiedImgs[x]);
+    const oldPath = initialFiles[x].filepath;
+    const newPath = path.join(form.uploadDir, modifiedImgs[x]);
     if (!uploadedImgs.includes(modifiedImgs[x])) {
       fs.rename(oldPath, newPath, (err) => {
-      
         if (err) {
           console.error(`Error saving file ${modifiedImgs[x]}:`, err);
           res.status(500).end("Error saving one or more files");
@@ -268,10 +266,28 @@ async function modifyImages(
       });
     }
   }
-
 }
 
-// CREATE FUNCTION FOR REMOVING IMAGES HERE
+async function manageDeleteImages(imgs, dir = "views/images") {
+  // CONST FOR IMAGES TO BE DELETED
+  const imgsToDelete = imgs
+  // CONST FOR IMAGES IN THE UPLOADS DIRECTORY
+  const uploadsPath = path.join(path.resolve(__dirname, ".."), `${dir}`);
+  const uploadedImgs = fs.readdirSync(uploadsPath)
+
+  for (let x = 0; x < imgsToDelete.length; x++) {
+    if (!uploadedImgs.includes(imgsToDelete[x])) {
+      const deletedImg = path.join(uploadsPath, uploadedImgs[x])
+      fs.unlink(deletedImg, (err) => {
+        if (err) {
+          console.error("Error removing file:", err);
+        } else {
+          console.log("File removed successfully");
+        }
+      });
+    }
+  }
+}
 
 // TEMPLATE MANAGEMENT
 function fillTemplate(req, res, pageName, metaTitle) {
@@ -310,5 +326,6 @@ module.exports = {
   manageGetPosts,
   manageImageUpload,
   modifyImages,
+  manageDeleteImages,
   fillTemplate,
 };
