@@ -251,21 +251,22 @@ async function modifyImages(
   }
   
   /* Fix this */
-  const oldPath = file.filepath;
-  const newPath = path.join(form.uploadDir, file.originalFilename);
-  // Adds images not in uploadedImgs
-  for (let x = 0; x < modifiedImgs.length; x++) {
-    if (!uploadedImgs.includes(modifiedImgs[x])) {
-      fs.rename(oldPath, newPath, (err) => {
+  // const oldPath = file.filepath;
+  // const newPath = path.join(form.uploadDir, file.originalFilename);
+  // // Adds images not in uploadedImgs
+  // for (let x = 0; x < modifiedImgs.length; x++) {
+  //   if (!uploadedImgs.includes(modifiedImgs[x])) {
+  //     fs.rename(oldPath, newPath, (err) => {
       
-        if (err) {
-          console.error(`Error saving file ${file.originalFilename}:`, err);
-          res.status(500).end("Error saving one or more files");
-          return;
-        }
-      });
-    }
-  }
+  //       if (err) {
+  //         console.error(`Error saving file ${file.originalFilename}:`, err);
+  //         res.status(500).end("Error saving one or more files");
+  //         return;
+  //       }
+  //     });
+  //   }
+  // }
+
 }
 
 // CREATE FUNCTION FOR REMOVING IMAGES HERE
