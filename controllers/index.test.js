@@ -8,9 +8,8 @@ import {
   afterAll,
 } from "vitest";
 import * as controllers from ".";
-import * as models from "../models";
-import { addPTags } from "../utilities";
 import * as mongo from "../mocks/mongodb.js";
+import * as formidable from "../mocks/formidable.js";
 const fs = require("fs");
 const path = require("path");
 
@@ -162,32 +161,9 @@ describe("Image management", () => {
     });
   });
 
-  const mockForm = vi.fn(() => {
-    return {
-      parse: (req, cb) => {
-        const err = null; // or an error object, if you want to simulate an error
-        const fields = { name:[] }; // Mock data for fields
-        const files = { images: [] };
-
-        for (let x = 0; x < fs.readdirSync(mockImagesPath).length; x++) {
-          const obj = {
-            filepath: path.join(
-              mockImagesPath,
-              fs.readdirSync(mockImagesPath)[x]
-            ),
-            originalFilename: fs.readdirSync(mockImagesPath)[x],
-          };
-          files.images.push(obj);
-          fields.name.push(obj.originalFilename)
-        }
-
-        cb(err, fields, files);
-      },
-    };
-  });
 
   it("should move all files to new directory", async () => {
-    await controllers.manageImageUpload(req, res, mockForm, "controllers/mockUploads");
+    await controllers.manageImageUpload(req, res, formidable.mockForm, "controllers/mockUploads");
     fs.readdirSync(mockUploadsPath, (err, files)=>{
       expect(files.length).toBe(3)
       expect(files).toContain("file1.txt")
@@ -208,9 +184,8 @@ describe("Image management", () => {
       fs.writeFileSync(filePath, content);
     });
 
-    await controllers.modifyImages(req, res, mockForm, "controllers/mockUploads")
+    await controllers.modifyImages(req, res, formidable.mockForm, "controllers/mockUploads")
     fs.readdirSync(mockUploadsPath, (err, files)=>{
-         console.log(files)
       expect(files).not.toContain("file2.txt")
       expect(files).toContain("file8.txt")
     })
