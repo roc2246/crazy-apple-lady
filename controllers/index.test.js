@@ -13,14 +13,6 @@ import * as formidable from "../mocks/formidable.js";
 const fs = require("fs");
 const path = require("path");
 
-function newDirectory(directory) {
-  fs.mkdir(directory, { recursive: true }, (err) => {});
-}
-
-async function deleteDirectory(directory) {
-  fs.rm(directory, { recursive: true, force: true }, (err) => {});
-}
-
 let req;
 let res;
 
@@ -143,64 +135,58 @@ describe("manageGetPosts", () => {
 describe("Image management", () => {
   const mockImagesPath = path.join(__dirname, "mockImgs");
   const mockUploadsPath = path.join(__dirname, "mockUploads");
-  const filesToCreate = [
-    { name: "file1.txt", content: "This is the first file." },
-    { name: "file2.txt", content: "This is the second file." },
-    { name: "file3.txt", content: "This is the third file." },
-  ];
+  const uploadsToCreate = ["file1.txt", "file2.txt", "file3.txt"];
+  const modsToCreate = ["file1.txt", "file8.txt"];
 
   beforeAll(() => {
     // Create a folder asynchronously
-    newDirectory(mockImagesPath);
-    newDirectory(mockUploadsPath);
+    formidable.newDirectory(mockImagesPath);
+    formidable.newDirectory(mockUploadsPath);
 
     // Iterate through the array and create each file
-    filesToCreate.forEach(({ name, content }) => {
-      const filePath = path.join(mockImagesPath, name);
-      fs.writeFileSync(filePath, content);
-    });
+    formidable.createFiles(uploadsToCreate, mockImagesPath);
   });
-
 
   it("should move all files to new directory", async () => {
-    await controllers.manageImageUpload(req, res, formidable.mockForm, "controllers/mockUploads");
-    fs.readdirSync(mockUploadsPath, (err, files)=>{
-      expect(files.length).toBe(3)
-      expect(files).toContain("file1.txt")
-      expect(files).toContain("file2.txt")
-      expect(files).toContain("file3.txt")
-
+    await controllers.manageImageUpload(
+      req,
+      res,
+      formidable.mockForm,
+      "controllers/mockUploads"
+    );
+    fs.readdirSync(mockUploadsPath, (err, files) => {
+      expect(files.length).toBe(3);
+      expect(files).toContain("file1.txt");
+      expect(files).toContain("file2.txt");
+      expect(files).toContain("file3.txt");
     });
-    
   });
-  it("should modify specific images", async ()=>{
-    const filesToCreate = [
-      { name: "file1.txt", content: "This is the first file." },
-      { name: "file8.txt", content: "This is the third file." },
-    ];
-    
-    filesToCreate.forEach(({ name, content }) => {
-      const filePath = path.join(mockImagesPath, name);
-      fs.writeFileSync(filePath, content);
+  it("should modify specific images", async () => {
+    formidable.createFiles(modsToCreate, mockImagesPath);
+    await controllers.modifyImages(
+      req,
+      res,
+      formidable.mockForm,
+      "controllers/mockUploads"
+    );
+    fs.readdirSync(mockUploadsPath, (err, files) => {
+      expect(files).not.toContain("file2.txt");
+      expect(files).toContain("file8.txt");
     });
-
-    await controllers.modifyImages(req, res, formidable.mockForm, "controllers/mockUploads")
-    fs.readdirSync(mockUploadsPath, (err, files)=>{
-      expect(files).not.toContain("file2.txt")
-      expect(files).toContain("file8.txt")
-    })
- 
-  })
-  
-it("should delete images", async()=>{
-  await controllers.manageDeleteImages(["file1.txt", "file8.txt"], "controllers/mockUploads")
-  fs.readdir(mockUploadsPath, (err, files)=>{
-    expect(files.length).toBe(0)
   });
-})
-  
+
+  it("should delete images", async () => {
+    await controllers.manageDeleteImages(
+      ["file1.txt", "file8.txt"],
+      "controllers/mockUploads"
+    );
+    fs.readdir(mockUploadsPath, (err, files) => {
+      expect(files.length).toBe(0);
+    });
+  });
+
   afterAll(() => {
-    deleteDirectory(mockImagesPath);
-    deleteDirectory(mockUploadsPath);
+    formidable.deleteDirectory(mockImagesPath);
+    formidable.deleteDirectory(mockUploadsPath);
   });
 });
