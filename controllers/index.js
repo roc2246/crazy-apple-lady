@@ -229,10 +229,12 @@ async function modifyImages(
 
   // const for holding modified image list
   let modifiedImgs
+  let initialFiles
   form.parse(req, (err, fields, files) => {
+    initialFiles = files.images
     modifiedImgs = fields.name;
   });
-  
+
   // const for holding images
   const uploadedImgsPath = path.join(path.resolve(__dirname, ".."), dir);
   const uploadedImgs = fs.readdirSync(uploadedImgsPath);
@@ -240,7 +242,8 @@ async function modifyImages(
   // removes images not in modifiedImages
   for (let x = 0; x < uploadedImgs.length; x++) {
     if (!modifiedImgs.includes(uploadedImgs[x])) {
-      fs.unlink(uploadedImgs[x], (err) => {
+      console.log(uploadedImgs[x])
+      fs.unlink(path.join(uploadedImgsPath,uploadedImgs[x]), (err) => {
         if (err) {
           console.error("Error removing file:", err);
         } else {
@@ -250,22 +253,21 @@ async function modifyImages(
     }
   }
   
-  /* Fix this */
-  // const oldPath = file.filepath;
-  // const newPath = path.join(form.uploadDir, file.originalFilename);
-  // // Adds images not in uploadedImgs
-  // for (let x = 0; x < modifiedImgs.length; x++) {
-  //   if (!uploadedImgs.includes(modifiedImgs[x])) {
-  //     fs.rename(oldPath, newPath, (err) => {
+  // Adds images not in uploadedImgs
+  for (let x = 0; x < modifiedImgs.length; x++) {
+  const oldPath = initialFiles[x].filepath;
+  const newPath = path.join(form.uploadDir, modifiedImgs[x]);
+    if (!uploadedImgs.includes(modifiedImgs[x])) {
+      fs.rename(oldPath, newPath, (err) => {
       
-  //       if (err) {
-  //         console.error(`Error saving file ${file.originalFilename}:`, err);
-  //         res.status(500).end("Error saving one or more files");
-  //         return;
-  //       }
-  //     });
-  //   }
-  // }
+        if (err) {
+          console.error(`Error saving file ${modifiedImgs[x]}:`, err);
+          res.status(500).end("Error saving one or more files");
+          return;
+        }
+      });
+    }
+  }
 
 }
 
