@@ -226,6 +226,6 @@ it("should delete images", async()=>{
   
   afterAll(() => {
     deleteDirectory(mockImagesPath);
-    // deleteDirectory(mockUploadsPath);
+    deleteDirectory(mockUploadsPath);
   });
 });
