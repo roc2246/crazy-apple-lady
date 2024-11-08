@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const fs = require("fs").promises;
 const path = require("path");
+const formidable = require("formidable");
 
 // LOGINS
 function generateRandomString(length) {
@@ -33,8 +34,24 @@ function verifyCallback(callback) {
   }
 }
 
+// FORM MANAGEMENT
+function newForm(
+  library = new formidable.IncomingForm(),
+  dir = "views/images"
+) {
+  // CREATE NEW FORM OBJECT
+  const form = library();
+
+  // SET PARAMETERS FOR FILES TO UPLOAD
+  form.uploadDir = path.join(path.resolve(__dirname, ".."), `${dir}`);
+  form.keepExtensions = true;
+  
+  return form
+}
+
 module.exports = {
   generateRandomString,
   addPTags,
   verifyCallback,
+  newForm
 };

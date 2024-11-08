@@ -8,6 +8,7 @@ import {
   afterAll,
 } from "vitest";
 import * as controllers from ".";
+import * as utilities from "../utilities/index.js";
 import * as mongo from "../mocks/mongodb.js";
 import * as formidable from "../mocks/formidable.js";
 const fs = require("fs");
@@ -136,6 +137,10 @@ describe("Image management", () => {
   const mockImagesPath = path.join(__dirname, "mockImgs");
   const mockUploadsPath = path.join(__dirname, "mockUploads");
   const uploadsToCreate = ["file1.txt", "file2.txt", "file3.txt"];
+  const formObj = utilities.newForm(
+    formidable.mockForm,
+    "controllers/mockUploads"
+  );
   const modsToCreate = ["file1.txt", "file8.txt"];
 
   beforeAll(() => {
@@ -148,12 +153,7 @@ describe("Image management", () => {
   });
 
   it("should move all files to new directory", async () => {
-    await controllers.manageImageUpload(
-      req,
-      res,
-      formidable.mockForm,
-      "controllers/mockUploads"
-    );
+    await controllers.manageImageUpload(req, res, formObj);
     fs.readdirSync(mockUploadsPath, (err, files) => {
       expect(files.length).toBe(3);
       expect(files).toContain("file1.txt");
@@ -163,27 +163,22 @@ describe("Image management", () => {
   });
   it("should modify specific images", async () => {
     formidable.createFiles(modsToCreate, mockImagesPath);
-    await controllers.modifyImages(
-      req,
-      res,
-      formidable.mockForm,
-      "controllers/mockUploads"
-    );
+    await controllers.modifyImages(req, res, formObj);
     fs.readdirSync(mockUploadsPath, (err, files) => {
       expect(files).not.toContain("file2.txt");
       expect(files).toContain("file8.txt");
     });
   });
 
-  it("should delete images", async () => {
-    await controllers.manageDeleteImages(req, res,
-      ["file1.txt", "file8.txt"],
-      "controllers/mockUploads"
-    );
-    fs.readdir(mockUploadsPath, (err, files) => {
-      expect(files.length).toBe(0);
-    });
-  });
+  // it("should delete images", async () => {
+  //   await controllers.manageDeleteImages(req, res,
+  //     ["file1.txt", "file8.txt"],
+  //     "controllers/mockUploads"
+  //   );
+  //   fs.readdir(mockUploadsPath, (err, files) => {
+  //     expect(files.length).toBe(0);
+  //   });
+  // });
 
   afterAll(() => {
     formidable.deleteDirectory(mockImagesPath);

@@ -172,18 +172,8 @@ async function manageGetPosts(req, res, model = models.postRetrieval) {
 }
 
 // IMAGE MANAGEMENT
-async function manageImageUpload(
-  req,
-  res,
-  library = new formidable.IncomingForm(),
-  dir = "views/images"
-) {
-  // CREATE NEW FORM OBJECT
-  const form = library();
-
-  // SET PARAMETERS FOR FILES TO UPLOAD
-  form.uploadDir = path.join(path.resolve(__dirname, ".."), `${dir}`);
-  form.keepExtensions = true;
+async function manageImageUpload(req, res, formLib = utilities.newForm()) {
+  const form = formLib;
 
   // UPLOAD AND PARSE FILES
   form.parse(req, (err, fields, files) => {
@@ -198,7 +188,7 @@ async function manageImageUpload(
       ? files.images
       : [files.images];
 
-    // RENAME FILES
+    // MOVE FILES TO UPLOAD DIR
     imageFiles.forEach((file) => {
       const oldPath = file.filepath;
       const newPath = path.join(form.uploadDir, file.originalFilename);
@@ -216,63 +206,63 @@ async function manageImageUpload(
   res.status(200).end("All files uploaded");
 }
 
-async function modifyImages(
-  req,
-  res,
-  library = new formidable.IncomingForm(),
-  dir = "views/images"
-) {
-  const form = library();
-  form.uploadDir = path.join(path.resolve(__dirname, ".."), `${dir}`);
-  form.keepExtensions = true;
+async function modifyImages(req, res, formLib = utilities.newForm()) {
+  const form = formLib;
 
-  // const for holding modified image list
-  let modifiedImgs;
-  let initialFiles;
+  // PARSE IMGS
   form.parse(req, (err, fields, files) => {
-    initialFiles = files.images;
-    modifiedImgs = fields.name;
+    // THROW ERROR
+    if (err) {
+      res.status(400).end(`Error parsing form data: ${err}`);
+      return;
+    }
+
+    // CHECK IF FILES ARE IN AN ARRAY
+    const imageFiles = Array.isArray(files.images)
+      ? files.images
+      : [files.images];
+
+    // Adds images not in uploadedImgs
+    imageFiles.forEach((file) => {
+      const oldPath = file.filepath;
+      const newPath = path.join(form.uploadDir, file.originalFilename);
+      if (!fields.name.includes(file)) {
+        fs.rename(oldPath, newPath, (err) => {
+          if (err) {
+            console.error(`Error saving file ${file}:`, err);
+            res.status(500).end("Error saving one or more files");
+            return;
+          }
+        });
+      }
+    });
+
+    // removes images not in modifiedImages
+    fields.name.forEach((file) => {
+      const fileToDelete = path.join(form.uploadDir, file);
+      if (!imageFiles.includes(file)) {
+        fs.unlink(fileToDelete, (err) => {
+          if (err) {
+            res.status(500).end("Error deleting fileds");
+          }
+        });
+      }
+    });
   });
-
-  // const for holding images
-  const uploadedImgsPath = path.join(path.resolve(__dirname, ".."), dir);
-  const uploadedImgs = fs.readdirSync(uploadedImgsPath);
-
-  // removes images not in modifiedImages
-  for (let x = 0; x < uploadedImgs.length; x++) {
-    if (!modifiedImgs.includes(uploadedImgs[x])) {
-      fs.unlinkSync(path.join(uploadedImgsPath, uploadedImgs[x]));
-    }
-  }
-
-  // Adds images not in uploadedImgs
-  for (let x = 0; x < modifiedImgs.length; x++) {
-    const oldPath = initialFiles[x].filepath;
-    const newPath = path.join(form.uploadDir, modifiedImgs[x]);
-    if (!uploadedImgs.includes(modifiedImgs[x])) {
-      fs.rename(oldPath, newPath, (err) => {
-        if (err) {
-          console.error(`Error saving file ${modifiedImgs[x]}:`, err);
-          res.status(500).end("Error saving one or more files");
-          return;
-        }
-      });
-    }
-  }
 }
 
 async function manageDeleteImages(req, res, imgs, dir = "views/images") {
-  const imgsToDelete = imgs
+  const imgsToDelete = imgs;
   const uploadsPath = path.join(path.resolve(__dirname, ".."), `${dir}`);
 
-  for (let x = 0; x < imgsToDelete.length; x++) {
-      const deletedImg = path.join(uploadsPath, imgsToDelete[x])
-      fs.unlink(deletedImg, err =>{
-        if(err){
-          res.status(500).end("Error deleting fileds");
-        }
-      });
-  }
+  imgsToDelete.forEach((file) => {
+    const fileToDelete = path.join(uploadsPath, file);
+    fs.unlink(fileToDelete, (err) => {
+      if (err) {
+        res.status(500).end("Error deleting fileds");
+      }
+    });
+  });
   res.status(200).end("All files uploaded");
 }
 
