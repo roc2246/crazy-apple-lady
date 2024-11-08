@@ -49,14 +49,14 @@ function newForm(
   return form;
 }
 
-async function uploadFiles(files, uploadDir) {
+async function uploadFiles(files, uploadDir, blogName) {
   files.forEach((file) => {
     try {
       const fileToUpload = file.originalFilename;
       const oldPath = file.filepath;
-      const newPath = path.join(uploadDir, file.originalFilename);
+      const newPath = path.join(uploadDir, fileToUpload);
       if (!uploadDir.includes(fileToUpload)) {
-        fs.renameSync(oldPath, newPath);
+        fs.renameSync(oldPath, `${blogName}-${newPath}`);
       }
     } catch (error) {
       throw new Error(`Error saving one or more files 
@@ -66,6 +66,25 @@ async function uploadFiles(files, uploadDir) {
   });
 }
 
+async function removeFilesNotInUploads(uploadDir, blogName) {
+  const regex = new RegExp(`^${blogName}-`);
+  const filesWPrefix = fs.readdirSync(uploadDir).map((file) => regex.test(file));
+
+  filesWPrefix.forEach((file) => {
+    try {
+      if (!uploadDir.includes(file)) {
+        fs.unlinkSync(path.join(uploadDir, file));
+      }
+    } catch (error) {
+      throw new Error(`Error saving one or more files 
+        \n File: ${file.originalFilename} 
+        \n Error: ${error}`);
+    }
+  });
+
+}
+
+// EDIT LATER
 async function removeFiles(files, imageFiles) {
   files.forEach((file) => {
     try {
@@ -88,5 +107,6 @@ module.exports = {
   verifyCallback,
   newForm,
   uploadFiles,
+  removeFilesNotInUploads,
   removeFiles,
 };

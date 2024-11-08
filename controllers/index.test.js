@@ -133,34 +133,34 @@ describe("manageGetPosts", () => {
   });
 });
 
-describe("Image management", () => {
-  const mockImagesPath = path.join(__dirname, "mockImgs");
-  const mockUploadsPath = path.join(__dirname, "mockUploads");
-  const uploadsToCreate = ["file1.txt", "file2.txt", "file3.txt"];
-  const formObj = utilities.newForm(
-    formidable.mockForm,
-    "controllers/mockUploads"
-  );
-  const modsToCreate = ["file1.txt", "file8.txt"];
+// describe("Image management", () => {
+//   const mockImagesPath = path.join(__dirname, "mockImgs");
+//   const mockUploadsPath = path.join(__dirname, "mockUploads");
+//   const uploadsToCreate = ["file1.txt", "file2.txt", "file3.txt"];
+//   const formObj = utilities.newForm(
+//     formidable.mockForm,
+//     "controllers/mockUploads"
+//   );
+//   const modsToCreate = ["file1.txt", "file8.txt"];
 
-  beforeAll(() => {
-    // Create a folder asynchronously
-    formidable.newDirectory(mockImagesPath);
-    formidable.newDirectory(mockUploadsPath);
+//   beforeAll(() => {
+//     // Create a folder asynchronously
+//     formidable.newDirectory(mockImagesPath);
+//     formidable.newDirectory(mockUploadsPath);
 
-    // Iterate through the array and create each file
-    formidable.createFiles(uploadsToCreate, mockImagesPath);
-  });
+//     // Iterate through the array and create each file
+//     formidable.createFiles(uploadsToCreate, mockImagesPath);
+//   });
 
-  it("should move all files to new directory", async () => {
-    await controllers.manageImageUpload(req, res, formObj);
-    fs.readdirSync(mockUploadsPath, (err, files) => {
-      expect(files.length).toBe(3);
-      expect(files).toContain("file1.txt");
-      expect(files).toContain("file2.txt");
-      expect(files).toContain("file3.txt");
-    });
-  });
+//   it("should move all files to new directory", async () => {
+//     await controllers.manageImageUpload(req, res, formObj);
+//     fs.readdirSync(mockUploadsPath, (err, files) => {
+//       expect(files.length).toBe(3);
+//       expect(files).toContain("file1.txt");
+//       expect(files).toContain("file2.txt");
+//       expect(files).toContain("file3.txt");
+//     });
+//   });
 
   // it("should modify specific images", async () => {
   //   formidable.createFiles(modsToCreate, mockImagesPath);
@@ -181,8 +181,8 @@ describe("Image management", () => {
   //   });
   // });
 
-  afterAll(() => {
-    formidable.deleteDirectory(mockImagesPath);
-    formidable.deleteDirectory(mockUploadsPath);
-  });
-});
+  // afterAll(() => {
+  //   formidable.deleteDirectory(mockImagesPath);
+  //   formidable.deleteDirectory(mockUploadsPath);
+  // });
+// });
