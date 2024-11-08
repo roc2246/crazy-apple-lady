@@ -172,9 +172,7 @@ async function manageGetPosts(req, res, model = models.postRetrieval) {
 }
 
 // IMAGE MANAGEMENT
-async function manageImageUpload(req, res, formLib = utilities.newForm()) {
-  const form = formLib;
-
+async function manageImageUpload(req, res, form = utilities.newForm()) {
   // UPLOAD AND PARSE FILES
   form.parse(req, (err, fields, files) => {
     // THROW ERROR
@@ -206,9 +204,7 @@ async function manageImageUpload(req, res, formLib = utilities.newForm()) {
   res.status(200).end("All files uploaded");
 }
 
-async function modifyImages(req, res, formLib = utilities.newForm()) {
-  const form = formLib;
-
+async function modifyImages(req, res, form = utilities.newForm()) {
   // PARSE IMGS
   form.parse(req, (err, fields, files) => {
     // THROW ERROR
