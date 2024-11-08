@@ -52,11 +52,11 @@ function newForm(
 async function uploadFiles(files, uploadDir, blogName) {
   files.forEach((file) => {
     try {
-      const fileToUpload = file.originalFilename;
+      const fileToUpload = `${blogName}-${file.originalFilename}`;
       const oldPath = file.filepath;
       const newPath = path.join(uploadDir, fileToUpload);
       if (!uploadDir.includes(fileToUpload)) {
-        fs.renameSync(oldPath, `${blogName}-${newPath}`);
+        fs.renameSync(oldPath, newPath);
       }
     } catch (error) {
       throw new Error(`Error saving one or more files 
