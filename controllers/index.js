@@ -173,8 +173,7 @@ async function manageGetPosts(req, res, model = models.postRetrieval) {
 
 // IMAGE MANAGEMENT
 async function manageImageUpload(req, res, form = utilities.newForm()) {
-  // UPLOAD AND PARSE FILES
-  form.parse(req, (err, fields, files) => {
+  form.parse(req, async (err, fields, files) => {
     // THROW ERROR
     if (err) {
       res.status(400).end(`Error parsing form data: ${err}`);
@@ -187,26 +186,17 @@ async function manageImageUpload(req, res, form = utilities.newForm()) {
       : [files.images];
 
     // MOVE FILES TO UPLOAD DIR
-    imageFiles.forEach((file) => {
-      const oldPath = file.filepath;
-      const newPath = path.join(form.uploadDir, file.originalFilename);
-      fs.rename(oldPath, newPath, (err) => {
-        // THROW ERROR
-        if (err) {
-          res.status(500).end(`Error saving one or more files 
-            \n File: ${file.originalFilename} 
-            \n Error: ${err}`);
-          return;
-        }
-      });
-    });
+    try {
+      await utilities.moveFiles(imageFiles, form.uploadDir);
+      res.status(200).end("All files uploaded");
+    } catch (error) {
+      res.status(500).end(error);
+    }
   });
-  res.status(200).end("All files uploaded");
 }
 
 async function modifyImages(req, res, form = utilities.newForm()) {
-  // PARSE IMGS
-  form.parse(req, (err, fields, files) => {
+  form.parse(req, async (err, fields, files) => {
     // THROW ERROR
     if (err) {
       res.status(400).end(`Error parsing form data: ${err}`);
@@ -219,31 +209,20 @@ async function modifyImages(req, res, form = utilities.newForm()) {
       : [files.images];
 
     // Adds images not in uploadedImgs
-    imageFiles.forEach((file) => {
-      const oldPath = file.filepath;
-      const newPath = path.join(form.uploadDir, file.originalFilename);
-      if (!fields.name.includes(file)) {
-        fs.rename(oldPath, newPath, (err) => {
-          if (err) {
-            console.error(`Error saving file ${file}:`, err);
-            res.status(500).end("Error saving one or more files");
-            return;
-          }
-        });
-      }
-    });
+    try {
+      await utilities.moveFiles(imageFiles, form.uploadDir);
+      res.status(200).end("All files uploaded");
+    } catch (error) {
+      res.status(500).end(error);
+    }
 
     // removes images not in modifiedImages
-    fields.name.forEach((file) => {
-      const fileToDelete = path.join(form.uploadDir, file);
-      if (!imageFiles.includes(file)) {
-        fs.unlink(fileToDelete, (err) => {
-          if (err) {
-            res.status(500).end("Error deleting fileds");
-          }
-        });
-      }
-    });
+    try {
+      await utilities.removeFiles(fields.name, imageFiles);
+      res.status(200).end("All files deleted");
+    } catch (error) {
+      res.status(500).end("Error deleting fileds");
+    }
   });
 }
 

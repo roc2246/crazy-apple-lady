@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const fs = require("fs").promises;
+const fs = require("fs");
 const path = require("path");
 const formidable = require("formidable");
 
@@ -45,13 +45,48 @@ function newForm(
   // SET PARAMETERS FOR FILES TO UPLOAD
   form.uploadDir = path.join(path.resolve(__dirname, ".."), `${dir}`);
   form.keepExtensions = true;
-  
-  return form
+
+  return form;
 }
+
+async function moveFiles(files, uploads) {
+  files.forEach((file) => {
+    try {
+      const oldPath = file.filepath;
+      const newPath = path.join(uploads, file.originalFilename);
+      if (!file.originalFilename.includes(file)) {
+        fs.renameSync(oldPath, newPath);
+      }
+    } catch (error) {
+      throw new Error(`Error saving one or more files 
+      \n File: ${file.originalFilename} 
+      \n Error: ${error}`);
+    }
+  });
+}
+
+async function removeFiles(files, imageFiles) {
+  files.forEach((file) => {
+    try {
+      const fileToDelete = path.join(form.uploadDir, file);
+
+      if (!imageFiles.includes(file)) {
+        fs.unlinkSync(fileToDelete);
+      }
+    } catch (error) {
+      throw new Error(`Error deleting files
+        \n File: ${file.originalFilename} 
+        \n Error: ${error}`);
+    }
+  });
+}
+
 
 module.exports = {
   generateRandomString,
   addPTags,
   verifyCallback,
-  newForm
+  newForm,
+  moveFiles,
+  removeFiles
 };
