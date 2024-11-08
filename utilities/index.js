@@ -52,7 +52,7 @@ function newForm(
 async function uploadFiles(files, uploadDir, blogName) {
   files.forEach((file) => {
     try {
-      const fileToUpload = `${blogName}-${file.originalFilename}`;
+      const fileToUpload = `${blogName}-${file.originalFileName}`;
       const oldPath = file.filepath;
       const newPath = path.join(uploadDir, fileToUpload);
       if (!uploadDir.includes(fileToUpload)) {
