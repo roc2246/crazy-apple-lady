@@ -52,9 +52,10 @@ function newForm(
 async function moveFiles(files, uploads) {
   files.forEach((file) => {
     try {
+      const fileToUpload = file.originalFilename;
       const oldPath = file.filepath;
       const newPath = path.join(uploads, file.originalFilename);
-      if (!file.originalFilename.includes(file)) {
+      if (!uploads.includes(fileToUpload)) {
         fs.renameSync(oldPath, newPath);
       }
     } catch (error) {
@@ -81,12 +82,11 @@ async function removeFiles(files, imageFiles) {
   });
 }
 
-
 module.exports = {
   generateRandomString,
   addPTags,
   verifyCallback,
   newForm,
   moveFiles,
-  removeFiles
+  removeFiles,
 };
