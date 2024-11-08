@@ -176,7 +176,7 @@ describe("Image management", () => {
   });
 
   it("should delete images", async () => {
-    await controllers.manageDeleteImages(
+    await controllers.manageDeleteImages(req, res,
       ["file1.txt", "file8.txt"],
       "controllers/mockUploads"
     );

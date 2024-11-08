@@ -261,14 +261,19 @@ async function modifyImages(
   }
 }
 
-async function manageDeleteImages(imgs, dir = "views/images") {
+async function manageDeleteImages(req, res, imgs, dir = "views/images") {
   const imgsToDelete = imgs
   const uploadsPath = path.join(path.resolve(__dirname, ".."), `${dir}`);
 
   for (let x = 0; x < imgsToDelete.length; x++) {
       const deletedImg = path.join(uploadsPath, imgsToDelete[x])
-      fs.unlinkSync(deletedImg);
+      fs.unlink(deletedImg, err =>{
+        if(err){
+          res.status(500).end("Error deleting fileds");
+        }
+      });
   }
+  res.status(200).end("All files uploaded");
 }
 
 // TEMPLATE MANAGEMENT
