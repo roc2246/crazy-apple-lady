@@ -49,13 +49,13 @@ function newForm(
   return form;
 }
 
-async function moveFiles(files, uploads) {
+async function uploadFiles(files, uploadDir) {
   files.forEach((file) => {
     try {
       const fileToUpload = file.originalFilename;
       const oldPath = file.filepath;
-      const newPath = path.join(uploads, file.originalFilename);
-      if (!uploads.includes(fileToUpload)) {
+      const newPath = path.join(uploadDir, file.originalFilename);
+      if (!uploadDir.includes(fileToUpload)) {
         fs.renameSync(oldPath, newPath);
       }
     } catch (error) {
@@ -87,6 +87,6 @@ module.exports = {
   addPTags,
   verifyCallback,
   newForm,
-  moveFiles,
+  uploadFiles,
   removeFiles,
 };

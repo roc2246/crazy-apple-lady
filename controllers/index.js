@@ -187,7 +187,7 @@ async function manageImageUpload(req, res, form = utilities.newForm()) {
 
     // MOVE FILES TO UPLOAD DIR
     try {
-      await utilities.moveFiles(imageFiles, form.uploadDir);
+      await utilities.uploadFiles(imageFiles, form.uploadDir);
       res.status(200).end("All files uploaded");
     } catch (error) {
       res.status(500).end(error);
@@ -210,7 +210,7 @@ async function modifyImages(req, res, form = utilities.newForm()) {
 
     // Adds images not in uploadedImgs
     try {
-      await utilities.moveFiles(imageFiles, form.uploadDir);
+      await utilities.uploadFiles(imageFiles, form.uploadDir);
       res.status(200).end("All files uploaded");
     } catch (error) {
       res.status(500).end(error);
