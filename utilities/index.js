@@ -68,7 +68,9 @@ async function uploadFiles(files, uploadDir, blogName) {
 
 async function removeFilesNotInUploads(uploadDir, blogName) {
   const regex = new RegExp(`^${blogName}-`);
-  const filesWPrefix = fs.readdirSync(uploadDir).map((file) => regex.test(file));
+  const filesWPrefix = fs
+    .readdirSync(uploadDir)
+    .map((file) => regex.test(file));
 
   filesWPrefix.forEach((file) => {
     try {
@@ -81,18 +83,14 @@ async function removeFilesNotInUploads(uploadDir, blogName) {
         \n Error: ${error}`);
     }
   });
-
 }
 
-// EDIT LATER
-async function removeFiles(files, imageFiles) {
+async function removeFiles(files) {
   files.forEach((file) => {
     try {
       const fileToDelete = path.join(form.uploadDir, file);
 
-      if (!imageFiles.includes(file)) {
-        fs.unlinkSync(fileToDelete);
-      }
+      fs.unlinkSync(fileToDelete);
     } catch (error) {
       throw new Error(`Error deleting files
         \n File: ${file.originalFilename} 
