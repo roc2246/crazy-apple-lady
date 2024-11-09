@@ -47,6 +47,13 @@ describe("File Mangement", () => {
     );
   });
 
+  it("should throw an error uploading files", async () => {
+    const initImgs = "TERST";
+    const results = utilities.uploadFiles(initImgs, mockPath.server, blogName);
+
+    await expect(results).rejects.toThrowError();
+  });
+
   it(`should update images of ${blogName}`, async () => {
     formidable.createFiles(mockImgs.updatePost, mockPath.local);
     const initImgs = formidable.setImgsToUpload(mockPath.local);
@@ -69,10 +76,26 @@ describe("File Mangement", () => {
     expect(uploadedImgs2).not.toContain(`${blogName}-file3.txt`);
   });
 
+  it("should throw an error removing files not in uploads", async () => {
+    const initImgs = "TERST";
+    const results = utilities.removeFilesNotInUploads(initImgs, mockPath.server,"", blogName);
+
+    await expect(results).rejects.toThrowError();
+  });
+
+
   it(`should remove all ${blogName} files`, async () => {
     const uploadedImgsBefore = fs.readdirSync(mockPath.server);
     await utilities.removeFiles(uploadedImgsBefore, mockPath.server, blogName);
     const uploadedImgsAfter = fs.readdirSync(mockPath.server);
     expect(uploadedImgsAfter.length).toBe(0);
   });
+
+  it("should throw an error removing files", async () => {
+    const initImgs = "TERST";
+    const results = utilities.removeFiles(initImgs, mockPath.server, blogName);
+
+    await expect(results).rejects.toThrowError();
+  });
+
 });
