@@ -66,16 +66,16 @@ async function uploadFiles(files, uploadDir, blogName) {
   });
 }
 
-async function removeFilesNotInUploads(uploadDir, blogName) {
+async function removeFilesNotInUploads(uploads,serverPath, localImgs, blogName) {
   const regex = new RegExp(`^${blogName}-`);
-  const filesWPrefix = fs
-    .readdirSync(uploadDir)
-    .map((file) => regex.test(file));
+  const filesWPrefix = uploads.filter((file) => regex.test(file));
+  const localFiles = localImgs.map(img => `${blogName}-${img}`)
 
   filesWPrefix.forEach((file) => {
     try {
-      if (!uploadDir.includes(file)) {
-        fs.unlinkSync(path.join(uploadDir, file));
+      if (!localFiles.includes(file)) {
+        const pathToDelete = path.join(serverPath, file)
+        fs.unlinkSync(pathToDelete);
       }
     } catch (error) {
       throw new Error(`Error saving one or more files 

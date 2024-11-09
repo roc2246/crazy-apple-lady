@@ -15,55 +15,71 @@ const path = require("path");
 let initImgs;
 // LET FOR IMAGES NOT IN IMAGES READY FOR UPLOAD
 
-const mockImagesPath = path.join(__dirname, "mockImgs");
-const mockUploadsPath = path.join(__dirname, "mockUploads");
+const mockPath = {
+  local: path.join(__dirname, "mockImgs"),
+  server: path.join(__dirname, "mockUploads")
+}
 
-const uploadsToCreate = ["file1.txt", "file2.txt", "file3.txt"];
-const modsToCreate = ["file1.txt", "file8.txt"];
+const mockImgs = {
+  newPost: ["file1.txt", "file2.txt", "file3.txt"],
+  updatePost: ["file1.txt", "file8.txt"]
+}
 
 const blogName = "tstBlog";
 
 beforeAll(() => {
   // Create a folder asynchronously
-  formidable.newDirectory(mockImagesPath);
-  formidable.newDirectory(mockUploadsPath);
+  formidable.newDirectory(mockPath.local);
+  formidable.newDirectory(mockPath.server);
 
   // Iterate through the array and create each file
-  formidable.createFiles(uploadsToCreate, mockImagesPath);
-  initImgs = fs.readdirSync(mockImagesPath);
+  formidable.createFiles(mockImgs.newPost, mockPath.local);
+  initImgs = fs.readdirSync(mockPath.local);
   initImgs = initImgs.map((img) => {
     return {
       originalFileName: img,
-      filepath: path.join(mockImagesPath, img),
+      filepath: path.join(mockPath.local, img),
     };
   });
 });
 afterAll(() => {
-  formidable.deleteDirectory(mockImagesPath);
-  formidable.deleteDirectory(mockUploadsPath);
+  formidable.deleteDirectory(mockPath.local);
+  formidable.deleteDirectory(mockPath.server);
 });
 
 describe("File Mangement", () => {
   it("should upload files", async () => {
-    await utilities.uploadFiles(initImgs, mockUploadsPath, blogName);
-    const mockUploads = fs.readdirSync(mockUploadsPath);
+    await utilities.uploadFiles(initImgs, mockPath.server, blogName);
+    const mockUploads = fs.readdirSync(mockPath.server);
 
-    expect(mockUploads.length).toBe(uploadsToCreate.length);
+    expect(mockUploads.length).toBe(mockImgs.newPost.length);
     initImgs.forEach(({ originalFileName }) =>
       expect(mockUploads).toContain(`${blogName}-${originalFileName}`)
     );
   });
 
-  //   IT SHOULD ALTER IMAGES OF MOCK BLOG
-  //     CREATE NEW FILES,
-  //       SOME THAT ARE IN UPLOADS
-  //       AND SOME THAT ARENT
-  //     SET INITIAL IMAGES FOR FILES JUST CREATED
-  //     CONST FOR UPLOADED FILES
-  //     SET VALUE FOR UPLOADS NOT IN INITIAL IMAGES
-  //     EXPECT DIRECOTRY CONTAINING FILES JUST CREATED TO CONTAIN FILES NOT IN UPLOADS
-  //     CONST FOR DELETING FILES NOT IN UPLOADS
-  //     EXPECT UPLOADS DIRECTORY TO NOT INCLUDE FILES ORIGINALLY CREATED BUT NO LONGER IN UPLOADS
+  it(`should update images of ${blogName}`, async () => {
+    formidable.createFiles(mockImgs.updatePost, mockPath.local);
+    initImgs = fs.readdirSync(mockPath.local);
+    initImgs = initImgs.map((img) => {
+      return {
+        originalFileName: img,
+        filepath: path.join(mockPath.local, img),
+      };
+    });
+    const localImgs = fs.readdirSync(mockPath.local)
+
+    await utilities.uploadFiles(initImgs, mockPath.server, blogName);
+
+    const uploadedImgs = fs.readdirSync(mockPath.server)
+    await utilities.removeFilesNotInUploads(uploadedImgs, mockPath.server,localImgs, blogName);
+    expect(uploadedImgs).toContain(`${blogName}-file1.txt`);
+    expect(uploadedImgs).toContain(`${blogName}-file8.txt`);
+
+    const uploadedImgs2 = fs.readdirSync(mockPath.server)
+    expect(uploadedImgs2).not.toContain(`${blogName}-file2.txt`);
+    expect(uploadedImgs2).not.toContain(`${blogName}-file3.txt`);
+  });
 
   //   IT SHOULD REMOVE FILES
   //     CONST FOR DELETING ALL IMAGES
