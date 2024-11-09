@@ -63,18 +63,13 @@ async function uploadFiles(localFiles, uploadDir, blogName) {
   });
 }
 
-async function removeFiles(
-  uploads,
-  serverPath,
-  blogName,
-  localImgs = [],
-) {
+async function removeFiles(uploads, serverPath, blogName, localImgs = []) {
   const regex = new RegExp(`^${blogName}-`);
   const blogImgs = uploads.filter((file) => regex.test(file));
   const localFiles = localImgs.map((img) => `${blogName}-${img}`);
 
   blogImgs.forEach((file) => {
-  const bool = localImgs.length > 0 ? !localFiles.includes(file) : file
+    const bool = localImgs.length > 0 ? !localFiles.includes(file) : file;
     try {
       if (bool) {
         const pathToDelete = path.join(serverPath, file);
