@@ -66,15 +66,20 @@ async function uploadFiles(files, uploadDir, blogName) {
   });
 }
 
-async function removeFilesNotInUploads(uploads,serverPath, localImgs, blogName) {
+async function removeFilesNotInUploads(
+  uploads,
+  serverPath,
+  localImgs,
+  blogName
+) {
   const regex = new RegExp(`^${blogName}-`);
   const filesWPrefix = uploads.filter((file) => regex.test(file));
-  const localFiles = localImgs.map(img => `${blogName}-${img}`)
+  const localFiles = localImgs.map((img) => `${blogName}-${img}`);
 
   filesWPrefix.forEach((file) => {
     try {
       if (!localFiles.includes(file)) {
-        const pathToDelete = path.join(serverPath, file)
+        const pathToDelete = path.join(serverPath, file);
         fs.unlinkSync(pathToDelete);
       }
     } catch (error) {
@@ -85,12 +90,14 @@ async function removeFilesNotInUploads(uploads,serverPath, localImgs, blogName) 
   });
 }
 
-async function removeFiles(files) {
+async function removeFiles(files, serverPath, blogName) {
   files.forEach((file) => {
     try {
-      const fileToDelete = path.join(form.uploadDir, file);
-
-      fs.unlinkSync(fileToDelete);
+      const fileToDelete = path.join(serverPath, file);
+      const regex = new RegExp(`^${blogName}-`);
+      if (regex.test(file)) {
+        fs.unlinkSync(fileToDelete);
+      }
     } catch (error) {
       throw new Error(`Error deleting files
         \n File: ${file.originalFilename} 
