@@ -65,8 +65,8 @@ describe("File Mangement", () => {
     await utilities.removeFilesNotInUploads(
       uploadedImgs,
       mockPath.server,
+      blogName,
       localImgs,
-      blogName
     );
     expect(uploadedImgs).toContain(`${blogName}-file1.txt`);
     expect(uploadedImgs).toContain(`${blogName}-file8.txt`);

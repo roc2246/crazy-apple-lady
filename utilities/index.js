@@ -66,12 +66,15 @@ async function uploadFiles(localFiles, uploadDir, blogName) {
 async function removeFilesNotInUploads(
   uploads,
   serverPath,
-  localImgs,
-  blogName
+  blogName,
+  localImgs
 ) {
   const regex = new RegExp(`^${blogName}-`);
   const blogImgs = uploads.filter((file) => regex.test(file));
-  const localFiles = localImgs.map((img) => `${blogName}-${img}`);
+  const localFiles =
+    localImgs.length > 0
+      ? localImgs.map((img) => `${blogName}-${img}`)
+      : blogImgs;
 
   blogImgs.forEach((file) => {
     try {
@@ -87,14 +90,14 @@ async function removeFilesNotInUploads(
   });
 }
 
-async function removeFiles(serverImgs, serverPath, blogName) {
-  serverImgs.forEach((file) => {
+async function removeFiles(uploads, serverPath, blogName) {
+  const regex = new RegExp(`^${blogName}-`);
+  const blogImgs = uploads.filter((file) => regex.test(file));
+
+  blogImgs.forEach((file) => {
     try {
-      const fileToDelete = path.join(serverPath, file);
-      const regex = new RegExp(`^${blogName}-`);
-      if (regex.test(file)) {
-        fs.unlinkSync(fileToDelete);
-      }
+      const pathToDelete = path.join(serverPath, file);
+      fs.unlinkSync(pathToDelete);
     } catch (error) {
       throw new Error(`Error deleting files
         \n File: ${file.originalFilename} 
