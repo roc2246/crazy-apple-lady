@@ -12,9 +12,7 @@ import * as formidable from "../mocks/formidable.js";
 const fs = require("fs");
 const path = require("path");
 
-let initImgs;
-// LET FOR IMAGES NOT IN IMAGES READY FOR UPLOAD
-
+let initImgs
 const mockPath = {
   local: path.join(__dirname, "mockImgs"),
   server: path.join(__dirname, "mockUploads")
@@ -34,13 +32,7 @@ beforeAll(() => {
 
   // Iterate through the array and create each file
   formidable.createFiles(mockImgs.newPost, mockPath.local);
-  initImgs = fs.readdirSync(mockPath.local);
-  initImgs = initImgs.map((img) => {
-    return {
-      originalFileName: img,
-      filepath: path.join(mockPath.local, img),
-    };
-  });
+  initImgs = formidable.setImgsToUpload(mockPath.local)
 });
 afterAll(() => {
   formidable.deleteDirectory(mockPath.local);
@@ -60,13 +52,7 @@ describe("File Mangement", () => {
 
   it(`should update images of ${blogName}`, async () => {
     formidable.createFiles(mockImgs.updatePost, mockPath.local);
-    initImgs = fs.readdirSync(mockPath.local);
-    initImgs = initImgs.map((img) => {
-      return {
-        originalFileName: img,
-        filepath: path.join(mockPath.local, img),
-      };
-    });
+    initImgs = formidable.setImgsToUpload(mockPath.local)
     const localImgs = fs.readdirSync(mockPath.local)
 
     await utilities.uploadFiles(initImgs, mockPath.server, blogName);
