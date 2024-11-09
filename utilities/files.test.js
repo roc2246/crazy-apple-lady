@@ -62,7 +62,7 @@ describe("File Mangement", () => {
     await utilities.uploadFiles(initImgs, mockPath.server, blogName);
 
     const uploadedImgs = fs.readdirSync(mockPath.server);
-    await utilities.removeFilesNotInUploads(
+    await utilities.removeFiles(
       uploadedImgs,
       mockPath.server,
       blogName,
@@ -78,7 +78,7 @@ describe("File Mangement", () => {
 
   it("should throw an error removing files not in uploads", async () => {
     const initImgs = "TERST";
-    const results = utilities.removeFilesNotInUploads(initImgs, mockPath.server,"", blogName);
+    const results = utilities.removeFiles(initImgs, mockPath.server,"", blogName);
 
     await expect(results).rejects.toThrowError();
   });
