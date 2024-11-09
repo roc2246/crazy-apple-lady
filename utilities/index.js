@@ -39,18 +39,15 @@ function newForm(
   library = new formidable.IncomingForm(),
   dir = "views/images"
 ) {
-  // CREATE NEW FORM OBJECT
   const form = library();
-
-  // SET PARAMETERS FOR FILES TO UPLOAD
   form.uploadDir = path.join(path.resolve(__dirname, ".."), `${dir}`);
   form.keepExtensions = true;
 
   return form;
 }
 
-async function uploadFiles(files, uploadDir, blogName) {
-  files.forEach((file) => {
+async function uploadFiles(localFiles, uploadDir, blogName) {
+  localFiles.forEach((file) => {
     try {
       const fileToUpload = `${blogName}-${file.originalFileName}`;
       const oldPath = file.filepath;
@@ -73,10 +70,10 @@ async function removeFilesNotInUploads(
   blogName
 ) {
   const regex = new RegExp(`^${blogName}-`);
-  const filesWPrefix = uploads.filter((file) => regex.test(file));
+  const blogImgs = uploads.filter((file) => regex.test(file));
   const localFiles = localImgs.map((img) => `${blogName}-${img}`);
 
-  filesWPrefix.forEach((file) => {
+  blogImgs.forEach((file) => {
     try {
       if (!localFiles.includes(file)) {
         const pathToDelete = path.join(serverPath, file);
@@ -90,8 +87,8 @@ async function removeFilesNotInUploads(
   });
 }
 
-async function removeFiles(files, serverPath, blogName) {
-  files.forEach((file) => {
+async function removeFiles(serverImgs, serverPath, blogName) {
+  serverImgs.forEach((file) => {
     try {
       const fileToDelete = path.join(serverPath, file);
       const regex = new RegExp(`^${blogName}-`);
