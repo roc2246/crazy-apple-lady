@@ -35,6 +35,7 @@ beforeAll(() => {
     body: {
       id: 0,
       type: "plantyLife",
+      blogName: blogName,
       title: "TEST",
       image: ["test.jpg"],
       content: "TEST",
@@ -56,7 +57,11 @@ afterAll(() => {
 
 describe("Image management", () => {
   it("should manage http requests for uploading files", async () => {
-    
+    formidable.createFiles(mockImgs.newPost, mockPath.local)
+    const form = formidable.mockForm(mockPath.local)
+
+    await controllers.manageImageUpload(req, res, form)
+    expect(res.status).toHaveBeenCalledWith(200);
   });
 
   // it("should modify specific images", async () => {

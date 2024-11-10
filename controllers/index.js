@@ -172,6 +172,29 @@ async function manageGetPosts(req, res, model = models.postRetrieval) {
 }
 
 // IMAGE MANAGEMENT
+async function manageFiles(req, res, callbacks, form = utilities.newForm()) {
+  form.parse(req, async (err, fields, files) => {
+    // THROW ERROR
+    if (err) {
+      res.status(400).end(`Error parsing form data: ${err}`);
+      return;
+    }
+
+    // CHECK IF FILES ARE IN AN ARRAY
+    const imageFiles = Array.isArray(files.images)
+      ? files.images
+      : [files.images];
+
+    // MOVE FILES TO UPLOAD DIR
+    try {
+      await callbacks.forEach(cb => cb());
+      res.status(200).end("All files uploaded");
+    } catch (error) {
+      res.status(500).end(error);
+    }
+  });
+}
+
 async function manageImageUpload(req, res, form = utilities.newForm()) {
   form.parse(req, async (err, fields, files) => {
     // THROW ERROR
@@ -187,7 +210,7 @@ async function manageImageUpload(req, res, form = utilities.newForm()) {
 
     // MOVE FILES TO UPLOAD DIR
     try {
-      await utilities.uploadFiles(imageFiles, form.uploadDir);
+      await utilities.uploadFiles(imageFiles, form.uploadDir, req.body.blogName);
       res.status(200).end("All files uploaded");
     } catch (error) {
       res.status(500).end(error);
@@ -218,7 +241,7 @@ async function modifyImages(req, res, form = utilities.newForm()) {
 
     // removes images not in modifiedImages
     try {
-      await utilities.removeFiles(fields.name, imageFiles);
+      await utilities.removeFiles(fields.name, imageFiles, req.body.blogName);
       res.status(200).end("All files deleted");
     } catch (error) {
       res.status(500).end("Error deleting fileds");
@@ -276,6 +299,7 @@ module.exports = {
   manageGetPostNames,
   manageGetPost,
   manageGetPosts,
+  manageFiles,
   manageImageUpload,
   modifyImages,
   manageDeleteImages,
