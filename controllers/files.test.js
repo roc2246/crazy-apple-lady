@@ -64,14 +64,13 @@ describe("Image management", () => {
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
-  // it("should modify specific images", async () => {
-  //   formidable.createFiles(modsToCreate, mockImagesPath);
-  //   await controllers.modifyImages(req, res, formObj);
-  //   fs.readdirSync(mockUploadsPath, (err, files) => {
-  //     expect(files).not.toContain("file2.txt");
-  //     expect(files).toContain("file8.txt");
-  //   });
-  // });
+  it("should modify specific images", async () => {
+    formidable.createFiles(mockImgs.updatePost, mockPath.local);
+    const form = formidable.mockForm(mockPath.local)
+    await controllers.modifyImages(req, res, form);
+    expect(res.status).toHaveBeenCalledWith(200);
+
+  });
 
   // it("should delete images", async () => {
   //   await controllers.manageDeleteImages(req, res,
