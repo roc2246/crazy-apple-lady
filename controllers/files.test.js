@@ -58,7 +58,7 @@ afterAll(() => {
 describe("Image management", () => {
   it("should manage http requests for uploading files", async () => {
     formidable.createFiles(mockImgs.newPost, mockPath.local)
-    const form = formidable.mockForm(mockPath.local)
+    const form = utilities.newForm(formidable.mockForm, "controllers/mockUploads")
 
     await controllers.manageImageUpload(req, res, form)
     expect(res.status).toHaveBeenCalledWith(200);
@@ -66,7 +66,7 @@ describe("Image management", () => {
 
   it("should modify specific images", async () => {
     formidable.createFiles(mockImgs.updatePost, mockPath.local);
-    const form = formidable.mockForm(mockPath.local)
+    const form = utilities.newForm(formidable.mockForm, "controllers/mockUploads")
     await controllers.modifyImages(req, res, form);
     expect(res.status).toHaveBeenCalledWith(200);
 

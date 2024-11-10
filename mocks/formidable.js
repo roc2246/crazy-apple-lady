@@ -10,9 +10,8 @@ import {
 const fs = require("fs");
 const path = require("path");
 
-export const mockForm = vi.fn((uploadDir) => {
+export const mockForm = vi.fn(() => {
   return {
-    uploadDir,
     parse: (req, cb) => {
       const err = null;
       const fields = { name: [] };

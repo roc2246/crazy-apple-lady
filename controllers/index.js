@@ -218,7 +218,7 @@ async function modifyImages(req, res, form = utilities.newForm()) {
 
     // removes images not in modifiedImages
     try {
-      await utilities.removeFiles(fields.name, imageFiles, req.body.blogName, form.uploadDir);
+      await utilities.removeFiles(fields.name, imageFiles, req.body.blogName/* , form.uploadDir */);
       res.status(200).end("All files deleted");
     } catch (error) {
       res.status(500).end("Error deleting fileds");
