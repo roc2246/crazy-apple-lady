@@ -14,7 +14,7 @@ export const mockForm = vi.fn(() => {
   return {
     parse: (req, cb) => {
       const err = null;
-      const fields = { name: [] };
+      const fields = { };
       const files = { images: [] };
 
       const mockImagesPath = path.join(
@@ -25,11 +25,10 @@ export const mockForm = vi.fn(() => {
 
       for (let x = 0; x < imgsToUpload.length; x++) {
         const obj = {
-          filepath: path.join(mockImagesPath, imgsToUpload[x]),
+          filepath: "TEMP",
           originalFilename: imgsToUpload[x],
         };
         files.images.push(obj);
-        fields.name.push(obj.originalFilename);
       }
 
       cb(err, fields, files);
