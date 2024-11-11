@@ -18,8 +18,8 @@ let req;
 let res;
 
 const mockPath = {
-  local: path.join(__dirname, "mockImgs"),
-  server: path.join(__dirname, "mockUploads"),
+  local: path.join(path.dirname(__dirname), "mockDir/mockImgs"),
+  server: path.join(path.dirname(__dirname), "mockDir/mockUploads"),
 };
 
 const mockImgs = {
@@ -47,18 +47,18 @@ beforeAll(() => {
     send: vi.fn(),
     end: vi.fn(),
   };
+  formidable.newDirectory("mockDir")
   formidable.newDirectory(mockPath.local);
   formidable.newDirectory(mockPath.server);
 });
 afterAll(() => {
-  formidable.deleteDirectory(mockPath.local);
-  formidable.deleteDirectory(mockPath.server);
+  formidable.deleteDirectory("mockDir")
 });
 
 describe("Image management", () => {
   it("should manage http requests for uploading files", async () => {
     formidable.createFiles(mockImgs.newPost, mockPath.local)
-    const form = utilities.newForm(formidable.mockForm, "controllers/mockUploads")
+    const form = utilities.newForm(formidable.mockForm)
 
     await controllers.manageImageUpload(req, res, form)
     expect(res.status).toHaveBeenCalledWith(200);
@@ -66,7 +66,7 @@ describe("Image management", () => {
 
   it("should modify specific images", async () => {
     formidable.createFiles(mockImgs.updatePost, mockPath.local);
-    const form = utilities.newForm(formidable.mockForm, "controllers/mockUploads")
+    const form = utilities.newForm(formidable.mockForm)
     await controllers.modifyImages(req, res, form);
     expect(res.status).toHaveBeenCalledWith(200);
 

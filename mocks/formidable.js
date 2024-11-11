@@ -19,7 +19,7 @@ export const mockForm = vi.fn(() => {
 
       const mockImagesPath = path.join(
         path.dirname(__dirname),
-        "controllers/mockImgs"
+        "mockDir/mockImgs"
       );
       const imgsToUpload = fs.readdirSync(mockImagesPath);
 

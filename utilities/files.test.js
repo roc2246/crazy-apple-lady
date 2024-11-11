@@ -13,8 +13,8 @@ const fs = require("fs");
 const path = require("path");
 
 const mockPath = {
-  local: path.join(__dirname, "mockImgs"),
-  server: path.join(__dirname, "mockUploads"),
+  local: path.join(path.dirname(__dirname), "mockDir/mockImgs"),
+  server: path.join(path.dirname(__dirname), "mockDir/mockUploads"),
 };
 
 const mockImgs = {
@@ -25,12 +25,12 @@ const mockImgs = {
 const blogName = "tstBlog";
 
 beforeAll(() => {
+  formidable.newDirectory("mockDir")
   formidable.newDirectory(mockPath.local);
   formidable.newDirectory(mockPath.server);
 });
 afterAll(() => {
-  formidable.deleteDirectory(mockPath.local);
-  formidable.deleteDirectory(mockPath.server);
+  formidable.deleteDirectory("mockDir")
 });
 
 describe("File Mangement", () => {
