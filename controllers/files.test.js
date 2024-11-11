@@ -17,15 +17,6 @@ const path = require("path");
 let req;
 let res;
 
-const mockPath = {
-  local: path.join(path.dirname(__dirname), "mockDir/mockImgs"),
-  server: path.join(path.dirname(__dirname), "mockDir/mockUploads"),
-};
-
-const mockImgs = {
-  newPost: ["file1.txt", "file2.txt", "file3.txt"],
-  updatePost: ["file1.txt", "file8.txt"],
-};
 
 const blogName = "tstBlog";
 
@@ -48,8 +39,8 @@ beforeAll(() => {
     end: vi.fn(),
   };
   formidable.newDirectory("mockDir")
-  formidable.newDirectory(mockPath.local);
-  formidable.newDirectory(mockPath.server);
+  formidable.newDirectory(formidable.mockPath.local);
+  formidable.newDirectory(formidable.mockPath.server);
 });
 afterAll(() => {
   formidable.deleteDirectory("mockDir")
@@ -57,7 +48,7 @@ afterAll(() => {
 
 describe("Image management", () => {
   it("should manage http requests for uploading files", async () => {
-    formidable.createFiles(mockImgs.newPost, mockPath.local)
+    formidable.createFiles(formidable.mockImgs.newPost, formidable.mockPath.local)
     const form = utilities.newForm(formidable.mockForm)
 
     await controllers.manageImageUpload(req, res, form)
@@ -65,7 +56,7 @@ describe("Image management", () => {
   });
 
   it("should modify specific images", async () => {
-    formidable.createFiles(mockImgs.updatePost, mockPath.local);
+    formidable.createFiles(formidable.mockImgs.updatePost, formidable.mockPath.local);
     const form = utilities.newForm(formidable.mockForm)
     await controllers.modifyImages(req, res, form);
     expect(res.status).toHaveBeenCalledWith(200);

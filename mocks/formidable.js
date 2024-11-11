@@ -37,6 +37,17 @@ export const mockForm = vi.fn(() => {
   };
 });
 
+export const mockPath = {
+  local: path.join(path.dirname(__dirname), "mockDir/mockImgs"),
+  server: path.join(path.dirname(__dirname), "mockDir/mockUploads"),
+};
+
+export const mockImgs = {
+  newPost: ["file1.txt", "file2.txt", "file3.txt"],
+  updatePost: ["file1.txt", "file8.txt"],
+};
+
+
 export function newDirectory(directory) {
   fs.mkdir(directory, { recursive: true }, (err) => {});
 }

@@ -12,22 +12,13 @@ import * as formidable from "../mocks/formidable.js";
 const fs = require("fs");
 const path = require("path");
 
-const mockPath = {
-  local: path.join(path.dirname(__dirname), "mockDir/mockImgs"),
-  server: path.join(path.dirname(__dirname), "mockDir/mockUploads"),
-};
-
-const mockImgs = {
-  newPost: ["file1.txt", "file2.txt", "file3.txt"],
-  updatePost: ["file1.txt", "file8.txt"],
-};
 
 const blogName = "tstBlog";
 
 beforeAll(() => {
   formidable.newDirectory("mockDir")
-  formidable.newDirectory(mockPath.local);
-  formidable.newDirectory(mockPath.server);
+  formidable.newDirectory(formidable.mockPath.local);
+  formidable.newDirectory(formidable.mockPath.server);
 });
 afterAll(() => {
   formidable.deleteDirectory("mockDir")
@@ -35,13 +26,13 @@ afterAll(() => {
 
 describe("File Mangement", () => {
   it("should upload files", async () => {
-    formidable.createFiles(mockImgs.newPost, mockPath.local);
-    const initImgs = formidable.setImgsToUpload(mockPath.local);
-    await utilities.uploadFiles(initImgs, mockPath.server, blogName);
+    formidable.createFiles(formidable.mockImgs.newPost, formidable.mockPath.local);
+    const initImgs = formidable.setImgsToUpload(formidable.mockPath.local);
+    await utilities.uploadFiles(initImgs, formidable.mockPath.server, blogName);
 
-    const mockUploads = fs.readdirSync(mockPath.server);
+    const mockUploads = fs.readdirSync(formidable.mockPath.server);
 
-    expect(mockUploads.length).toBe(mockImgs.newPost.length);
+    expect(mockUploads.length).toBe(formidable.mockImgs.newPost.length);
     initImgs.forEach(({ originalFileName }) =>
       expect(mockUploads).toContain(`${blogName}-${originalFileName}`)
     );
@@ -49,51 +40,51 @@ describe("File Mangement", () => {
 
   it("should throw an error uploading files", async () => {
     const initImgs = "TERST";
-    const results = utilities.uploadFiles(initImgs, mockPath.server, blogName);
+    const results = utilities.uploadFiles(initImgs, formidable.mockPath.server, blogName);
 
     await expect(results).rejects.toThrowError();
   });
 
   it(`should update images of ${blogName}`, async () => {
-    formidable.createFiles(mockImgs.updatePost, mockPath.local);
-    const initImgs = formidable.setImgsToUpload(mockPath.local);
-    const localImgs = fs.readdirSync(mockPath.local);
+    formidable.createFiles(formidable.mockImgs.updatePost, formidable.mockPath.local);
+    const initImgs = formidable.setImgsToUpload(formidable.mockPath.local);
+    const localImgs = fs.readdirSync(formidable.mockPath.local);
 
-    await utilities.uploadFiles(initImgs, mockPath.server, blogName);
+    await utilities.uploadFiles(initImgs, formidable.mockPath.server, blogName);
 
-    const uploadedImgs = fs.readdirSync(mockPath.server);
+    const uploadedImgs = fs.readdirSync(formidable.mockPath.server);
     await utilities.removeFiles(
       uploadedImgs,
-      mockPath.server,
+      formidable.mockPath.server,
       blogName,
       localImgs,
     );
     expect(uploadedImgs).toContain(`${blogName}-file1.txt`);
     expect(uploadedImgs).toContain(`${blogName}-file8.txt`);
 
-    const uploadedImgs2 = fs.readdirSync(mockPath.server);
+    const uploadedImgs2 = fs.readdirSync(formidable.mockPath.server);
     expect(uploadedImgs2).not.toContain(`${blogName}-file2.txt`);
     expect(uploadedImgs2).not.toContain(`${blogName}-file3.txt`);
   });
 
   it("should throw an error removing files not in uploads", async () => {
     const initImgs = "TERST";
-    const results = utilities.removeFiles(initImgs, mockPath.server,"", blogName);
+    const results = utilities.removeFiles(initImgs, formidable.mockPath.server,"", blogName);
 
     await expect(results).rejects.toThrowError();
   });
 
 
   it(`should remove all ${blogName} files`, async () => {
-    const uploadedImgsBefore = fs.readdirSync(mockPath.server);
-    await utilities.removeFiles(uploadedImgsBefore, mockPath.server, blogName);
-    const uploadedImgsAfter = fs.readdirSync(mockPath.server);
+    const uploadedImgsBefore = fs.readdirSync(formidable.mockPath.server);
+    await utilities.removeFiles(uploadedImgsBefore, formidable.mockPath.server, blogName);
+    const uploadedImgsAfter = fs.readdirSync(formidable.mockPath.server);
     expect(uploadedImgsAfter.length).toBe(0);
   });
 
   it("should throw an error removing files", async () => {
     const initImgs = "TERST";
-    const results = utilities.removeFiles(initImgs, mockPath.server, blogName);
+    const results = utilities.removeFiles(initImgs, formidable.mockPath.server, blogName);
 
     await expect(results).rejects.toThrowError();
   });
