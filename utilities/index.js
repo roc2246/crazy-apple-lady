@@ -46,9 +46,9 @@ function newForm(
   return form;
 }
 
-async function uploadFiles(localFiles, uploadDir, blogName) {
+async function uploadFiles(tempFiles, uploadDir, blogName) {
   const uploadDirSet = new Set(uploadDir)
-  localFiles.forEach((file) => {
+  tempFiles.forEach((file) => {
     try {
       const fileToUpload = `${blogName}-${file.originalFileName}`;
       const oldPath = file.filepath;
@@ -67,11 +67,11 @@ async function uploadFiles(localFiles, uploadDir, blogName) {
 async function removeFiles(uploads, serverPath, blogName, localImgs = []) {
   const regex = new RegExp(`^${blogName}-`);
   const blogImgs = uploads.filter((file) => regex.test(file));
-  const localFiles = localImgs.map((img) => `${blogName}-${img}`);
-  const localFilesSet = new Set(localFiles)
+  const tempFiles = localImgs.map((img) => `${blogName}-${img}`);
+  const tempFilesSet = new Set(tempFiles)
 
   blogImgs.forEach((file) => {
-    const bool = localImgs.length > 0 ? !localFilesSet.has(file) : file;
+    const bool = localImgs.length > 0 ? !tempFilesSet.has(file) : file;
     try {
       if (bool) {
         const pathToDelete = path.join(serverPath, file);
