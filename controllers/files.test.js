@@ -19,6 +19,7 @@ let res;
 
 
 const blogName = "tstBlog";
+const form = utilities.newForm(formidable.mockForm, "mockDir/mockUploads")
 
 beforeAll(() => {
   // Reset req and res before each test
@@ -49,15 +50,12 @@ afterAll(() => {
 describe("Image management", () => {
   it("should manage http requests for uploading files", async () => {
     formidable.createFiles(formidable.mockImgs.newPost, formidable.mockPath.local)
-    const form = utilities.newForm(formidable.mockForm)
-
     await controllers.manageImageUpload(req, res, form)
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
   it("should modify specific images", async () => {
     formidable.createFiles(formidable.mockImgs.updatePost, formidable.mockPath.local);
-    const form = utilities.newForm(formidable.mockForm)
     await controllers.modifyImages(req, res, form);
     expect(res.status).toHaveBeenCalledWith(200);
 
