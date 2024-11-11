@@ -1,44 +1,10 @@
-import {
-  vi,
-  describe,
-  it,
-  expect,
-  beforeEach,
-  beforeAll,
-  afterAll,
-} from "vitest";
+import { vi } from "vitest";
 const fs = require("fs");
 const path = require("path");
 
-export const mockForm = vi.fn(() => {
-  return {
-    parse: (req, cb) => {
-      const err = null;
-      const fields = { };
-      const files = { images: [] };
-
-      const mockImagesPath = path.join(
-        path.dirname(__dirname),
-        "mockDir/mockImgs"
-      );
-      const imgsToUpload = fs.readdirSync(mockImagesPath);
-
-      for (let x = 0; x < imgsToUpload.length; x++) {
-        const obj = {
-          filepath: "TEMP",
-          originalFilename: imgsToUpload[x],
-        };
-        files.images.push(obj);
-      }
-
-      cb(err, fields, files);
-    },
-  };
-});
-
 export const mockPath = {
-  local: path.join(path.dirname(__dirname), "mockDir/mockImgs"),
-  server: path.join(path.dirname(__dirname), "mockDir/mockUploads"),
+  temp: path.join(path.dirname(__dirname), "mockDir/temp"),
+  server: path.join(path.dirname(__dirname), "mockDir/server"),
 };
 
 export const mockImgs = {
@@ -46,6 +12,27 @@ export const mockImgs = {
   updatePost: ["file1.txt", "file8.txt"],
 };
 
+export const mockForm = vi.fn(() => {
+  return {
+    parse: (req, cb) => {
+      const err = null;
+      const fields = {};
+      const files = { images: [] };
+
+      const imgsToUpload = fs.readdirSync(mockPath.temp);
+
+      imgsToUpload.forEach((img) => {
+        const obj = {
+          filepath: path.join(mockImgs.temp, img),
+          originalFilename: img,
+        };
+        files.images.push(obj);
+      });
+
+      cb(err, fields, files);
+    },
+  };
+});
 
 export function newDirectory(directory) {
   fs.mkdir(directory, { recursive: true }, (err) => {});
@@ -67,8 +54,8 @@ export function setImgsToUpload(localDir) {
   initImgs = fs.readdirSync(localDir);
   initImgs = initImgs.map((img) => {
     return {
+      filepath: path.join(mockPath.temp, img),
       originalFileName: img,
-      filepath: path.join(localDir, img),
     };
   });
   return initImgs;
