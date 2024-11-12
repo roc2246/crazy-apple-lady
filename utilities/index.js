@@ -46,14 +46,33 @@ function newForm(
   return form;
 }
 
-async function uploadFiles(tempFiles, uploadDir, blogName) {
-  const uploadDirSet = new Set(uploadDir)
+function validateArg(arg, dataType) {
+  const isInvalid = {
+    string: dataType === "string" && (typeof arg !== "string" || arg.trim().length === 0),
+    object: dataType === "object" && (!arg || (Array.isArray(arg) && arg.length === 0))
+  };
+
+  if (isInvalid[dataType] || typeof arg !== dataType) {
+    throw new Error(`Please make sure ${arg} is a valid ${dataType}`);
+  }
+}
+
+
+
+async function uploadFiles(tempFiles, uploadDir, tag) {
+  validateArg(tempFiles, "object")
+  validateArg(uploadDir, "string")
+  validateArg(tag, "string")
+  
+  const uploadFiles = fs.readdirSync(uploadDir)
+  const uploadFilesSet = new Set(uploadFiles)
+
   tempFiles.forEach((file) => {
     try {
-      const fileToUpload = `${blogName}-${file.originalFileName}`;
+      const fileToUpload = `${tag}-${file.originalFileName}`;
       const oldPath = file.filepath;
       const newPath = path.join(uploadDir, fileToUpload);
-      if (!uploadDirSet.has(fileToUpload)) {
+      if (!uploadFilesSet.has(fileToUpload)) {
         fs.renameSync(oldPath, newPath);
       }
     } catch (error) {
@@ -64,10 +83,10 @@ async function uploadFiles(tempFiles, uploadDir, blogName) {
   });
 }
 
-async function removeFiles(uploads, serverPath, blogName, localImgs = []) {
-  const regex = new RegExp(`^${blogName}-`);
+async function removeFiles(uploads, serverPath, tag, localImgs = []) {
+  const regex = new RegExp(`^${tag}-`);
   const blogImgs = uploads.filter((file) => regex.test(file));
-  const tempFiles = localImgs.map((img) => `${blogName}-${img}`);
+  const tempFiles = localImgs.map((img) => `${tag}-${img}`);
   const tempFilesSet = new Set(tempFiles)
 
   blogImgs.forEach((file) => {
