@@ -10,6 +10,14 @@ export const mockPath = {
 export const mockImgs = {
   newPost: ["file1.txt", "file2.txt", "file3.txt"],
   updatePost: ["file1.txt", "file8.txt"],
+  deletePost: [
+    "file1.txt",
+    "file2.txt",
+    "file3.txt",
+    "file4.txt",
+    "file5.txt",
+    "file6.txt",
+  ],
 };
 
 export const mockForm = vi.fn(() => {
