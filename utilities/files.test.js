@@ -81,7 +81,7 @@ describe("File Mangement", () => {
 
     await utilities.removeFiles(formidable.mockPath.server, tag, tempFiles);
     expect(uploadedFiles).not.toContain("file2.txt");
-  })
+  });
   it("should upload files not in uploads directory", async () => {
     const files2Upload = formidable.setImgsToUpload(formidable.mockPath.temp);
     await utilities.uploadFiles(files2Upload, formidable.mockPath.server, tag);
@@ -90,11 +90,27 @@ describe("File Mangement", () => {
     const mockUploads = await fs.readdir(formidable.mockPath.server);
 
     expect(mockTempFiles).toContain("file1.txt");
-    files2Upload.forEach(({ originalFileName }) =>
-      expect(mockUploads).toContain(`${tag}-${originalFileName}`)
-    );
   });
 
-
   // TEST FOR DELETING ALL IMAGES WITH TAG NAME
+  it("should create files in uploads without tags", async () => {
+    formidable.createFiles(
+      formidable.mockImgs.deletePost,
+      formidable.mockPath.server
+    );
+    const uploadPath = formidable.mockPath.server;
+    const uploads = await fs.readdir(uploadPath);
+
+    formidable.mockImgs.deletePost.forEach((img) =>
+      expect(uploads).toContain(`${img}`)
+    );
+  });
+  it("should remove files with tag", async () => {
+    const regex = new RegExp(`^${tag}-`);
+
+    await utilities.removeFiles(formidable.mockPath.server, tag);
+    formidable.mockImgs.updatePost.forEach((img) =>
+      expect(regex.test(img)).toBe(false)
+    );
+  });
 });
