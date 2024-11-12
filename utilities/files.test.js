@@ -37,9 +37,12 @@ describe("File Mangement", () => {
     const files2Upload = formidable.setImgsToUpload(formidable.mockPath.temp);
     await utilities.uploadFiles(files2Upload, formidable.mockPath.server, tag);
 
+    const mockTempFiles = await fs.readdir(formidable.mockPath.temp)
     const mockUploads = await fs.readdir(formidable.mockPath.server);
+    const createdImgNames = formidable.mockImgs.newPost
 
-    expect(mockUploads.length).toBe(formidable.mockImgs.newPost.length);
+    expect(mockUploads.length).toBe(createdImgNames.length);
+    expect(mockTempFiles.length).toBe(0);
     files2Upload.forEach(({ originalFileName }) =>
       expect(mockUploads).toContain(`${tag}-${originalFileName}`)
     );
