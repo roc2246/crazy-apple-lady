@@ -75,6 +75,13 @@ describe("File Mangement", () => {
     createdImgNames.forEach((name) => expect(mockTempFiles).toContain(name));
   });
 
+  it("should remove files not in temp files", async () => {
+    const tempFiles = await fs.readdir(formidable.mockPath.temp);
+    const uploadedFiles = await fs.readdir(formidable.mockPath.server);
+
+    await utilities.removeFiles(formidable.mockPath.server, tag, tempFiles);
+    expect(uploadedFiles).not.toContain("file2.txt");
+  })
   it("should upload files not in uploads directory", async () => {
     const files2Upload = formidable.setImgsToUpload(formidable.mockPath.temp);
     await utilities.uploadFiles(files2Upload, formidable.mockPath.server, tag);
@@ -82,37 +89,11 @@ describe("File Mangement", () => {
     const mockTempFiles = await fs.readdir(formidable.mockPath.temp);
     const mockUploads = await fs.readdir(formidable.mockPath.server);
 
-    expect(mockTempFiles).toContain('file1.txt')
+    expect(mockTempFiles).toContain("file1.txt");
     files2Upload.forEach(({ originalFileName }) =>
       expect(mockUploads).toContain(`${tag}-${originalFileName}`)
     );
   });
-  
-  // it("should remove files not in temp files", async()=>{
-
-  // })
-
-  // it(`should update images of ${tag}`, async () => {
-  //
-  //   const initImgs = formidable.setImgsToUpload(formidable.mockPath.temp);
-  //   const localImgs = fs.readdirSync(formidable.mockPath.temp);
-
-  //   await utilities.uploadFiles(initImgs, formidable.mockPath.server, tag);
-
-  //   const uploadedImgs = fs.readdirSync(formidable.mockPath.server);
-  //   await utilities.removeFiles(
-  //     uploadedImgs,
-  //     formidable.mockPath.server,
-  //     tag,
-  //     localImgs,
-  //   );
-  //   expect(uploadedImgs).toContain(`${tag}-file1.txt`);
-  //   expect(uploadedImgs).toContain(`${tag}-file8.txt`);
-
-  //   const uploadedImgs2 = fs.readdirSync(formidable.mockPath.server);
-  //   expect(uploadedImgs2).not.toContain(`${tag}-file2.txt`);
-  //   expect(uploadedImgs2).not.toContain(`${tag}-file3.txt`);
-  // });
 
   // it("should throw an error removing files not in uploads", async () => {
   //   const initImgs = "TERST";

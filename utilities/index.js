@@ -54,6 +54,7 @@ function validateArg(arg, dataType) {
     object:
       dataType === "object" &&
       (!arg || (Array.isArray(arg) && arg.length === 0)),
+    array: dataType === "array" && !Array.isArray(arg),
   };
 
   if (isInvalid[dataType]) {
@@ -62,7 +63,7 @@ function validateArg(arg, dataType) {
 }
 
 async function uploadFiles(tempFiles, uploadDir, tag) {
-  validateArg(tempFiles, "object");
+  validateArg(tempFiles, "array");
   validateArg(uploadDir, "string");
   validateArg(tag, "string");
 
@@ -87,25 +88,28 @@ async function uploadFiles(tempFiles, uploadDir, tag) {
   }
 }
 
-async function removeFiles(uploads, serverPath, tag, localImgs = []) {
-  const regex = new RegExp(`^${tag}-`);
-  const blogImgs = uploads.filter((file) => regex.test(file));
-  const tempFiles = localImgs.map((img) => `${tag}-${img}`);
-  const tempFilesSet = new Set(tempFiles);
+async function removeFiles(uploadDir, tag, tempFiles = []) {
+  validateArg(uploadDir, "string");
+  validateArg(tag, "string");
+  validateArg(tempFiles, "array");
 
-  blogImgs.forEach((file) => {
-    const bool = localImgs.length > 0 ? !tempFilesSet.has(file) : file;
+  const uploadFiles = await fs.readdir(uploadDir);
+  const tempFileSet = new Set(tempFiles.map((file) => `${tag}-${file}`));
+
+  for (const file of uploadFiles) {
+    const bool =
+      tempFiles.length > 0 ? !tempFileSet.has(file) : `${tag}-${file}`;
     try {
       if (bool) {
-        const pathToDelete = path.join(serverPath, file);
-        fs.unlinkSync(pathToDelete);
+        const pathToDelete = path.join(uploadDir, file);
+        await fs.unlink(pathToDelete);
       }
     } catch (error) {
       throw new Error(`Error saving one or more files 
         \n File: ${file.originalFilename} 
         \n Error: ${error}`);
     }
-  });
+  }
 }
 
 module.exports = {

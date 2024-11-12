@@ -208,14 +208,7 @@ async function modifyImages(req, res, form = utilities.newForm()) {
       ? files.images
       : [files.images];
 
-    // Adds images not in uploadedImgs
-    try {
-      await utilities.uploadFiles(imageFiles, form.uploadDir, req.body.blogName);
-      res.status(200).end("All files uploaded");
-    } catch (error) {
-      res.status(500).end(error);
-    }
-
+   
     // removes images not in modifiedImages
     try {
       await utilities.removeFiles(fields.name, imageFiles, req.body.blogName/* , form.uploadDir */);
@@ -223,6 +216,15 @@ async function modifyImages(req, res, form = utilities.newForm()) {
     } catch (error) {
       res.status(500).end("Error deleting fileds");
     }
+
+     // Adds images not in uploadedImgs
+     try {
+      await utilities.uploadFiles(imageFiles, form.uploadDir, req.body.blogName);
+      res.status(200).end("All files uploaded");
+    } catch (error) {
+      res.status(500).end(error);
+    }
+
   });
 }
 
