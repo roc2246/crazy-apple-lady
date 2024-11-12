@@ -50,13 +50,8 @@ export function createFiles(files, directory) {
 }
 
 export function setImgsToUpload(localDir) {
-  let initImgs;
-  initImgs = fs.readdirSync(localDir);
-  initImgs = initImgs.map((img) => {
-    return {
-      filepath: path.join(mockPath.temp, img),
-      originalFileName: img,
-    };
-  });
-  return initImgs;
+  return fs.readdirSync(localDir).map((img) => ({
+    filepath: path.join(mockPath.temp, img),
+    originalFileName: img,
+  }));
 }
