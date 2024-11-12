@@ -95,19 +95,18 @@ async function removeFiles(uploadDir, tag, tempFiles = []) {
 
   const uploadFiles = await fs.readdir(uploadDir);
   const tempFileSet = new Set(tempFiles.map((file) => `${tag}-${file}`));
+  const regex = new RegExp(`^${tag}-`);
+  
+  const filesToDelete = uploadFiles.filter((file) => 
+    tempFiles.length > 0 ? !tempFileSet.has(file) : regex.test(file)
+  );
 
-  for (const file of uploadFiles) {
-    const bool =
-      tempFiles.length > 0 ? !tempFileSet.has(file) : `${tag}-${file}`;
+  for (const file of filesToDelete) {
     try {
-      if (bool) {
-        const pathToDelete = path.join(uploadDir, file);
-        await fs.unlink(pathToDelete);
-      }
+      const pathToDelete = path.join(uploadDir, file);
+      await fs.unlink(pathToDelete);
     } catch (error) {
-      throw new Error(`Error saving one or more files 
-        \n File: ${file.originalFilename} 
-        \n Error: ${error}`);
+      throw new Error(`Error deleting file: ${file} \n Error: ${error}`);
     }
   }
 }

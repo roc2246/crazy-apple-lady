@@ -95,24 +95,6 @@ describe("File Mangement", () => {
     );
   });
 
-  // it("should throw an error removing files not in uploads", async () => {
-  //   const initImgs = "TERST";
-  //   const results = utilities.removeFiles(initImgs, formidable.mockPath.server,"", tag);
 
-  //   await expect(results).rejects.toThrowError();
-  // });
-
-  // it(`should remove all ${tag} files`, async () => {
-  //   const uploadedImgsBefore = fs.readdirSync(formidable.mockPath.server);
-  //   await utilities.removeFiles(uploadedImgsBefore, formidable.mockPath.server, tag);
-  //   const uploadedImgsAfter = fs.readdirSync(formidable.mockPath.server);
-  //   expect(uploadedImgsAfter.length).toBe(0);
-  // });
-
-  // it("should throw an error removing files", async () => {
-  //   const initImgs = "TERST";
-  //   const results = utilities.removeFiles(initImgs, formidable.mockPath.server, tag);
-
-  //   await expect(results).rejects.toThrowError();
-  // });
+  // TEST FOR DELETING ALL IMAGES WITH TAG NAME
 });
