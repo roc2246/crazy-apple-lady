@@ -62,6 +62,7 @@ describe("File Mangement", () => {
     await expect(results).rejects.toThrowError();
   });
 
+  // UPDATING IMGS
   it("should create images for the following tests", async () => {
     formidable.createFiles(
       formidable.mockImgs.updatePost,
@@ -73,6 +74,23 @@ describe("File Mangement", () => {
     expect(mockTempFiles.length).toBe(createdImgNames.length);
     createdImgNames.forEach((name) => expect(mockTempFiles).toContain(name));
   });
+
+  it("should upload files not in uploads directory", async () => {
+    const files2Upload = formidable.setImgsToUpload(formidable.mockPath.temp);
+    await utilities.uploadFiles(files2Upload, formidable.mockPath.server, tag);
+
+    const mockTempFiles = await fs.readdir(formidable.mockPath.temp);
+    const mockUploads = await fs.readdir(formidable.mockPath.server);
+
+    expect(mockTempFiles).toContain('file1.txt')
+    files2Upload.forEach(({ originalFileName }) =>
+      expect(mockUploads).toContain(`${tag}-${originalFileName}`)
+    );
+  });
+  
+  // it("should remove files not in temp files", async()=>{
+
+  // })
 
   // it(`should update images of ${tag}`, async () => {
   //
