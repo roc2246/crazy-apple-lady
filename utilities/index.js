@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const fs = require("fs");
+const fs = require("fs").promises;
 const path = require("path");
 const formidable = require("formidable");
 
@@ -48,46 +48,50 @@ function newForm(
 
 function validateArg(arg, dataType) {
   const isInvalid = {
-    string: dataType === "string" && (typeof arg !== "string" || arg.trim().length === 0),
-    object: dataType === "object" && (!arg || (Array.isArray(arg) && arg.length === 0))
+    string:
+      dataType === "string" &&
+      (typeof arg !== "string" || arg.trim().length === 0),
+    object:
+      dataType === "object" &&
+      (!arg || (Array.isArray(arg) && arg.length === 0)),
   };
 
-  if (isInvalid[dataType] || typeof arg !== dataType) {
-    throw new Error(`Please make sure ${arg} is a valid ${dataType}`);
+  if (isInvalid[dataType]) {
+    throw new Error(`Expected a valid ${dataType}, but received ${arg}`);
   }
 }
 
-
-
 async function uploadFiles(tempFiles, uploadDir, tag) {
-  validateArg(tempFiles, "object")
-  validateArg(uploadDir, "string")
-  validateArg(tag, "string")
-  
-  const uploadFiles = fs.readdirSync(uploadDir)
-  const uploadFilesSet = new Set(uploadFiles)
+  validateArg(tempFiles, "object");
+  validateArg(uploadDir, "string");
+  validateArg(tag, "string");
 
-  tempFiles.forEach((file) => {
+  const uploadFiles = await fs.readdir(uploadDir);
+  const uploadFilesSet = new Set(uploadFiles);
+
+  for (const file of tempFiles) {
     try {
       const fileToUpload = `${tag}-${file.originalFileName}`;
       const oldPath = file.filepath;
       const newPath = path.join(uploadDir, fileToUpload);
+
       if (!uploadFilesSet.has(fileToUpload)) {
-        fs.renameSync(oldPath, newPath);
+        await fs.rename(oldPath, newPath);
       }
     } catch (error) {
-      throw new Error(`Error saving one or more files 
-      \n File: ${file.originalFilename} 
-      \n Error: ${error}`);
+      throw new Error(
+        `Error saving file ${file.originalFileName} from ${file.filepath} to ${newPath}. 
+        \nError: ${error.message}`
+      );
     }
-  });
+  }
 }
 
 async function removeFiles(uploads, serverPath, tag, localImgs = []) {
   const regex = new RegExp(`^${tag}-`);
   const blogImgs = uploads.filter((file) => regex.test(file));
   const tempFiles = localImgs.map((img) => `${tag}-${img}`);
-  const tempFilesSet = new Set(tempFiles)
+  const tempFilesSet = new Set(tempFiles);
 
   blogImgs.forEach((file) => {
     const bool = localImgs.length > 0 ? !tempFilesSet.has(file) : file;
