@@ -75,14 +75,13 @@ async function uploadFiles(tempFiles, uploadDir, tag) {
       const fileToUpload = `${tag}-${file.originalFilename}`;
       const oldPath = file.filepath;
       const newPath = path.join(uploadDir, fileToUpload);
-      console.log(fileToUpload)
 
       if (!uploadFilesSet.has(fileToUpload)) {
         await fs.rename(oldPath, newPath);
       }
     } catch (error) {
       throw new Error(
-        `Error saving file ${file.originalFileName} from ${file.filepath} to ${newPath}. 
+        `Error saving file ${file.originalFilename} from ${file.filepath} to ${newPath}. 
         \nError: ${error.message}`
       );
     }

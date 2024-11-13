@@ -48,8 +48,8 @@ describe("File Mangement", () => {
 
     expect(mockUploads.length).toBe(createdImgNames.length);
     expect(mockTempFiles.length).toBe(0);
-    files2Upload.forEach(({ originalFileName }) =>
-      expect(mockUploads).toContain(`${tag}-${originalFileName}`)
+    files2Upload.forEach(({ originalFilename }) =>
+      expect(mockUploads).toContain(`${tag}-${originalFilename}`)
     );
   });
 
