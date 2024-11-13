@@ -188,11 +188,12 @@ async function manageImageUpload(req, res, form = utilities.newForm()) {
     // MOVE FILES TO UPLOAD DIR
     try {
       await utilities.uploadFiles(tempFiles, form.uploadDir, req.body.tag);
-      res.status(200).end("All files uploaded");
     } catch (error) {
       res.status(500).end(error);
     }
   });
+  res.status(200).end("All files uploaded");
+
 }
 
 async function modifyImages(req, res, form = utilities.newForm()) {

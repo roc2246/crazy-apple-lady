@@ -51,7 +51,7 @@ describe("Image management", () => {
   it("should manage http requests for uploading files", async () => {
     formidable.createFiles(formidable.mockImgs.newPost, formidable.mockPath.temp)
     await controllers.manageImageUpload(req, res, form)
-    // expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.status).toHaveBeenCalledWith(200);
   });
 
   // it("should modify specific images", async () => {
