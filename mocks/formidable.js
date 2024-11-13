@@ -43,6 +43,13 @@ export const mockForm = vi.fn(() => {
   };
 });
 
+export const formFail = {
+  parse: vi.fn((req, callback) => {
+    const err = new Error("Form parsing error");
+    callback(err, {}, {}); // Trigger error callback
+  }),
+};
+
 export async function newDirectory(directory) {
   await fsPromise.mkdir(directory, { recursive: true });
 }
