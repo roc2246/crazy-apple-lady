@@ -181,13 +181,13 @@ async function manageImageUpload(req, res, form = utilities.newForm()) {
     }
 
     // CHECK IF FILES ARE IN AN ARRAY
-    const imageFiles = Array.isArray(files.images)
+    const tempFiles = Array.isArray(files.images)
       ? files.images
       : [files.images];
 
     // MOVE FILES TO UPLOAD DIR
     try {
-      await utilities.uploadFiles(imageFiles, form.uploadDir, req.body.blogName);
+      await utilities.uploadFiles(tempFiles, form.uploadDir, req.body.tag);
       res.status(200).end("All files uploaded");
     } catch (error) {
       res.status(500).end(error);

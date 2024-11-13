@@ -19,7 +19,7 @@ let res;
 
 
 const tag = "tstBlog";
-const form = utilities.newForm(formidable.mockForm, "mockDir/mockUploads")
+const form = utilities.newForm(formidable.mockForm, "mockDir/server")
 
 beforeAll(() => {
   // Reset req and res before each test
@@ -49,9 +49,9 @@ afterAll(() => {
 
 describe("Image management", () => {
   it("should manage http requests for uploading files", async () => {
-  //   formidable.createFiles(formidable.mockImgs.newPost, formidable.mockPath.temp)
-  //   await controllers.manageImageUpload(req, res, form)
-  //   expect(res.status).toHaveBeenCalledWith(200);
+    formidable.createFiles(formidable.mockImgs.newPost, formidable.mockPath.temp)
+    await controllers.manageImageUpload(req, res, form)
+    // expect(res.status).toHaveBeenCalledWith(200);
   });
 
   // it("should modify specific images", async () => {

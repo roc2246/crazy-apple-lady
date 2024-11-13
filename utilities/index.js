@@ -72,9 +72,10 @@ async function uploadFiles(tempFiles, uploadDir, tag) {
 
   for (const file of tempFiles) {
     try {
-      const fileToUpload = `${tag}-${file.originalFileName}`;
+      const fileToUpload = `${tag}-${file.originalFilename}`;
       const oldPath = file.filepath;
       const newPath = path.join(uploadDir, fileToUpload);
+      console.log(fileToUpload)
 
       if (!uploadFilesSet.has(fileToUpload)) {
         await fs.rename(oldPath, newPath);

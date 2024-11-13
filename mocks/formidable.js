@@ -31,7 +31,7 @@ export const mockForm = vi.fn(() => {
 
       imgsToUpload.forEach((img) => {
         const obj = {
-          filepath: path.join(mockImgs.temp, img),
+          filepath: path.join(mockPath.temp, img),
           originalFilename: img,
         };
         files.images.push(obj);
@@ -60,6 +60,6 @@ export function createFiles(files, directory) {
 export function setImgsToUpload(localDir) {
   return fs.readdirSync(localDir).map((img) => ({
     filepath: path.join(mockPath.temp, img),
-    originalFileName: img,
+    originalFilename: img,
   }));
 }
