@@ -47,16 +47,14 @@ describe("Upload images", () => {
   });
 
   it("should throw an error uploading files", async () => {
-    const initImgs = "TERST";
     const serverPath = formidable.mockPath.server;
-
-    const results = utilities.uploadFiles(initImgs, serverPath, tag);
+    const results = utilities.uploadFiles("FAIL", serverPath, tag);
 
     await expect(results).rejects.toThrowError();
   });
-})
+});
 
-describe("Update images", ()=>{
+describe("Update images", () => {
   it("should create images for the following tests", async () => {
     const updatedImgs = formidable.mockImgs.updatePost;
     const tempPath = formidable.mockPath.temp;
@@ -77,6 +75,11 @@ describe("Update images", ()=>{
     await utilities.removeFiles(formidable.mockPath.server, tag, tempFiles);
     expect(uploadedFiles).not.toContain("file2.txt");
   });
+  it("should throw error removing files not in temp files", async () => {
+    const tempFiles = await fs.readdir(formidable.mockPath.temp);
+    const results = utilities.removeFiles("FAIL", tag, tempFiles);
+    await expect(results).rejects.toThrowError();
+  });
   it("should upload files not in uploads directory", async () => {
     const tempPath = formidable.mockPath.temp;
     const serverPath = formidable.mockPath.server;
@@ -90,10 +93,16 @@ describe("Update images", ()=>{
     expect(mockTempFiles).toContain("file1.txt");
     expect(mockUploads).toContain(`${tag}-file8.txt`);
   });
+  it("should throw error uploading files not in uploads directory", async () => {
+    const serverPath = formidable.mockPath.server;
+    const results = utilities.uploadFiles("FAIL", serverPath, tag);
+
+    await expect(results).rejects.toThrowError();
+  });
 });
 
-describe("Remove images", ()=>{
-   it("should create files in uploads without tags", async () => {
+describe("Remove images", () => {
+  it("should create files in uploads without tags", async () => {
     const deleteImgs = formidable.mockImgs.deletePost;
     const serverPath = formidable.mockPath.server;
 
@@ -111,4 +120,8 @@ describe("Remove images", ()=>{
     await utilities.removeFiles(serverPath, tag);
     updatedImgs.forEach((img) => expect(regex.test(img)).toBe(false));
   });
-})
+  it("should throw error removing files with tag", async () => {
+    const results = utilities.removeFiles("FAIL", tag);
+    await expect(results).rejects.toThrowError();
+  });
+});
