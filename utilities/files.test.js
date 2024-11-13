@@ -1,16 +1,7 @@
-import {
-  vi,
-  describe,
-  it,
-  expect,
-  beforeEach,
-  beforeAll,
-  afterAll,
-} from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import * as utilities from "./index.js";
 import * as formidable from "../mocks/formidable.js";
 const fs = require("fs").promises;
-const path = require("path");
 
 const tag = "tstBlog";
 
@@ -20,12 +11,12 @@ beforeAll(async () => {
   await formidable.newDirectory(formidable.mockPath.server);
 });
 afterAll(async () => {
-  await formidable.deleteDirectory(formidable.mockPath.temp)
-  await formidable.deleteDirectory(formidable.mockPath.server)
+  await formidable.deleteDirectory(formidable.mockPath.temp);
+  await formidable.deleteDirectory(formidable.mockPath.server);
   await formidable.deleteDirectory("mockDir");
 });
 
-describe("File Mangement", () => {
+describe("Upload images", () => {
   it("should create initial files to upload", async () => {
     const newPostImgs = formidable.mockImgs.newPost;
     const tempPath = formidable.mockPath.temp;
@@ -63,8 +54,9 @@ describe("File Mangement", () => {
 
     await expect(results).rejects.toThrowError();
   });
+})
 
-  // UPDATING IMGS
+describe("Update images", ()=>{
   it("should create images for the following tests", async () => {
     const updatedImgs = formidable.mockImgs.updatePost;
     const tempPath = formidable.mockPath.temp;
@@ -98,9 +90,10 @@ describe("File Mangement", () => {
     expect(mockTempFiles).toContain("file1.txt");
     expect(mockUploads).toContain(`${tag}-file8.txt`);
   });
+});
 
-  // TEST FOR DELETING ALL IMAGES WITH TAG NAME
-  it("should create files in uploads without tags", async () => {
+describe("Remove images", ()=>{
+   it("should create files in uploads without tags", async () => {
     const deleteImgs = formidable.mockImgs.deletePost;
     const serverPath = formidable.mockPath.server;
 
@@ -118,4 +111,4 @@ describe("File Mangement", () => {
     await utilities.removeFiles(serverPath, tag);
     updatedImgs.forEach((img) => expect(regex.test(img)).toBe(false));
   });
-});
+})

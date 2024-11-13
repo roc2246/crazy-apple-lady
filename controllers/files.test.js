@@ -48,7 +48,7 @@ afterAll(async () => {
   await formidable.deleteDirectory("mockDir");
 });
 
-describe("Image management", () => {
+describe("Upload images", ()=>{
   it("should call 200 after uploading images", async () => {
     formidable.createFiles(
       formidable.mockImgs.newPost,
@@ -57,7 +57,9 @@ describe("Image management", () => {
     await controllers.manageImageUpload(req, res, form);
     expect(res.status).toHaveBeenCalledWith(200);
   });
+})
 
+describe("Update Images", ()=>{
   it("should call 200 after modifying images", async () => {
     formidable.createFiles(
       formidable.mockImgs.updatePost,
@@ -66,9 +68,11 @@ describe("Image management", () => {
     await controllers.modifyImages(req, res, form);
     expect(res.status).toHaveBeenCalledWith(200);
   });
+})
 
+describe("Delete images", ()=>{
   it("sshould call 200 after deleting images", async () => {
     await controllers.manageDeleteImages(req, res, form);
     expect(res.status).toHaveBeenCalledWith(200);
   });
-});
+})
