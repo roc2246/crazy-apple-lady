@@ -17,11 +17,10 @@ const path = require("path");
 let req;
 let res;
 
-
 const tag = "tstBlog";
-const form = utilities.newForm(formidable.mockForm, "mockDir/server")
+const form = utilities.newForm(formidable.mockForm, "mockDir/server");
 
-beforeAll(async() => {
+beforeAll(async () => {
   // Reset req and res before each test
   req = {
     body: {
@@ -39,37 +38,37 @@ beforeAll(async() => {
     send: vi.fn(),
     end: vi.fn(),
   };
-  await formidable.newDirectory("mockDir")
+  await formidable.newDirectory("mockDir");
   await formidable.newDirectory(formidable.mockPath.temp);
   await formidable.newDirectory(formidable.mockPath.server);
 });
 afterAll(async () => {
-  await formidable.deleteDirectory(formidable.mockPath.temp)
-  await formidable.deleteDirectory(formidable.mockPath.server)
-  await formidable.deleteDirectory("mockDir")
+  await formidable.deleteDirectory(formidable.mockPath.temp);
+  await formidable.deleteDirectory(formidable.mockPath.server);
+  await formidable.deleteDirectory("mockDir");
 });
 
 describe("Image management", () => {
   it("should manage http requests for uploading files", async () => {
-    formidable.createFiles(formidable.mockImgs.newPost, formidable.mockPath.temp)
-    await controllers.manageImageUpload(req, res, form)
+    formidable.createFiles(
+      formidable.mockImgs.newPost,
+      formidable.mockPath.temp
+    );
+    await controllers.manageImageUpload(req, res, form);
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
   it("should modify specific images", async () => {
-    formidable.createFiles(formidable.mockImgs.updatePost, formidable.mockPath.temp);
+    formidable.createFiles(
+      formidable.mockImgs.updatePost,
+      formidable.mockPath.temp
+    );
     await controllers.modifyImages(req, res, form);
     expect(res.status).toHaveBeenCalledWith(200);
-
   });
 
-  // it("should delete images", async () => {
-  //   await controllers.manageDeleteImages(req, res,
-  //     ["file1.txt", "file8.txt"],
-  //     "controllers/mockUploads"
-  //   );
-  //   fs.readdir(mockUploadsPath, (err, files) => {
-  //     expect(files.length).toBe(0);
-  //   });
-  // });
+  it("should delete images", async () => {
+    await controllers.manageDeleteImages(req, res, form);
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
 });

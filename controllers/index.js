@@ -205,14 +205,14 @@ async function modifyImages(req, res, form = utilities.newForm()) {
     }
 
     // CHECK IF FILES ARE IN AN ARRAY
-    const imageFiles = Array.isArray(files.images)
+    const tempFiles = Array.isArray(files.images)
       ? files.images
       : [files.images];
 
    
     // removes images not in modifiedImages
     try {
-      await utilities.removeFiles(fields.name, imageFiles, req.body.blogName/* , form.uploadDir */);
+      await utilities.removeFiles(form.uploadDir, req.body.tag, tempFiles);
       res.status(200).end("All files deleted");
     } catch (error) {
       res.status(500).end("Error deleting fileds");
@@ -220,7 +220,7 @@ async function modifyImages(req, res, form = utilities.newForm()) {
 
      // Adds images not in uploadedImgs
      try {
-      await utilities.uploadFiles(imageFiles, form.uploadDir, req.body.blogName);
+      await utilities.uploadFiles(tempFiles, form.uploadDir, req.body.blogName);
       res.status(200).end("All files uploaded");
     } catch (error) {
       res.status(500).end(error);
@@ -229,19 +229,29 @@ async function modifyImages(req, res, form = utilities.newForm()) {
   });
 }
 
-async function manageDeleteImages(req, res, imgs, dir = "views/images") {
-  const imgsToDelete = imgs;
-  const uploadsPath = path.join(path.resolve(__dirname, ".."), `${dir}`);
+async function manageDeleteImages(req, res, form = utilities.newForm()) {
+  form.parse(req, async (err, fields, files) => {
+    // THROW ERROR
+    if (err) {
+      res.status(400).end(`Error parsing form data: ${err}`);
+      return;
+    }
 
-  imgsToDelete.forEach((file) => {
-    const fileToDelete = path.join(uploadsPath, file);
-    fs.unlink(fileToDelete, (err) => {
-      if (err) {
-        res.status(500).end("Error deleting fileds");
-      }
-    });
+    // CHECK IF FILES ARE IN AN ARRAY
+    const tempFiles = Array.isArray(files.images)
+      ? files.images
+      : [files.images];
+
+   
+    // removes images not in modifiedImages
+    try {
+      await utilities.removeFiles(form.uploadDir, req.body.tag, tempFiles);
+      res.status(200).end("All files deleted");
+    } catch (error) {
+      res.status(500).end("Error deleting fileds");
+    }
+
   });
-  res.status(200).end("All files uploaded");
 }
 
 // TEMPLATE MANAGEMENT
