@@ -56,12 +56,12 @@ describe("Image management", () => {
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
-  // it("should modify specific images", async () => {
-  //   formidable.createFiles(formidable.mockImgs.updatePost, formidable.mockPath.temp);
-  //   await controllers.modifyImages(req, res, form);
-  //   expect(res.status).toHaveBeenCalledWith(200);
+  it("should modify specific images", async () => {
+    formidable.createFiles(formidable.mockImgs.updatePost, formidable.mockPath.temp);
+    await controllers.modifyImages(req, res, form);
+    expect(res.status).toHaveBeenCalledWith(200);
 
-  // });
+  });
 
   // it("should delete images", async () => {
   //   await controllers.manageDeleteImages(req, res,
