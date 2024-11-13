@@ -57,6 +57,11 @@ describe("Upload images", ()=>{
     await controllers.manageImageUpload(req, res, form);
     expect(res.status).toHaveBeenCalledWith(200);
   });
+
+  it("should call 500 after uploading images", async () => {
+    await controllers.manageImageUpload("FAIL", res, form);
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
 })
 
 describe("Update Images", ()=>{
@@ -68,11 +73,23 @@ describe("Update Images", ()=>{
     await controllers.modifyImages(req, res, form);
     expect(res.status).toHaveBeenCalledWith(200);
   });
+  it("should call 500 after modifying images", async () => {
+    formidable.createFiles(
+      formidable.mockImgs.updatePost,
+      formidable.mockPath.temp
+    );
+    await controllers.modifyImages("FAIL", res, form);
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
 })
 
 describe("Delete images", ()=>{
-  it("sshould call 200 after deleting images", async () => {
+  it("should call 200 after deleting images", async () => {
     await controllers.manageDeleteImages(req, res, form);
     expect(res.status).toHaveBeenCalledWith(200);
+  });
+  it("should call 500 after deleting images", async () => {
+    await controllers.manageDeleteImages("FAIL", res, form);
+    expect(res.status).toHaveBeenCalledWith(500);
   });
 })
