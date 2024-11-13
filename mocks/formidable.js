@@ -1,5 +1,6 @@
 import { vi } from "vitest";
 const fs = require("fs");
+const fsPromise = require("fs").promises
 const path = require("path");
 
 export const mockPath = {
@@ -42,12 +43,12 @@ export const mockForm = vi.fn(() => {
   };
 });
 
-export function newDirectory(directory) {
-  fs.mkdir(directory, { recursive: true }, (err) => {});
+export async function newDirectory(directory) {
+  await fsPromise.mkdir(directory, { recursive: true });
 }
 
-export function deleteDirectory(directory) {
-  fs.rm(directory, { recursive: true, force: true }, (err) => {});
+export async function deleteDirectory(directory) {
+  await fsPromise.rm(directory, { recursive: true, force: true });
 }
 
 export function createFiles(files, directory) {

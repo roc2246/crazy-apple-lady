@@ -21,7 +21,7 @@ let res;
 const tag = "tstBlog";
 const form = utilities.newForm(formidable.mockForm, "mockDir/server")
 
-beforeAll(() => {
+beforeAll(async() => {
   // Reset req and res before each test
   req = {
     body: {
@@ -39,12 +39,12 @@ beforeAll(() => {
     send: vi.fn(),
     end: vi.fn(),
   };
-  formidable.newDirectory("mockDir")
-  formidable.newDirectory(formidable.mockPath.temp);
-  formidable.newDirectory(formidable.mockPath.server);
+  await formidable.newDirectory("mockDir")
+  await formidable.newDirectory(formidable.mockPath.temp);
+  await formidable.newDirectory(formidable.mockPath.server);
 });
-afterAll(() => {
-  formidable.deleteDirectory("mockDir")
+afterAll(async () => {
+  await formidable.deleteDirectory("mockDir")
 });
 
 describe("Image management", () => {

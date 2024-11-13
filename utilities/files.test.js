@@ -14,13 +14,13 @@ const path = require("path");
 
 const tag = "tstBlog";
 
-beforeAll(() => {
-  formidable.newDirectory("mockDir");
-  formidable.newDirectory(formidable.mockPath.temp);
-  formidable.newDirectory(formidable.mockPath.server);
+beforeAll(async () => {
+  await formidable.newDirectory("mockDir");
+  await formidable.newDirectory(formidable.mockPath.temp);
+  await formidable.newDirectory(formidable.mockPath.server);
 });
-afterAll(() => {
-  formidable.deleteDirectory("mockDir");
+afterAll(async () => {
+  await formidable.deleteDirectory("mockDir");
 });
 
 describe("File Mangement", () => {
