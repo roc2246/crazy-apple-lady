@@ -1,18 +1,7 @@
-import {
-  vi,
-  describe,
-  it,
-  expect,
-  beforeEach,
-  beforeAll,
-  afterAll,
-} from "vitest";
+import { vi, describe, it, expect, beforeAll, afterAll } from "vitest";
 import * as controllers from ".";
 import * as utilities from "../utilities/index.js";
-import * as mongo from "../mocks/mongodb.js";
 import * as formidable from "../mocks/formidable.js";
-const fs = require("fs");
-const path = require("path");
 
 let req;
 let res;
@@ -81,7 +70,6 @@ describe("Update Images", () => {
     expect(res.status).toHaveBeenCalledWith(400);
   });
   it("should call 500", async () => {
-
     await controllers.modifyImages("FAIL", res, form);
     expect(res.status).toHaveBeenCalledWith(500);
   });
