@@ -44,6 +44,8 @@ beforeAll(async() => {
   await formidable.newDirectory(formidable.mockPath.server);
 });
 afterAll(async () => {
+  await formidable.deleteDirectory(formidable.mockPath.temp)
+  await formidable.deleteDirectory(formidable.mockPath.server)
   await formidable.deleteDirectory("mockDir")
 });
 
