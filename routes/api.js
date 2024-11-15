@@ -36,12 +36,16 @@ router.get("/get-posts", (req, res) => {
   controllers.manageGetPosts(req, res);
 });
 
-router.post("/upload", (req, res) => {
+router.post("/upload-images", (req, res) => {
   controllers.manageImageUpload(req, res);
 });
 
 router.put('/update-images', (req, res)=>{
   controllers.modifyImages(req, res)
+})
+
+router.delete('delete-images', (req, res) =>{
+  controllers.manageDeleteImages(req, res)
 })
 
 module.exports = router;
