@@ -12,6 +12,10 @@ router.post("/logout", (req, res) => {
   controllers.logout(req, res);
 });
 
+router.post("/new-user", (req, res)=>{
+  controllers.manageNewUser(req, res)
+})
+
 // CRUD
 router.post("/new-post", (req, res) => {
   controllers.manageNewPost(req, res);
