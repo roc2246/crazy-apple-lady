@@ -4,11 +4,15 @@ const path = require("path");
 const formidable = require("formidable");
 
 // LOGINS
-function generateRandomString(length) {
+function generateRandomString(input) {
+  if(typeof input !=="string"){
+    throw Error("Input must be string.")
+  }
+  input = input.length
   return crypto
-    .randomBytes(Math.ceil(length / 2))
+    .randomBytes(Math.ceil(input / 2))
     .toString("hex") // Convert to hexadecimal representation
-    .slice(0, length); // Trim to desired length
+    .slice(0, input); // Trim to desired length
 }
 
 // TEXT FORMATTING

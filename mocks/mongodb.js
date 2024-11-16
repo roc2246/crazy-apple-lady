@@ -3,6 +3,11 @@ import { Readable } from "stream"; // Import Readable for creating a stream
 
 export let db = [];
 
+export const mockUser = {
+  username: "testUser",
+  password: "testPassword"
+}
+
 export const mockPosts = [
   {
     _id: 21312313413,
@@ -26,7 +31,7 @@ export const mockPosts = [
 export const mockConnectToDB = vi.fn();
 
 // Create a mock for the MongoDB collection
-export const mockFindOne = vi.fn();
+export const mockFindOne = vi.fn(input => db.some(obj => obj.username === input.username));
 export const mockInsertOne = vi.fn((post) => (db = [...db, post]));
 export const mockFindOneAndUpdate = vi.fn(({ id }, update) => {
   update["$set"].id = id;

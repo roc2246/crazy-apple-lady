@@ -44,12 +44,12 @@ async function createUser(data, connection = connectToDB) {
   try {
     const { db } = await connection();
     const collection = db.collection("users");
-    const posts = new Set(await collection.find().toArray());
+    const existingUser = await collection.findOne({ username: data.username });
     const newUser = {
       username: data.username,
-      passowrd: utilities.generateRandomString(data.passowrd),
+      password: utilities.generateRandomString(data.password),
     };
-    if (!posts.has(newUser.username)) {
+    if (!existingUser) {
       await collection.insertOne(newUser);
     } else {
       throw Error("Username already taken");

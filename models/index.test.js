@@ -1,16 +1,27 @@
-import { vi, describe, it, expect } from "vitest";
+import { vi, describe, it, expect, afterAll } from "vitest";
 import {
   connectToDB,
   deletePost,
+  createUser,
   findUser,
   newPost,
   postRetrieval,
   updatePost,
 } from ".";
 import { addPTags } from "../utilities";
-import  *  as mongo from "../mocks/mongodb.js"
+import * as mongo from "../mocks/mongodb.js";
 
-
+describe("Adding new user data", () => {
+  afterAll(() => (mongo.db.length = 0));
+  it("should add new user", async () => {
+    await createUser(mongo.mockUser, mongo.mockConnectToDB);
+    expect(mongo.db.length).toBe(1);
+  });
+  it("should throw error if username already exists", async () => {
+    const result = createUser(mongo.mockUser, mongo.mockConnectToDB);
+    await expect(result).rejects.toThrowError();
+  });
+});
 describe("newPost", () => {
   const post = {
     id: 0,
@@ -22,14 +33,14 @@ describe("newPost", () => {
   it("should add new post", async () => {
     const priorLength = mongo.db.length;
     await newPost(post, mongo.mockConnectToDB);
-    const newLength = mongo.db.length
-    expect(newLength).toBeGreaterThan(priorLength);
+    const newLength = mongo.db.length;
+    await expect(newLength).toBeGreaterThan(priorLength);
   });
 
   it("should throw errors", async () => {
     await expect(newPost({}, "failedConnection")).rejects.toThrow();
     await expect(newPost({}, mongo.mockConnectToDB)).rejects.toThrow();
-  });  
+  });
 });
 
 describe("updatePost", () => {
@@ -47,7 +58,7 @@ describe("updatePost", () => {
   });
   it("should throw error", async () => {
     await expect(updatePost({}, mongo.mockConnectToDB)).rejects.toThrow();
-  });  
+  });
 });
 
 describe("deletePost", () => {
@@ -99,7 +110,7 @@ describe("retrieving post names", () => {
 
     const results = postRetrieval(match, project, mongo.mockConnectToDB);
     await expect(results).rejects.toThrow();
-  });  
+  });
 });
 
 describe("Get full post", () => {
@@ -108,21 +119,23 @@ describe("Get full post", () => {
     const project = { _id: 0 };
 
     const results = await postRetrieval(match, project, mongo.mockConnectToDB);
-    const expectedResults = [{
-      id: 0,
-      type: 'plantyLife',
-      title: 'Plant Blog Post',
-      image: [ 'plant.jpg' ],
-      content: 'This is a post about plants.'
-    }]
-    expect(results).toStrictEqual(expectedResults)
+    const expectedResults = [
+      {
+        id: 0,
+        type: "plantyLife",
+        title: "Plant Blog Post",
+        image: ["plant.jpg"],
+        content: "This is a post about plants.",
+      },
+    ];
+    expect(results).toStrictEqual(expectedResults);
   });
   it("should throw error", async () => {
-    const match = { id: 1000000};
+    const match = { id: 1000000 };
     const project = { _id: 0 };
 
     const results = postRetrieval(match, project, mongo.mockConnectToDB);
 
     await expect(results).rejects.toThrow();
-  });  
+  });
 });
