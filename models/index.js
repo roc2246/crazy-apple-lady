@@ -167,6 +167,7 @@ async function postRetrieval(
 
 module.exports = {
   connectToDB,
+  createUser,
   findUser,
   generatePostID,
   newPost,
