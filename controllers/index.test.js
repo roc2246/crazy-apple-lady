@@ -36,6 +36,24 @@ beforeAll(() => {
   };
 });
 
+describe("manageNewUser", ()=>{
+  let newUser = {
+    body: mongo.mockUser
+  }
+  it("should return a 201", async () => {
+    await controllers.manageNewUser(newUser, res, mongo.mockInsertOne);
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith({ message: "User created" });
+  });
+
+  it("should return a 401", async () => {
+    const result = controllers.manageNewUser(newUser, res, "BLA");
+    await expect(result).rejects.toThrow("Invalid Function");
+
+    expect(res.status).toHaveBeenCalledWith(409);
+  });
+})
+
 describe("manageNewPost", () => {
   it("should return a 201", async () => {
     await controllers.manageNewPost(req, res, mongo.mockInsertOne);
