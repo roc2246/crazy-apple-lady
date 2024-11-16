@@ -47,10 +47,14 @@ describe("manageNewUser", ()=>{
     expect(res.json).toHaveBeenCalledWith({ message: "User created" });
   });
 
-  it("should return a 401", async () => {
+  it("should return a 401 from an invalid function", async () => {
     const result = controllers.manageNewUser(newUser, res, "BLA");
     await expect(result).rejects.toThrow("Invalid Function");
 
+    expect(res.status).toHaveBeenCalledWith(409);
+  });
+  it("should return a 401 due to the user already in the database", async () => {
+    await controllers.manageNewUser(newUser, res, mongo.mockInsertOne);
     expect(res.status).toHaveBeenCalledWith(409);
   });
 })
