@@ -39,6 +39,27 @@ async function findUser(username, connection = connectToDB) {
   }
 }
 
+// NEW USER
+async function createUser(data, connection = connectToDB) {
+  try {
+    const { db } = await connection();
+    const collection = db.collection("users");
+    const posts = new Set(await collection.find().toArray());
+    const newUser = {
+      username: data.username,
+      passowrd: utilities.generateRandomString(data.passowrd),
+    };
+    if (!posts.has(newUser.username)) {
+      await collection.insertOne(newUser);
+    } else {
+      throw Error("Username already taken");
+    }
+  } catch (error) {
+    console.error("Error while creating user:", error);
+    throw error;
+  }
+}
+
 // UTIL
 async function generatePostID(connection = connectToDB) {
   const { db } = await connection();
@@ -108,12 +129,16 @@ async function deletePost(postID, connection = connectToDB) {
 }
 
 // Retrieve Posts
-async function postRetrieval(match, project = {_id: 0}, connection = connectToDB) {
+async function postRetrieval(
+  match,
+  project = { _id: 0 },
+  connection = connectToDB
+) {
   try {
     const { db } = await connection();
     const collection = db.collection("posts");
 
-    const params = [{ $match: match }, { $project: project}];
+    const params = [{ $match: match }, { $project: project }];
     const cursor = collection.aggregate(params);
 
     const stream = cursor.stream();
