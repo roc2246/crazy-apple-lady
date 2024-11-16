@@ -40,6 +40,7 @@ describe("manageNewUser", ()=>{
   let newUser = {
     body: mongo.mockUser
   }
+  afterAll(()=>mongo.db.length = 0)
   it("should return a 201", async () => {
     await controllers.manageNewUser(newUser, res, mongo.mockInsertOne);
     expect(res.status).toHaveBeenCalledWith(201);
