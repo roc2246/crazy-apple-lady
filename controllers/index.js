@@ -77,6 +77,18 @@ async function login(req, res) {
   }
 }
 
+async function manageNewUser(req, res, model = models.createUser) {
+  try {
+    utilities.verifyCallback(model);
+    const userData = req.body;
+    await model(userData);
+    res.status(201).json({ message: "User created" });
+  } catch (error) {
+    res.status(409).json({ message: error });
+    throw error;
+  }
+}
+
 // CREATE, UPDATE, DELETE
 async function manageNewPost(req, res, model = models.newPost) {
   try {
@@ -193,7 +205,6 @@ async function manageImageUpload(req, res, form = utilities.newForm()) {
     }
   });
   res.status(200).end("All files uploaded");
-
 }
 
 async function modifyImages(req, res, form = utilities.newForm()) {
@@ -209,7 +220,6 @@ async function modifyImages(req, res, form = utilities.newForm()) {
       ? files.images
       : [files.images];
 
-   
     // removes images not in modifiedImages
     try {
       await utilities.removeFiles(form.uploadDir, req.body.tag, tempFiles);
@@ -217,8 +227,8 @@ async function modifyImages(req, res, form = utilities.newForm()) {
       res.status(500).end("Error deleting fileds");
     }
 
-     // Adds images not in uploadedImgs
-     try {
+    // Adds images not in uploadedImgs
+    try {
       await utilities.uploadFiles(tempFiles, form.uploadDir, req.body.blogName);
     } catch (error) {
       res.status(500).end(error);
@@ -240,7 +250,6 @@ async function manageDeleteImages(req, res, form = utilities.newForm()) {
       ? files.images
       : [files.images];
 
-   
     // removes images not in modifiedImages
     try {
       await utilities.removeFiles(form.uploadDir, req.body.tag, tempFiles);
@@ -280,6 +289,7 @@ function fillTemplate(req, res, pageName, metaTitle) {
 module.exports = {
   logout,
   login,
+  manageNewUser,
   manageNewPost,
   manageUpdatePost,
   manageDeletePost,
