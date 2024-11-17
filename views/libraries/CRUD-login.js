@@ -1,6 +1,6 @@
 export async function newUser(input){
     try {
-        const response = await fetch('/new-user', {
+        const response = await fetch('/api/new-user', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

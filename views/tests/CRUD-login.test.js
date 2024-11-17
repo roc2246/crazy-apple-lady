@@ -22,7 +22,7 @@ it("should add new user to database", async()=>{
    const result = await newUser(user)
    expect(fetch).toHaveBeenCalledTimes(1); 
    expect(fetch).toHaveBeenCalledWith(
-     "/new-user", 
+     "/api/new-user", 
      {
        method: "POST",
        headers: { "Content-Type": "application/json" },
