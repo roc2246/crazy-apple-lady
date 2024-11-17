@@ -6,10 +6,10 @@ export async function createPost(input) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id: input.id || (await generatePostID()),
+        id: input.id ,
         type: input.type,
         title: input.title,
-        image: input.image.map((img) => `./images/${img}`),
+        image: input.image,
         content: input.content,
       }),
     });
