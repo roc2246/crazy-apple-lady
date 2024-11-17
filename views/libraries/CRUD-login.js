@@ -13,8 +13,8 @@ export async function newUser(input){
         if (!response.ok) {
             throw new Error(`HTTP Error: ${response.status} - ${response.statusText}`);
         }
-        const data = await response.json(); // Parse and use the response data
-        return data; // Return the data for further use
+        const data = await response.json();
+        return data; 
     } catch (error) {
         console.log(error)
         throw error
