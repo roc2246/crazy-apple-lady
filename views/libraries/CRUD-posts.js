@@ -55,3 +55,23 @@ export async function updatePost(input) {
     throw error;
   }
 }
+
+export async function deletePost(input) {
+  try {
+    const response = await fetch(`/api/delete-post?id=${input.id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error while updating post:", error);
+    throw error;
+  }
+}
