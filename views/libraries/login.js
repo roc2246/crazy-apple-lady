@@ -20,3 +20,25 @@ export async function login(input) {
       throw error;
     }
   }
+
+  export async function logout () {
+    try {
+        const response = await fetch('/api/logout', {
+          method: 'POST', 
+        });
+        console.log(response)
+    
+        if (!response.ok) {
+          throw new Error('Logout failed'); 
+        }
+    
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    }
+
+    /* 
+    REFACTOR 
+        window.location.replace('/login');
+
+    */
