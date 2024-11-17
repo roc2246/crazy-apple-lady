@@ -78,7 +78,7 @@ async function newPost(post, connection = connectToDB) {
     const collection = db.collection("posts");
 
     const newPost = {
-      id: post.id || (await generatePostID()),
+      id: post.id ? post.id : (await generatePostID()),
       type: post.type,
       title: post.title,
       image: post.image.map((img) => `./images/${img}`),
