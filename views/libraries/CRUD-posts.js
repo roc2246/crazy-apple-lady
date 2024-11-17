@@ -26,3 +26,32 @@ export async function createPost(input) {
     throw error;
   }
 }
+
+export async function updatePost(input) {
+  try {
+    const response = await fetch("/api/update-post", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: input.id ,
+        type: input.type,
+        title: input.title,
+        image: input.image,
+        content: input.content,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `HTTP Error: ${response.status} - ${response.statusText}`
+      );
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error while updating post:", error);
+    throw error;
+  }
+}
