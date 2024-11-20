@@ -144,7 +144,12 @@ async function manageGetPostNames(
     const match = { type: type };
     const project = { _id: 0, id: 1, title: 1 };
     const posts = await model(match, project);
-    if (posts.length > 0) res.status(200).json(posts);
+    
+    if (posts.length > 0) {
+      res.status(200).json(posts);
+    } else {
+      throw Error("No Posts available");
+    }
   } catch (error) {
     res.status(404).json({ message: error });
     console.log(error);
