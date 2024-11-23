@@ -84,8 +84,7 @@ async function manageNewUser(req, res, model = models.createUser) {
     await model(userData);
     res.status(201).json({ message: "User created" });
   } catch (error) {
-    res.status(409).json({ message: error });
-    throw error;
+    res.status(409).json({ message: error.toString() });
   }
 }
 
@@ -98,7 +97,6 @@ async function manageNewPost(req, res, model = models.newPost) {
     res.status(201).json({ message: "Post added" });
   } catch (error) {
     res.status(401).json({ message: error });
-    throw error;
   }
 }
 

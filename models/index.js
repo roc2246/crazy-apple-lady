@@ -52,11 +52,10 @@ async function createUser(data, connection = connectToDB) {
     if (!existingUser) {
       await collection.insertOne(newUser);
     } else {
-      throw Error("Username already taken");
+      throw new Error("Username already taken");
     }
   } catch (error) {
-    console.error("Error while creating user:", error);
-    throw error;
+    throw error
   }
 }
 
