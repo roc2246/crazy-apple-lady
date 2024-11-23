@@ -45,7 +45,7 @@ function bottom(script) {
       /></a>
     </nav>
   </footer>
-  <script src="../${script}"></script>
+  <script type="module" src="../${script}"></script>
 </body>
 </html>`;
 }

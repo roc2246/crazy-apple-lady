@@ -1,23 +1,24 @@
-import { it, vi } from "vitest";
-import { createPost, deletePost, updatePost } from "../libraries/CRUD-posts";
-import { describe } from "node:test";
+import { it, vi, describe } from "vitest";
+import * as control from "../libraries/CRUD-posts";
 
-// Mocking `fetch` globally
 global.fetch = vi.fn();
 beforeEach(() => {
   fetch.mockClear();
 });
+function mockImpl(message){
+  const mockParams = {
+    ok: true,
+    status: vi.fn(),
+    json: async () => ({ message }),
+    text: async () => "Mocked fetch response",
+  };
+  fetch.mockImplementation(async (url, options) => mockParams);
+}
+
 
 describe("createPost", () => {
-  fetch.mockImplementation(async (url, options) => {
-    return {
-      ok: true,
-      status: vi.fn(),
-      json: async () => ({ message: "Post added successfully" }),
-      text: async () => "Mocked fetch response",
-    };
-  });
   it("should create a new post", async () => {
+    mockImpl("Post added successfully")
     const post = {
       id: 0,
       type: "plantyLife",
@@ -25,27 +26,23 @@ describe("createPost", () => {
       image: ["1.jpg", "2.jpg"],
       content: "TESTING",
     };
-    const result = await createPost(post);
-    expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch).toHaveBeenCalledWith("/api/new-post", {
+    const fetchInput = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(post),
-    });
+    };
+    const url = "/api/new-post";
+    const result = await control.createPost(post);
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledWith(url, fetchInput);
     expect(result).toEqual({ message: "Post added successfully" });
   });
 });
 
 describe("updatePost", () => {
-  fetch.mockImplementation(async (url, options) => {
-    return {
-      ok: true,
-      status: vi.fn(),
-      json: async () => ({ message: "Post added successfully" }),
-      text: async () => "Mocked fetch response",
-    };
-  });
   it("should update post", async () => {
+    mockImpl("Post updated successfully" )
     const post = {
       id: 0,
       type: "plantyLife",
@@ -53,27 +50,23 @@ describe("updatePost", () => {
       image: ["1.jpg", "2.jpg"],
       content: "TESTING",
     };
-    const result = await updatePost(post);
-    expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch).toHaveBeenCalledWith("/api/update-post", {
+    const fetchInput = {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(post),
-    });
-    expect(result).toEqual({ message: "Post added successfully" });
+    };
+    const url = "/api/update-post";
+    const result = await control.updatePost(post);
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledWith(url, fetchInput);
+    expect(result).toEqual({ message: "Post updated successfully" });
   });
 });
 
 describe("deletePost", () => {
-  fetch.mockImplementation(async (url, options) => {
-    return {
-      ok: true,
-      status: vi.fn(),
-      json: async () => ({ message: "Post added successfully" }),
-      text: async () => "Mocked fetch response",
-    };
-  });
   it("should delete post", async () => {
+    mockImpl("Post deleted successfully" )
     const post = {
       id: 0,
       type: "plantyLife",
@@ -81,13 +74,15 @@ describe("deletePost", () => {
       image: ["1.jpg", "2.jpg"],
       content: "TESTING",
     };
-    const result = await deletePost(post);
-    expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch).toHaveBeenCalledWith(`/api/delete-post?id=${post.id}`, {
+    const fetchInput = {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" }
-    });
-    expect(result).toEqual({ message: "Post added successfully" });
+      headers: { "Content-Type": "application/json" },
+    };
+    const url = `/api/delete-post?id=${post.id}`;
+    const result = await control.deletePost(post);
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledWith(url, fetchInput);
+    expect(result).toEqual({ message: "Post deleted successfully" });
   });
 });
-
