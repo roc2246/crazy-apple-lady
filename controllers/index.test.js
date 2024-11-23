@@ -48,9 +48,7 @@ describe("manageNewUser", ()=>{
   });
 
   it("should return a 401 from an invalid function", async () => {
-    const result = controllers.manageNewUser(newUser, res, "BLA");
-    await expect(result).rejects.toThrow("Invalid Function");
-
+    await controllers.manageNewUser(newUser, res, "BLA");
     expect(res.status).toHaveBeenCalledWith(409);
   });
   it("should return a 401 due to the user already in the database", async () => {
@@ -67,9 +65,7 @@ describe("manageNewPost", () => {
   });
 
   it("should return a 401", async () => {
-    const result = controllers.manageNewPost(req, res, "BLA");
-    await expect(result).rejects.toThrow("Invalid Function");
-
+    await controllers.manageNewPost(req, res, "BLA");
     expect(res.status).toHaveBeenCalledWith(401);
   });
 });
