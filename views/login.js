@@ -11,6 +11,9 @@ document
         username: document.getElementById("name").value,
         password: document.getElementById("password").value,
       };
+      if(credentials.username.trim().length === 0||credentials.password.trim().length === 0 ){
+        throw new Error("Please enter a username and password")
+      }
       const results = await controllers.login(credentials);
       if (results.message === "Login succeeded") {
         window.location.replace("/dashboard");

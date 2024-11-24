@@ -12,6 +12,9 @@ document
         username: document.getElementById("name").value,
         password: document.getElementById("password").value,
       };
+      if(credentials.username.trim().length === 0||credentials.password.trim().length === 0 ){
+        throw new Error("Please enter a username and password")
+      }
       const results = await controllers.newUser(credentials);
       DOM.createMssg(results.message);
     } catch (error) {
