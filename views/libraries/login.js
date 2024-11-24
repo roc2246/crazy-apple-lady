@@ -11,11 +11,8 @@ export async function login(input) {
         }),
       });
 
-      if (response.status === 401) {
-        throw new Error("Login failed");
-      } else {
-        return response;
-      }
+      const data = await response.json();
+      return data;
     } catch (error) {
       throw error;
     }

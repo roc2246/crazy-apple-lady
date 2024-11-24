@@ -2,6 +2,8 @@ const crypto = require("crypto");
 const fs = require("fs").promises;
 const path = require("path");
 const formidable = require("formidable");
+const bcrypt = require("bcrypt");
+
 
 // LOGINS
 function generateRandomString(input) {
@@ -13,6 +15,17 @@ function generateRandomString(input) {
     .randomBytes(Math.ceil(input / 2))
     .toString("hex") // Convert to hexadecimal representation
     .slice(0, input); // Trim to desired length
+}
+
+async function hashString(inputString) {
+  try {
+    const saltRounds = 10;
+    const hashedString = await bcrypt.hash(inputString, saltRounds);
+    return hashedString;
+  } catch (error) {
+    console.error("Error hashing string:", error);
+    throw error;
+  }
 }
 
 // TEXT FORMATTING
@@ -117,6 +130,7 @@ async function removeFiles(uploadDir, tag, tempFiles = []) {
 
 module.exports = {
   generateRandomString,
+  hashString,
   addPTags,
   verifyCallback,
   newForm,

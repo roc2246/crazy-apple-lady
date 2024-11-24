@@ -13,16 +13,7 @@ require("dotenv").config({
 });
 
 // FOR GENERATING PASSWORD__________________________________
-async function hashString(inputString) {
-  try {
-    const saltRounds = 10;
-    const hashedString = await bcrypt.hash(inputString, saltRounds);
-    return hashedString;
-  } catch (error) {
-    console.error("Error hashing string:", error);
-    throw error;
-  }
-}
+
 
 // hashString(inputString)
 //   .then(hashedString => {
@@ -46,34 +37,29 @@ function logout(req, res) {
 }
 
 async function login(req, res) {
-  const sessionTimeout = 30 * 60 * 1000;
-  const userExists = await models.findUser(req.body.username);
+  try {
+    const sessionTimeout = 30 * 60 * 1000;
 
-  if (userExists) {
+    const userExists = await models.findUser(req.body.username);
+
     const passwordMatch = await bcrypt.compare(
       req.body.password,
       userExists.password
     );
+    if (!passwordMatch) throw new Error("Wrong password");
+    // Authentication successful
+    const sessionId = utilities.generateRandomString('20');
+    const currentTime = Date.now();
 
-    if (passwordMatch) {
-      // Authentication successful
-      const sessionId = utilities.generateRandomString(20);
-      const currentTime = Date.now();
+    // Set session properties
+    req.session.username = req.body.username;
+    req.session.lastAccessed = currentTime;
+    req.session.sessionId = sessionId;
+    req.session.expiresAt = currentTime + sessionTimeout; // Calculate session expiration time
 
-      // Set session properties
-      req.session.username = req.body.username;
-      req.session.lastAccessed = currentTime;
-      req.session.sessionId = sessionId;
-      req.session.expiresAt = currentTime + sessionTimeout; // Calculate session expiration time
-
-      res.status(200).send("Login succeeded");
-    } else {
-      // Password doesn't match
-      res.status(401).send("Invalid credentials");
-    }
-  } else {
-    // User not found
-    res.status(401).send("Invalid credentials");
+    res.status(200).json({ message: "Login succeeded" });
+  } catch (error) {
+    res.status(401).json({ message: error.toString() });
   }
 }
 
@@ -142,7 +128,7 @@ async function manageGetPostNames(
     const match = { type: type };
     const project = { _id: 0, id: 1, title: 1 };
     const posts = await model(match, project);
-    
+
     if (posts.length > 0) {
       res.status(200).json(posts);
     } else {

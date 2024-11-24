@@ -32,10 +32,13 @@ async function findUser(username, connection = connectToDB) {
     const collection = db.collection("users");
     const query = { username };
     const user = await collection.findOne(query);
-    return user || null;
+    if (user) {
+      return user ;
+    } else {
+      throw new Error("User not found");
+    }
   } catch (error) {
-    console.error("Error while finding user:", error);
-    throw error;
+    throw error
   }
 }
 
@@ -47,7 +50,7 @@ async function createUser(data, connection = connectToDB) {
     const existingUser = await collection.findOne({ username: data.username });
     const newUser = {
       username: data.username,
-      password: utilities.generateRandomString(data.password),
+      password: await utilities.hashString(data.password),
     };
     if (!existingUser) {
       await collection.insertOne(newUser);
