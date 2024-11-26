@@ -15,10 +15,10 @@ document
         imgs: document.querySelector(".create-post__img").files,
         tag: document.querySelector(".create-post__title").value
       }
-      
+
       let imgNames = []
-      for(const name of input.imgs){
-        imgNames.push(`${input.tag}-${name}`)
+      for(const img of input.imgs){
+        imgNames.push(`${input.tag}-${img.name}`)
       }
 
       const newPost = {
