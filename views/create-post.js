@@ -15,25 +15,27 @@ document
         imgs: document.querySelector(".create-post__img").files,
         tag: document.querySelector(".create-post__title").value
       }
+      
+      let imgNames = []
+      for(const name of input.imgs){
+        imgNames.push(`${input.tag}-${name}`)
+      }
 
       const newPost = {
         type: document.querySelector(".create-post__type").value,
         title: document.querySelector(".create-post__title").value,
-        image: images || null,
+        image: imgNames,
         content: document.querySelector(".create-post__content").value,
       };
-      const bool = {
 
+      const controller = {
+        imgs:await images.uploadImages(input),
+        post:await controllers.createPost(newPost),
       }
-      // if(newPost.username.trim().length === 0||newPost.password.trim().length === 0 ){
-      //   throw new Error("Please enter a username and password")
-      // }
-      const imgUpload = await images.uploadImages(input)
-      
-      // const results = await controllers.createPost(newPost);
-      // ADD RESULT FOR UPLOADING IMAGES
-      DOM.createMssg(results.message);
+
+      DOM.createMssg(controller.imgs.message);
+      DOM.createMssg(controller.post.message);
     } catch (error) {
-      DOM.createMssg(results.error);
+      DOM.createMssg(error);
     }
   });
