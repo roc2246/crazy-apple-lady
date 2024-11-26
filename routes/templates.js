@@ -19,7 +19,7 @@ router.get("/login", middleware.checkSession, (req, res) => {
   controllers.fillTemplate(req, res, "login", "Login");
 });
 
-router.get("/create-user", middleware.checkSession, (req, res) => {
+router.get("/create-user", middleware.requireLogin, (req, res) => {
   controllers.fillTemplate(req, res, "create-user", "Create User");
 });
 
