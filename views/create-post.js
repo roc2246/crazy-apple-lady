@@ -10,9 +10,12 @@ document
    
     try {
       e.preventDefault();
-      const input = document.querySelector(".create-post__img").files
+    
+      const input = {
+        imgs: document.querySelector(".create-post__img").files,
+        tag: document.querySelector(".create-post__title").value
+      }
 
-      console.log(input)
       const newPost = {
         type: document.querySelector(".create-post__type").value,
         title: document.querySelector(".create-post__title").value,

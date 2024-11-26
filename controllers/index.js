@@ -14,7 +14,6 @@ require("dotenv").config({
 
 // FOR GENERATING PASSWORD__________________________________
 
-
 // hashString(inputString)
 //   .then(hashedString => {
 //     console.log('Hashed string:', hashedString);
@@ -48,7 +47,7 @@ async function login(req, res) {
     );
     if (!passwordMatch) throw new Error("Wrong password");
     // Authentication successful
-    const sessionId = utilities.generateRandomString('20');
+    const sessionId = utilities.generateRandomString("20");
     const currentTime = Date.now();
 
     // Set session properties
@@ -182,18 +181,19 @@ async function manageImageUpload(req, res, form = utilities.newForm()) {
     }
 
     // CHECK IF FILES ARE IN AN ARRAY
-    const tempFiles = Array.isArray(files.images)
-      ? files.images
-      : [files.images];
+    const tempFiles = Array.isArray(files.image)
+      ? files.image
+      : [files.image];
+      console.log(fields)
 
     // MOVE FILES TO UPLOAD DIR
     try {
-      await utilities.uploadFiles(tempFiles, form.uploadDir, req.body.tag);
+      await utilities.uploadFiles(tempFiles, form.uploadDir, fields.tag[0]);
+      res.status(200).json({ message: "All files uploaded" });
     } catch (error) {
-      res.status(500).end(error.toString());
+      res.status(500).json({ message: error.toString() });
     }
   });
-  res.status(200).end("All files uploaded");
 }
 
 async function modifyImages(req, res, form = utilities.newForm()) {
@@ -205,13 +205,13 @@ async function modifyImages(req, res, form = utilities.newForm()) {
     }
 
     // CHECK IF FILES ARE IN AN ARRAY
-    const tempFiles = Array.isArray(files.images)
-      ? files.images
-      : [files.images];
+    const tempFiles = Array.isArray(files.image)
+      ? files.image
+      : [files.image];
 
     // removes images not in modifiedImages
     try {
-      await utilities.removeFiles(form.uploadDir, req.body.tag, tempFiles);
+      await utilities.removeFiles(form.uploadDir, fields.tag[0], tempFiles);
     } catch (error) {
       res.status(500).end("Error deleting fileds");
     }
@@ -235,13 +235,13 @@ async function manageDeleteImages(req, res, form = utilities.newForm()) {
     }
 
     // CHECK IF FILES ARE IN AN ARRAY
-    const tempFiles = Array.isArray(files.images)
-      ? files.images
-      : [files.images];
+    const tempFiles = Array.isArray(files.image)
+      ? files.image
+      : [files.image];
 
     // removes images not in modifiedImages
     try {
-      await utilities.removeFiles(form.uploadDir, req.body.tag, tempFiles);
+      await utilities.removeFiles(form.uploadDir, fields.tag[0], tempFiles);
     } catch (error) {
       res.status(500).end(error.toString());
     }

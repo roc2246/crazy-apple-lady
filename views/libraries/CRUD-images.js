@@ -1,8 +1,9 @@
 export function formData(input) {
   const formData = new FormData();
-  for (const file of input) {
+  for (const file of input.imgs) {
     formData.append("image", file);
   }
+  formData.append("tag", input.tag)
   return formData;
 }
 export async function uploadImages(input) {
@@ -12,7 +13,7 @@ export async function uploadImages(input) {
       method: "POST",
       body: formData(input),
     });
-    const data = response;
+    const data = await response.json();
     return data;
   } catch (error) {
     console.error("Error while uploading images:", error);
