@@ -53,12 +53,13 @@ function verifyCallback(callback) {
 
 // FORM MANAGEMENT
 function newForm(
-  library = new formidable.IncomingForm(),
+  library = formidable.IncomingForm,
   dir = "views/images"
 ) {
-  const form = library();
+  const form = new library();
   form.uploadDir = path.join(path.resolve(__dirname, ".."), `${dir}`);
   form.keepExtensions = true;
+  form.maxFileSize = 2 * 1024 * 1024 * 1024;
 
   return form;
 }

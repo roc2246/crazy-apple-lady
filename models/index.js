@@ -89,7 +89,6 @@ async function newPost(post, connection = connectToDB) {
 
     await collection.insertOne(newPost);
   } catch (error) {
-    console.error("Error while adding post:", error);
     throw error;
   }
 }

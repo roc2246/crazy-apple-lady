@@ -14,11 +14,6 @@ export async function createPost(input) {
       }),
     });
 
-    if (!response.ok) {
-      throw new Error(
-        `HTTP Error: ${response.status} - ${response.statusText}`
-      );
-    }
     const data = await response.json();
     return data;
   } catch (error) {
@@ -43,11 +38,6 @@ export async function updatePost(input) {
       }),
     });
 
-    if (!response.ok) {
-      throw new Error(
-        `HTTP Error: ${response.status} - ${response.statusText}`
-      );
-    }
     const data = await response.json();
     return data;
   } catch (error) {

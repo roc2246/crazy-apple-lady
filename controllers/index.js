@@ -82,7 +82,7 @@ async function manageNewPost(req, res, model = models.newPost) {
     await model(post);
     res.status(201).json({ message: "Post added" });
   } catch (error) {
-    res.status(401).json({ message: error });
+    res.status(401).json({ message: error.toString() });
   }
 }
 
@@ -99,7 +99,7 @@ async function manageUpdatePost(
       .status(200)
       .json({ message: "Post updated successfully", updatedPost: updatedPost });
   } catch (error) {
-    res.status(500).json({ message: error });
+    res.status(500).json({ message: error.toString() });
     throw error;
   }
 }
@@ -111,7 +111,7 @@ async function manageDeletePost(req, res, id, model = models.deletePost) {
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
     console.error("Error while deleting post:", error);
-    res.status(500).json({ message: error });
+    res.status(500).json({ message: error.toString() });
     throw error;
   }
 }
@@ -135,7 +135,7 @@ async function manageGetPostNames(
       throw Error("No Posts available");
     }
   } catch (error) {
-    res.status(404).json({ message: error });
+    res.status(404).json({ message: error.toString() });
     console.log(error);
   }
 }
@@ -167,7 +167,7 @@ async function manageGetPosts(req, res, model = models.postRetrieval) {
     const posts = await model({});
     res.status(200).json(!posts ? new Error("No posts available") : posts);
   } catch (error) {
-    res.status(500).json({ message: error });
+    res.status(500).json({ message: error.toString() });
     throw error;
   }
 }
@@ -190,7 +190,7 @@ async function manageImageUpload(req, res, form = utilities.newForm()) {
     try {
       await utilities.uploadFiles(tempFiles, form.uploadDir, req.body.tag);
     } catch (error) {
-      res.status(500).end(error);
+      res.status(500).end(error.toString());
     }
   });
   res.status(200).end("All files uploaded");
@@ -220,7 +220,7 @@ async function modifyImages(req, res, form = utilities.newForm()) {
     try {
       await utilities.uploadFiles(tempFiles, form.uploadDir, req.body.blogName);
     } catch (error) {
-      res.status(500).end(error);
+      res.status(500).end(error.toString());
     }
   });
   res.status(200).end("All files updated");
@@ -243,7 +243,7 @@ async function manageDeleteImages(req, res, form = utilities.newForm()) {
     try {
       await utilities.removeFiles(form.uploadDir, req.body.tag, tempFiles);
     } catch (error) {
-      res.status(500).end("Error deleting fileds");
+      res.status(500).end(error.toString());
     }
   });
   res.status(200).end("All files deleted");

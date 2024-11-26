@@ -11,11 +11,10 @@ require("dotenv").config({
   path: path.join(__dirname, "../config/.env"),
 });
 
-// Parse JSON request bodies
-app.use(express.json());
 
-// Parse URL-encoded request bodies
-app.use(express.urlencoded({ extended: true }));
+// Configure body parser limits
+app.use(express.json({ limit: "2gb" })); // Increase JSON body limit if needed
+app.use(express.urlencoded({ limit: "2gb", extended: true }));
 
 // Configures express session
 app.use(

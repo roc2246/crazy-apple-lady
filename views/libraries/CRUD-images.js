@@ -1,21 +1,18 @@
-export function formData(input){
-  const file = input.files[0];
+export function formData(input) {
   const formData = new FormData();
-  formData.append("image", file);
-  return formData
+  for (const file of input) {
+    formData.append("image", file);
+  }
+  return formData;
 }
-
 export async function uploadImages(input) {
   try {
     // INPUT IS DOC.GETELEMENY BY ETC
     const response = await fetch("/api/upload-images", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: formData(input),
     });
-    const data = await response.json();
+    const data = response;
     return data;
   } catch (error) {
     console.error("Error while uploading images:", error);
