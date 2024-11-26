@@ -182,7 +182,6 @@ async function manageImageUpload(req, res, form = utilities.newForm()) {
 
     // CHECK IF FILES ARE IN AN ARRAY
     const tempFiles = Array.isArray(files.image) ? files.image : [files.image];
-    console.log(fields);
 
     // MOVE FILES TO UPLOAD DIR
     try {
