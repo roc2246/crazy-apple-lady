@@ -1,3 +1,5 @@
+import * as DOM from './CRUD-DOM.js'
+
 export async function createPost(input) {
   try {
     const response = await fetch("/api/new-post", {
@@ -10,7 +12,7 @@ export async function createPost(input) {
         type: input.type,
         title: input.title,
         image: input.image,
-        content: input.content,
+        content: DOM.addPTags(input.content),
       }),
     });
 
@@ -18,6 +20,17 @@ export async function createPost(input) {
     return data;
   } catch (error) {
     console.error("Error while adding post:", error);
+    throw error;
+  }
+}
+
+export async function retrievePosts() {
+    try {
+    const response = await fetch("/api/get-posts");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error);
     throw error;
   }
 }
