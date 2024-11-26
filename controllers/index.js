@@ -181,10 +181,8 @@ async function manageImageUpload(req, res, form = utilities.newForm()) {
     }
 
     // CHECK IF FILES ARE IN AN ARRAY
-    const tempFiles = Array.isArray(files.image)
-      ? files.image
-      : [files.image];
-      console.log(fields)
+    const tempFiles = Array.isArray(files.image) ? files.image : [files.image];
+    console.log(fields);
 
     // MOVE FILES TO UPLOAD DIR
     try {
@@ -205,9 +203,7 @@ async function modifyImages(req, res, form = utilities.newForm()) {
     }
 
     // CHECK IF FILES ARE IN AN ARRAY
-    const tempFiles = Array.isArray(files.image)
-      ? files.image
-      : [files.image];
+    const tempFiles = Array.isArray(files.image) ? files.image : [files.image];
 
     // removes images not in modifiedImages
     try {
@@ -219,11 +215,11 @@ async function modifyImages(req, res, form = utilities.newForm()) {
     // Adds images not in uploadedImgs
     try {
       await utilities.uploadFiles(tempFiles, form.uploadDir, req.body.blogName);
+      res.status(200).end("All files updated");
     } catch (error) {
       res.status(500).end(error.toString());
     }
   });
-  res.status(200).end("All files updated");
 }
 
 async function manageDeleteImages(req, res, form = utilities.newForm()) {
@@ -235,18 +231,16 @@ async function manageDeleteImages(req, res, form = utilities.newForm()) {
     }
 
     // CHECK IF FILES ARE IN AN ARRAY
-    const tempFiles = Array.isArray(files.image)
-      ? files.image
-      : [files.image];
+    const tempFiles = Array.isArray(files.image) ? files.image : [files.image];
 
     // removes images not in modifiedImages
     try {
       await utilities.removeFiles(form.uploadDir, fields.tag[0], tempFiles);
+      res.status(200).end("All files deleted");
     } catch (error) {
       res.status(500).end(error.toString());
     }
   });
-  res.status(200).end("All files deleted");
 }
 
 // TEMPLATE MANAGEMENT
