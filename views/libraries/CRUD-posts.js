@@ -59,18 +59,11 @@ export async function updatePost(input) {
   }
 }
 
-export async function deletePost(input) {
+export async function deletePost(id) {
   try {
-    const response = await fetch(`/api/delete-post?id=${input.id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const response = await fetch(`/api/delete-post?id=${id}`, {
+      method: "DELETE"
     });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
     const data = await response.json();
     return data;
   } catch (error) {

@@ -108,7 +108,9 @@ async function removeFiles(uploadDir, tag, tempFiles = []) {
   validateArg(uploadDir, "string");
   validateArg(tag, "string");
   validateArg(tempFiles, "array");
-  tempFiles = tempFiles.map((file) => `${tag}-${file.originalFilename}`)
+  if(!tempFiles.includes(undefined)){
+    tempFiles = tempFiles.map((file) => `${tag}-${file.originalFilename}`)
+  }
 
   const uploadFiles = await fs.readdir(uploadDir);
   

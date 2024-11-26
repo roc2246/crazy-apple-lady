@@ -132,7 +132,7 @@ async function deletePost(postID, connection = connectToDB) {
   }
 }
 
-async function deletePost2(postID, connection = connectToDB) {
+async function deleteAllPosts(postID, connection = connectToDB) {
   try {
     const { db } = await connection();
     const collection = db.collection("posts");
@@ -143,7 +143,7 @@ async function deletePost2(postID, connection = connectToDB) {
     throw error;
   }
 }
-// deletePost2()
+// deleteAllPosts()
 
 // Retrieve Posts
 async function postRetrieval(

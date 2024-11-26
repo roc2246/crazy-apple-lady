@@ -48,7 +48,7 @@ router.put('/update-images', (req, res)=>{
   controllers.modifyImages(req, res)
 })
 
-router.delete('delete-images', (req, res) =>{
+router.delete('/delete-images', (req, res) =>{
   controllers.manageDeleteImages(req, res)
 })
 

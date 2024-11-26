@@ -60,30 +60,25 @@ document
     }
   });
 
-// (() => {
-//   const deleteBtn = document.querySelector(".manage-post__delete");
-//   deleteBtn.addEventListener("click", async (e) => {
-//     e.preventDefault();
-//     try {
-//       const id =
-//         document.querySelector(".manage-post__select").selectedIndex + 1;
+document
+  .querySelector(".manage-post__delete")
+  .addEventListener("click", async (e) => {
+    try {
+      e.preventDefault()
+      const id =
+        document.querySelector(".manage-post__select").selectedIndex + 1;
 
-//       const response = await fetch(`/api/delete-post?id=${id}`, {
-//         method: "DELETE",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       });
+    const input = {
+      tag: document.querySelector(".manage-post__title").value,
+    };
+    const controller = {
+        post: await controllers.deletePost(id),
+        imgs: await image.deleteImages(input),
+      };
 
-//       if (!response.ok) {
-//         throw new Error(`HTTP error! Status: ${response.status}`);
-//       }
-
-//       const result = await response.json();
-//       console.log("Success:", result);
-//     } catch (error) {
-//       console.log(error);
-//       throw Error;
-//     }
-//   });
-// })();
+      DOM.createMssg(controller.imgs.message);
+      DOM.createMssg(controller.post.message);
+    } catch (error) {
+      DOM.createMssg(error);
+    }
+  });

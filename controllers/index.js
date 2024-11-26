@@ -237,9 +237,9 @@ async function manageDeleteImages(req, res, form = utilities.newForm()) {
     // removes images not in modifiedImages
     try {
       await utilities.removeFiles(form.uploadDir, fields.tag[0], tempFiles);
-      res.status(200).end("All files deleted");
+      res.status(200).json({message:"All files deleted"});
     } catch (error) {
-      res.status(500).end(error.toString());
+      res.status(500).json({message:error.toString()});
     }
   });
 }
