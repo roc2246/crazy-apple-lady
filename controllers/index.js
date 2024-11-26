@@ -213,7 +213,7 @@ async function modifyImages(req, res, form = utilities.newForm()) {
 
     // Adds images not in uploadedImgs
     try {
-      await utilities.uploadFiles(tempFiles, form.uploadDir, req.body.blogName);
+      await utilities.uploadFiles(tempFiles, form.uploadDir, fields.tag[0]);
       res.status(200).end("All files updated");
     } catch (error) {
       res.status(500).end(error.toString());
