@@ -33,12 +33,12 @@ async function findUser(username, connection = connectToDB) {
     const query = { username };
     const user = await collection.findOne(query);
     if (user) {
-      return user ;
+      return user;
     } else {
       throw new Error("User not found");
     }
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
@@ -58,7 +58,7 @@ async function createUser(data, connection = connectToDB) {
       throw new Error("Username already taken");
     }
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
@@ -80,14 +80,18 @@ async function newPost(post, connection = connectToDB) {
     const collection = db.collection("posts");
 
     const newPost = {
-      id: post.id ? post.id : (await generatePostID()),
+      id: post.id ? post.id : await generatePostID(),
       type: post.type,
       title: post.title,
       image: post.image.map((img) => `./images/${img}`),
       content: post.content,
     };
-
-    await collection.insertOne(newPost);
+    const titleExists = await collection.findOne({ title: post.title });
+    if (!titleExists) {
+      await collection.insertOne(newPost);
+    } else {
+      throw new Error("Post name already exists");
+    }
   } catch (error) {
     throw error;
   }
