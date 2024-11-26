@@ -204,20 +204,22 @@ async function modifyImages(req, res, form = utilities.newForm()) {
     // CHECK IF FILES ARE IN AN ARRAY
     const tempFiles = Array.isArray(files.image) ? files.image : [files.image];
 
-    // removes images not in modifiedImages
+   
+    // Adds images not in uploadedImgs
     try {
+      await utilities.uploadFiles(tempFiles, form.uploadDir, fields.tag[0]);
+      res.status(200).json({message : "All files updated"});
+    } catch (error) {
+      res.status(500).json({message : error.toString()});
+    }
+
+     // removes images not in modifiedImages
+     try {
       await utilities.removeFiles(form.uploadDir, fields.tag[0], tempFiles);
     } catch (error) {
       res.status(500).end("Error deleting fileds");
     }
 
-    // Adds images not in uploadedImgs
-    try {
-      await utilities.uploadFiles(tempFiles, form.uploadDir, fields.tag[0]);
-      res.status(200).end("All files updated");
-    } catch (error) {
-      res.status(500).end(error.toString());
-    }
   });
 }
 

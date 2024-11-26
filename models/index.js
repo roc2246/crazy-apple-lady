@@ -102,13 +102,12 @@ async function updatePost(updatedPost, connection = connectToDB) {
   try {
     const { db } = await connection();
     const collection = db.collection("posts");
-
     const updates = {
       type: updatedPost.type,
       title: updatedPost.title,
-      image: updatedPost.image,
       content: utilities.addPTags(updatedPost.content),
     };
+    if(updatedPost.image) updates.image = updatedPost.image.map((img) => `./images/${img}`)
 
     await collection.findOneAndUpdate(
       { id: updatedPost.id },
@@ -132,6 +131,19 @@ async function deletePost(postID, connection = connectToDB) {
     throw error;
   }
 }
+
+async function deletePost2(postID, connection = connectToDB) {
+  try {
+    const { db } = await connection();
+    const collection = db.collection("posts");
+
+    await collection.deleteMany({});
+  } catch (error) {
+    console.error("Error while deleting post:", error);
+    throw error;
+  }
+}
+// deletePost2()
 
 // Retrieve Posts
 async function postRetrieval(

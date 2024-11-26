@@ -1,53 +1,62 @@
-import * as controller from './libraries/CRUD-posts.js'
-import * as utility from './libraries/utilities.js'
+import * as controllers from "./libraries/CRUD-posts.js";
+import * as image from "/libraries/CRUD-images.js";
+import * as DOM from "/libraries/CRUD-DOM.js";
+import * as utility from "./libraries/utilities.js";
 
 (async () => {
   try {
-    const data = await controller.retrievePosts();
+    const data = await controllers.retrievePosts();
     utility.setOptions(data);
     utility.generateFormData(data);
   } catch (error) {
     console.error("Error:", error);
-    throw Error;
+    throw error;
   }
 })();
 
-
-document.querySelector(".manage-post__select").addEventListener("change", async () => {
-    const data = await controller.retrievePosts();
+document
+  .querySelector(".manage-post__select")
+  .addEventListener("change", async () => {
+    const data = await controllers.retrievePosts();
     utility.generateFormData(data);
   });
 
-
-document.querySelector(".manage-post__update").addEventListener("click", async (e) => {
+document
+  .querySelector(".manage-post__update")
+  .addEventListener("click", async (e) => {
     e.preventDefault();
     try {
-      const imgs = storeImgURLS()
+      const input = {
+        imgs: document.querySelector(".manage-post__img").files,
+        tag: document.querySelector(".manage-post__title").value,
+      };
+
+      let imgNames = [];
+      for (const img of input.imgs) {
+        imgNames.push(`${input.tag}-${img.name}`);
+      }
+
       const updatedPost = {
         id: postID,
         type: document.querySelector(".manage-post__type").value,
         title: document.querySelector(".manage-post__title").value,
-        image: imgs.length > 0 ? imgs : postImg,
         content: document.querySelector(".manage-post__text").value,
       };
 
-      const response = await fetch("/api/update-post", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedPost),
-      });
+      if (imgNames.length > 0) updatedPost.image = imgNames;
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      const controller = {
+        post: await controllers.updatePost(updatedPost),
+      };
+
+      if (imgNames.length > 0) {
+        (controller.imgs = await image.updateImages(input)),
+          DOM.createMssg(controller.imgs.message);
       }
 
-      const result = await response.json();
-      console.log("Success:", result);
+      DOM.createMssg(controller.post.message);
     } catch (error) {
-      console.log(error);
-      throw Error;
+      DOM.createMssg(error);
     }
   });
 

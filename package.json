@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "test": "vitest",
-    "dev": "nodemon app.js",
+    "dev": "node --watch app.js",
     "compile:sass": "sass views/sass/main.scss views/style.css"
   },
   "repository": {
@@ -30,7 +30,6 @@
     "formidable": "^3.5.1",
     "mongodb": "^6.8.0",
     "node": "^20.15.0",
-    "nodemon": "^3.1.0",
     "vitest": "^1.6.0"
   },
   "devDependencies": {

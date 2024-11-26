@@ -26,9 +26,6 @@ export async function updateImages(input) {
       // INPUT IS DOC.GETELEMENY BY ETC
       const response = await fetch("/api/update-images", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: formData(input),
       });
       const data = await response.json();

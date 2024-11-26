@@ -4,13 +4,12 @@ const path = require("path");
 const formidable = require("formidable");
 const bcrypt = require("bcrypt");
 
-
 // LOGINS
 function generateRandomString(input) {
-  if(typeof input !=="string"){
-    throw Error("Input must be string.")
+  if (typeof input !== "string") {
+    throw Error("Input must be string.");
   }
-  input = input.length
+  input = input.length;
   return crypto
     .randomBytes(Math.ceil(input / 2))
     .toString("hex") // Convert to hexadecimal representation
@@ -52,10 +51,7 @@ function verifyCallback(callback) {
 }
 
 // FORM MANAGEMENT
-function newForm(
-  library = formidable.IncomingForm,
-  dir = "views/images"
-) {
+function newForm(library = formidable.IncomingForm, dir = "views/images") {
   const form = new library();
   form.uploadDir = path.join(path.resolve(__dirname, ".."), `${dir}`);
   form.keepExtensions = true;
@@ -96,6 +92,8 @@ async function uploadFiles(tempFiles, uploadDir, tag) {
 
       if (!uploadFilesSet.has(fileToUpload)) {
         await fs.rename(oldPath, newPath);
+      } else {
+        await fs.unlink(oldPath);
       }
     } catch (error) {
       throw new Error(
@@ -110,12 +108,14 @@ async function removeFiles(uploadDir, tag, tempFiles = []) {
   validateArg(uploadDir, "string");
   validateArg(tag, "string");
   validateArg(tempFiles, "array");
+  tempFiles = tempFiles.map((file) => `${tag}-${file.originalFilename}`)
 
   const uploadFiles = await fs.readdir(uploadDir);
-  const tempFileSet = new Set(tempFiles.map((file) => `${tag}-${file}`));
-  const regex = new RegExp(`^${tag}-`);
   
-  const filesToDelete = uploadFiles.filter((file) => 
+  const tempFileSet = new Set(tempFiles);
+  const regex = new RegExp(`^${tag}-`);
+
+  const filesToDelete = uploadFiles.filter((file) =>
     tempFiles.length > 0 ? !tempFileSet.has(file) : regex.test(file)
   );
 
