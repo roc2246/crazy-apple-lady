@@ -25,8 +25,8 @@ export const mockForm = vi.fn(() => {
   return {
     parse: (req, cb) => {
       const err = null;
-      const fields = {};
-      const files = { images: [] };
+      const fields = {tag:["tstBlog"]};
+      const files = { image: [] };
 
       const imgsToUpload = fs.readdirSync(mockPath.temp);
 
@@ -35,7 +35,7 @@ export const mockForm = vi.fn(() => {
           filepath: path.join(mockPath.temp, img),
           originalFilename: img,
         };
-        files.images.push(obj);
+        files.image.push(obj);
       });
 
       cb(err, fields, files);
