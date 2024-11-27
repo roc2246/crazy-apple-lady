@@ -47,7 +47,7 @@ async function login(req, res) {
     );
     if (!passwordMatch) throw new Error("Wrong password");
     // Authentication successful
-    const sessionId = utilities.generateRandomString("20");
+    const sessionId = utilities.generateRandomString(2);
     const currentTime = Date.now();
 
     // Set session properties
