@@ -3,11 +3,19 @@ const { Transform } = require("stream");
 const { MongoClient } = require("mongodb");
 const utilities = require("../utilities/index");
 
+// Load environment variables
 require("dotenv").config({
   path: path.join(__dirname, "../config/.env"),
 });
 
 // CONNECT
+/**
+ * Establishes a connection to the MongoDB database.
+ * @param {MongoClient} MongoClientInstance - MongoClient instance to use (defaults to MongoClient).
+ * @param {string} uri - MongoDB URI (defaults to process.env.MONGODB_URI).
+ * @returns {Promise<{db: Db, client: MongoClient}>} Resolves with the database and client objects.
+ * @throws {Error} If the connection fails.
+ */
 async function connectToDB(
   MongoClientInstance = MongoClient,
   uri = process.env.MONGODB_URI
@@ -17,7 +25,6 @@ async function connectToDB(
   try {
     client = new MongoClientInstance(uri);
     await client.connect();
-
     return { db: client.db("crazy-apple-lady"), client };
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
@@ -26,6 +33,13 @@ async function connectToDB(
 }
 
 // LOGIN
+/**
+ * Finds a user by their username.
+ * @param {string} username - The username to search for.
+ * @param {Function} connection - A function to connect to the database (defaults to connectToDB).
+ * @returns {Promise<Object>} Resolves with the user object if found.
+ * @throws {Error} If the user is not found or an error occurs during the search.
+ */
 async function findUser(username, connection = connectToDB) {
   try {
     const { db } = await connection();
@@ -43,6 +57,13 @@ async function findUser(username, connection = connectToDB) {
 }
 
 // NEW USER
+/**
+ * Creates a new user in the database.
+ * @param {Object} data - The user data, including username and password.
+ * @param {Function} connection - A function to connect to the database (defaults to connectToDB).
+ * @returns {Promise<void>} Resolves when the user is successfully created.
+ * @throws {Error} If the username is already taken or an error occurs.
+ */
 async function createUser(data, connection = connectToDB) {
   try {
     const { db } = await connection();
@@ -63,6 +84,11 @@ async function createUser(data, connection = connectToDB) {
 }
 
 // UTIL
+/**
+ * Generates a unique post ID based on the highest existing ID.
+ * @param {Function} connection - A function to connect to the database (defaults to connectToDB).
+ * @returns {Promise<number>} Resolves with the next available post ID.
+ */
 async function generatePostID(connection = connectToDB) {
   const { db } = await connection();
   const collection = db.collection("posts");
@@ -74,6 +100,13 @@ async function generatePostID(connection = connectToDB) {
 }
 
 // CRUD
+/**
+ * Creates a new post in the database.
+ * @param {Object} post - The post data to insert.
+ * @param {Function} connection - A function to connect to the database (defaults to connectToDB).
+ * @returns {Promise<void>} Resolves when the post is successfully inserted.
+ * @throws {Error} If the post title already exists.
+ */
 async function newPost(post, connection = connectToDB) {
   try {
     const { db } = await connection();
@@ -97,7 +130,13 @@ async function newPost(post, connection = connectToDB) {
   }
 }
 
-// Updates blogpost
+/**
+ * Updates an existing post in the database.
+ * @param {Object} updatedPost - The updated post data.
+ * @param {Function} connection - A function to connect to the database (defaults to connectToDB).
+ * @returns {Promise<void>} Resolves when the post is successfully updated.
+ * @throws {Error} If an error occurs during the update.
+ */
 async function updatePost(updatedPost, connection = connectToDB) {
   try {
     const { db } = await connection();
@@ -107,7 +146,7 @@ async function updatePost(updatedPost, connection = connectToDB) {
       title: updatedPost.title,
       content: utilities.addPTags(updatedPost.content),
     };
-    if(updatedPost.image) updates.image = updatedPost.image.map((img) => `./images/${img}`)
+    if (updatedPost.image) updates.image = updatedPost.image.map((img) => `./images/${img}`);
 
     await collection.findOneAndUpdate(
       { id: updatedPost.id },
@@ -119,7 +158,13 @@ async function updatePost(updatedPost, connection = connectToDB) {
   }
 }
 
-// Deletes blogpost
+/**
+ * Deletes a post from the database by its ID.
+ * @param {number} postID - The ID of the post to delete.
+ * @param {Function} connection - A function to connect to the database (defaults to connectToDB).
+ * @returns {Promise<void>} Resolves when the post is successfully deleted.
+ * @throws {Error} If an error occurs during deletion.
+ */
 async function deletePost(postID, connection = connectToDB) {
   try {
     const { db } = await connection();
@@ -132,6 +177,12 @@ async function deletePost(postID, connection = connectToDB) {
   }
 }
 
+/**
+ * Deletes all posts from the database.
+ * @param {Function} connection - A function to connect to the database (defaults to connectToDB).
+ * @returns {Promise<void>} Resolves when all posts are successfully deleted.
+ * @throws {Error} If an error occurs during deletion.
+ */
 async function deleteAllPosts(postID, connection = connectToDB) {
   try {
     const { db } = await connection();
@@ -139,13 +190,19 @@ async function deleteAllPosts(postID, connection = connectToDB) {
 
     await collection.deleteMany({});
   } catch (error) {
-    console.error("Error while deleting post:", error);
+    console.error("Error while deleting posts:", error);
     throw error;
   }
 }
-// deleteAllPosts()
 
-// Retrieve Posts
+/**
+ * Retrieves posts from the database based on a match query and projection.
+ * @param {Object} match - The match query to filter posts.
+ * @param {Object} [project={ _id: 0 }] - The projection for fields to include/exclude.
+ * @param {Function} connection - A function to connect to the database (defaults to connectToDB).
+ * @returns {Promise<Object[]>} Resolves with an array of posts matching the query.
+ * @throws {Error} If an error occurs while retrieving posts.
+ */
 async function postRetrieval(
   match,
   project = { _id: 0 },
