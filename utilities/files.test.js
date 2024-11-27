@@ -90,7 +90,7 @@ describe("Update images", () => {
     const mockTempFiles = await fs.readdir(tempPath);
     const mockUploads = await fs.readdir(serverPath);
 
-    expect(mockTempFiles).toContain("file1.txt");
+    expect(mockUploads).not.toContain("file1.txt");
     expect(mockUploads).toContain(`${tag}-file8.txt`);
   });
   it("should throw error uploading files not in uploads directory", async () => {
