@@ -1,3 +1,21 @@
+/* BASE */
+html {
+    font-size: 12px; 
+    box-sizing: border-box; 
+    line-height: 1.5; 
+}
 
+*, *::before, *::after {
+    box-sizing: inherit; 
+}
 
-/*# sourceMappingURL=style.css.map */
+body {
+    margin: 0; 
+    font-family: Arial, sans-serif; 
+    color: #333;
+    background-color: #f9f9f9; 
+}
+
+/* RESET */
+
+/* TYPOGRAPHY */
