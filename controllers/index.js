@@ -23,38 +23,50 @@ require("dotenv").config({
 //   });
 // ___________________________________________________
 
-// LOGIN
+// LOGOUT
+/**
+ * Logs out the user by destroying their session.
+ * Clears the session data for the current user.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
 function logout(req, res) {
-  // Destroy the session or clear specific session properties
   req.session.destroy((err) => {
     if (err) {
       console.error("Error destroying session:", err);
     } else {
-      res.status(200).send("Succesfully logged out");
+      res.status(200).send("Successfully logged out");
     }
   });
 }
 
+// LOGIN
+/**
+ * Authenticates a user by comparing the provided password with the stored hash.
+ * On successful authentication, a session is created for the user.
+ * 
+ * @param {Object} req - The request object containing user credentials.
+ * @param {Object} res - The response object.
+ */
 async function login(req, res) {
   try {
     const sessionTimeout = 30 * 60 * 1000;
 
     const userExists = await models.findUser(req.body.username);
-
     const passwordMatch = await bcrypt.compare(
       req.body.password,
       userExists.password
     );
     if (!passwordMatch) throw new Error("Wrong password");
-    // Authentication successful
+
     const sessionId = utilities.generateRandomString(2);
     const currentTime = Date.now();
 
-    // Set session properties
     req.session.username = req.body.username;
     req.session.lastAccessed = currentTime;
     req.session.sessionId = sessionId;
-    req.session.expiresAt = currentTime + sessionTimeout; // Calculate session expiration time
+    req.session.expiresAt = currentTime + sessionTimeout;
 
     res.status(200).json({ message: "Login succeeded" });
   } catch (error) {
@@ -62,6 +74,14 @@ async function login(req, res) {
   }
 }
 
+// CREATE USER
+/**
+ * Creates a new user after validating and hashing the user's password.
+ * 
+ * @param {Object} req - The request object containing the user's data.
+ * @param {Object} res - The response object.
+ * @param {Function} model - The model function used to create the user (defaults to `models.createUser`).
+ */
 async function manageNewUser(req, res, model = models.createUser) {
   try {
     utilities.verifyCallback(model);
@@ -73,7 +93,14 @@ async function manageNewUser(req, res, model = models.createUser) {
   }
 }
 
-// CREATE, UPDATE, DELETE
+// CREATE, UPDATE, DELETE POST
+/**
+ * Adds a new post to the database.
+ * 
+ * @param {Object} req - The request object containing the post data.
+ * @param {Object} res - The response object.
+ * @param {Function} model - The model function used to create the post (defaults to `models.newPost`).
+ */
 async function manageNewPost(req, res, model = models.newPost) {
   try {
     utilities.verifyCallback(model);
@@ -85,6 +112,14 @@ async function manageNewPost(req, res, model = models.newPost) {
   }
 }
 
+/**
+ * Updates an existing post in the database.
+ * 
+ * @param {Object} req - The request object containing the updated post data.
+ * @param {Object} res - The response object.
+ * @param {Object} updatedPost - The updated post data.
+ * @param {Function} model - The model function used to update the post (defaults to `models.updatePost`).
+ */
 async function manageUpdatePost(
   req,
   res,
@@ -103,6 +138,14 @@ async function manageUpdatePost(
   }
 }
 
+/**
+ * Deletes a post from the database by its ID.
+ * 
+ * @param {Object} req - The request object containing the post ID.
+ * @param {Object} res - The response object.
+ * @param {string} id - The ID of the post to be deleted.
+ * @param {Function} model - The model function used to delete the post (defaults to `models.deletePost`).
+ */
 async function manageDeletePost(req, res, id, model = models.deletePost) {
   try {
     utilities.verifyCallback(model);
@@ -116,6 +159,14 @@ async function manageDeletePost(req, res, id, model = models.deletePost) {
 }
 
 // DATA RETRIEVAL
+/**
+ * Retrieves a list of post names of a specific type.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {string} type - The type of posts to retrieve.
+ * @param {Function} model - The model function used to retrieve posts (defaults to `models.postRetrieval`).
+ */
 async function manageGetPostNames(
   req,
   res,
@@ -139,6 +190,14 @@ async function manageGetPostNames(
   }
 }
 
+/**
+ * Retrieves a specific post by its ID.
+ * 
+ * @param {Object} req - The request object containing the post ID.
+ * @param {Object} res - The response object.
+ * @param {string} id - The ID of the post to retrieve.
+ * @param {Function} model - The model function used to retrieve the post (defaults to `models.postRetrieval`).
+ */
 async function manageGetPost(req, res, id, model = models.postRetrieval) {
   try {
     utilities.verifyCallback(model);
@@ -160,6 +219,13 @@ async function manageGetPost(req, res, id, model = models.postRetrieval) {
   }
 }
 
+/**
+ * Retrieves all posts.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} model - The model function used to retrieve posts (defaults to `models.postRetrieval`).
+ */
 async function manageGetPosts(req, res, model = models.postRetrieval) {
   try {
     utilities.verifyCallback(model);
@@ -172,18 +238,23 @@ async function manageGetPosts(req, res, model = models.postRetrieval) {
 }
 
 // IMAGE MANAGEMENT
+/**
+ * Handles image upload via a form.
+ * Moves uploaded files to the designated directory.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Object} form - The form instance used for file parsing (defaults to `utilities.newForm()`).
+ */
 async function manageImageUpload(req, res, form = utilities.newForm()) {
   form.parse(req, async (err, fields, files) => {
-    // THROW ERROR
     if (err) {
       res.status(400).end(`Error parsing form data: ${err}`);
       return;
     }
 
-    // CHECK IF FILES ARE IN AN ARRAY
     const tempFiles = Array.isArray(files.image) ? files.image : [files.image];
 
-    // MOVE FILES TO UPLOAD DIR
     try {
       await utilities.uploadFiles(tempFiles, form.uploadDir, fields.tag[0]);
       res.status(200).json({ message: "All files uploaded" });
@@ -193,58 +264,71 @@ async function manageImageUpload(req, res, form = utilities.newForm()) {
   });
 }
 
+/**
+ * Modifies uploaded images: adds new ones and removes old ones.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Object} form - The form instance used for file parsing (defaults to `utilities.newForm()`).
+ */
 async function modifyImages(req, res, form = utilities.newForm()) {
   form.parse(req, async (err, fields, files) => {
-    // THROW ERROR
     if (err) {
       res.status(400).end(`Error parsing form data: ${err}`);
       return;
     }
 
-    // CHECK IF FILES ARE IN AN ARRAY
     const tempFiles = Array.isArray(files.image) ? files.image : [files.image];
 
-   
-    // Adds images not in uploadedImgs
     try {
       await utilities.uploadFiles(tempFiles, form.uploadDir, fields.tag[0]);
-      res.status(200).json({message : "All files updated"});
+      res.status(200).json({ message: "All files updated" });
     } catch (error) {
-      res.status(500).json({message : error.toString()});
+      res.status(500).json({ message: error.toString() });
     }
 
-     // removes images not in modifiedImages
-     try {
+    try {
       await utilities.removeFiles(form.uploadDir, fields.tag[0], tempFiles);
     } catch (error) {
-      res.status(500).end("Error deleting fileds");
+      res.status(500).end("Error deleting files");
     }
-
   });
 }
 
+/**
+ * Deletes images from the upload directory.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Object} form - The form instance used for file parsing (defaults to `utilities.newForm()`).
+ */
 async function manageDeleteImages(req, res, form = utilities.newForm()) {
   form.parse(req, async (err, fields, files) => {
-    // THROW ERROR
     if (err) {
       res.status(400).end(`Error parsing form data: ${err}`);
       return;
     }
 
-    // CHECK IF FILES ARE IN AN ARRAY
     const tempFiles = Array.isArray(files.image) ? files.image : [files.image];
 
-    // removes images not in modifiedImages
     try {
       await utilities.removeFiles(form.uploadDir, fields.tag[0], tempFiles);
-      res.status(200).json({message:"All files deleted"});
+      res.status(200).json({ message: "All files deleted" });
     } catch (error) {
-      res.status(500).json({message:error.toString()});
+      res.status(500).json({ message: error.toString() });
     }
   });
 }
 
 // TEMPLATE MANAGEMENT
+/**
+ * Fills a template with dynamic content for a specific page.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {string} pageName - The name of the page to load.
+ * @param {string} metaTitle - The title of the page's meta information.
+ */
 function fillTemplate(req, res, pageName, metaTitle) {
   const viewsDir = path.join(__dirname, "../views");
   const filePath = path.join(viewsDir, `${pageName}.html`);
