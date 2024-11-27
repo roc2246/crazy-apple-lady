@@ -1,5 +1,6 @@
 import { it, vi, describe } from "vitest";
 import * as control from "../libraries/CRUD-posts";
+import * as DOM from '../libraries/CRUD-DOM.js'
 
 global.fetch = vi.fn();
 beforeEach(() => {
@@ -24,7 +25,7 @@ describe("createPost", () => {
       type: "plantyLife",
       title: "TEST",
       image: ["1.jpg", "2.jpg"],
-      content: "TESTING",
+      content: DOM.addPTags("TESTING"),
     };
     const fetchInput = {
       method: "POST",
@@ -76,10 +77,9 @@ describe("deletePost", () => {
     };
     const fetchInput = {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
     };
     const url = `/api/delete-post?id=${post.id}`;
-    const result = await control.deletePost(post);
+    const result = await control.deletePost(post.id);
 
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(fetch).toHaveBeenCalledWith(url, fetchInput);
