@@ -52,9 +52,17 @@ describe("updatePost", () => {
       image: ["test.jpg"],
       content: addPTags("TEST1212"),
     };
+    const expectedResult = {
+      id: 0,
+      type: "mushroomBlog",
+      title: "test2",
+      image: ["./images/test.jpg"],
+      content: addPTags("TEST1212"),
+    };
+
     await updatePost(updatedPost, mongo.mockConnectToDB);
-    const newPost = mongo.db[0];
-    expect(newPost).toEqual(updatedPost);
+
+    expect(mongo.db[0]).toEqual(expectedResult);
   });
   it("should throw error", async () => {
     await expect(updatePost({}, mongo.mockConnectToDB)).rejects.toThrow();
