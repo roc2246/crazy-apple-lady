@@ -116,7 +116,7 @@ async function newPost(post, connection = connectToDB) {
       id: post.id ? post.id : await generatePostID(),
       type: post.type,
       title: post.title,
-      image: post.image.map((img) => `./images/${img}`),
+      image: post.image.map((img) => `./images/${img}`.replace(/\s+/g, '')),
       content: post.content,
     };
     const titleExists = await collection.findOne({ title: post.title });
@@ -146,7 +146,7 @@ async function updatePost(updatedPost, connection = connectToDB) {
       title: updatedPost.title,
       content: utilities.addPTags(updatedPost.content),
     };
-    if (updatedPost.image) updates.image = updatedPost.image.map((img) => `./images/${img}`);
+    if (updatedPost.image) updates.image = updatedPost.image.map((img) => `./images/${img}`.replace(/\s+/g, ''));
 
     await collection.findOneAndUpdate(
       { id: updatedPost.id },

@@ -130,7 +130,7 @@ async function uploadFiles(tempFiles, uploadDir, tag) {
   await Promise.all(
     tempFiles.map(async (file) => {
       try {
-        const fileToUpload = `${tag}-${file.originalFilename}`;
+        const fileToUpload = `${tag.replace(/\s+/g, '')}-${file.originalFilename.replace(/\s+/g, '')}`;
         const oldPath = file.filepath;
         const newPath = path.join(uploadDir, fileToUpload);
 
@@ -166,7 +166,7 @@ async function removeFiles(uploadDir, tag, tempFiles = []) {
   validateArg(tempFiles, "array");
 
   if (tempFiles.every((file) => file)) {
-    tempFiles = tempFiles.map((file) => `${tag}-${file.originalFilename}`);
+    tempFiles = tempFiles.map((file) => `${tag}-${file.originalFilename.replace(/\s+/g, '')}`);
   }
 
   const uploadFiles = await fs.readdir(uploadDir);
