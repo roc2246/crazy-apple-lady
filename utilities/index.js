@@ -3,6 +3,7 @@ const fs = require("fs").promises;
 const path = require("path");
 const formidable = require("formidable");
 const bcrypt = require("bcrypt");
+const models = () => require('../models/index');
 
 // LOGINS
 /**
@@ -136,6 +137,7 @@ async function uploadFiles(tempFiles, uploadDir, tag) {
 
         if (!existingFiles.has(fileToUpload)) {
           await fs.rename(oldPath, newPath);
+          await models.uploadImg(newPath)
           results.successes.push(fileToUpload);
         } else {
           await fs.unlink(oldPath);

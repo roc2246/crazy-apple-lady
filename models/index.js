@@ -1,7 +1,8 @@
 const path = require("path");
 const { Transform } = require("stream");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId, GridFSBucket } = require("mongodb");
 const utilities = require("../utilities/index");
+const fs = require('fs')
 
 // Load environment variables
 require("dotenv").config({
@@ -32,6 +33,50 @@ async function connectToDB(
   }
 }
 
+// IMG MANAGEMENT
+async function uploadImg(fileName) {
+  try {
+    const {db} = await connectToDB()
+    const bucket = new GridFSBucket(db, { bucketName: 'uploads' });
+    // Create a download stream
+    const downloadStream = bucket.openDownloadStreamByName(fileName);
+    const writeStream = fs.createWriteStream(`../views/images/${fileName}`);
+
+    downloadStream.pipe(writeStream);
+
+    downloadStream.on('error', (error) => {
+      console.error('Error downloading file:', error);
+    });
+
+    downloadStream.on('end', () => {
+      console.log('File downloaded successfully!');
+    });
+  } catch (error) {
+    console.log(error)
+  }
+}
+// async function deleteImg(fileName) {
+//   try {
+//     const { db } = await connectToDB();
+//     const bucket = new GridFSBucket(db, { bucketName: 'uploads' });
+
+//     // Find the file metadata (including the ObjectId) based on the file name
+//     const file = await db.collection('uploads.files').findOne({ filename: fileName });
+    
+//     if (!file) {
+//       console.log('File not found!');
+//       return;
+//     }
+
+//     // Use the ObjectId to delete the file from GridFS
+//     const fileId = file._id;
+//     await bucket.delete(fileId);
+    
+//     console.log('File deleted successfully!');
+//   } catch (error) {
+//     console.log('Error:', error);
+//   }
+// }
 // LOGIN
 /**
  * Finds a user by their username.
@@ -116,7 +161,7 @@ async function newPost(post, connection = connectToDB) {
       id: post.id ? post.id : await generatePostID(),
       type: post.type,
       title: post.title,
-      image: post.image.map((img) => `./images/${img}`.replace(/\s+/g, '')),
+      image: post.image.map((img) => `./images/${img}`.replace(/\s+/g, "")),
       content: post.content,
     };
     const titleExists = await collection.findOne({ title: post.title });
@@ -146,7 +191,10 @@ async function updatePost(updatedPost, connection = connectToDB) {
       title: updatedPost.title,
       content: utilities.addPTags(updatedPost.content),
     };
-    if (updatedPost.image) updates.image = updatedPost.image.map((img) => `./images/${img}`.replace(/\s+/g, ''));
+    if (updatedPost.image)
+      updates.image = updatedPost.image.map((img) =>
+        `./images/${img}`.replace(/\s+/g, "")
+      );
 
     await collection.findOneAndUpdate(
       { id: updatedPost.id },
@@ -241,6 +289,8 @@ async function postRetrieval(
 
 module.exports = {
   connectToDB,
+uploadImg,
+// deleteImg,
   createUser,
   findUser,
   generatePostID,
