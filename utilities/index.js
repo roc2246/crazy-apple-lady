@@ -131,13 +131,13 @@ async function uploadFiles(tempFiles, uploadDir, tag) {
   await Promise.all(
     tempFiles.map(async (file) => {
       try {
-        const fileToUpload = `${tag.replace(/\s+/g, '')}-${file.originalFilename.replace(/\s+/g, '')}`;
+        const fileToUpload = `${tag/* .replace(/\s+/g, '') */}-${file.originalFilename/* .replace(/\s+/g, '') */}`;
         const oldPath = file.filepath;
         const newPath = path.join(uploadDir, fileToUpload);
 
         if (!existingFiles.has(fileToUpload)) {
           await fs.rename(oldPath, newPath);
-          await models.uploadImg(newPath)
+          // await models.uploadImg(newPath)
           results.successes.push(fileToUpload);
         } else {
           await fs.unlink(oldPath);
