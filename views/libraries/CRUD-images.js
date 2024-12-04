@@ -16,6 +16,7 @@ export async function uploadImages(input) {
       method: "POST",
       body: formData(input),
     });
+    console.log(response)
     const data = await response.json();
     return data;
   } catch (error) {
