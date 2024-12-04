@@ -16,8 +16,18 @@ export async function uploadImages(input) {
       method: "POST",
       body: formData(input),
     });
-    console.log(response)
-    const data = await response.json();
+    
+    console.log("Response status:", response.status);
+    console.log("Response headers:", response.headers);
+  
+    const responseText = await response.text(); // Use `text()` instead of `json()` to inspect raw response
+    console.log("Response body:", responseText);
+  
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+  
+    const data = JSON.parse(responseText); // Parse JSON manually if the response is valid
     return data;
   } catch (error) {
     console.error("Error while uploading images:", error);
