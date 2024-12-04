@@ -253,10 +253,10 @@ async function manageImageUpload(req, res, form = utilities.newForm()) {
       return;
     }
 
-    // const tempFiles = Array.isArray(files.image) ? files.image : [files.image];
+    const tempFiles = Array.isArray(files.image) ? files.image : [files.image];
 
     try {
-      // await utilities.uploadFiles(tempFiles, form.uploadDir, fields.tag[0]);
+      await utilities.uploadFiles(tempFiles, form.uploadDir, fields.tag[0]);
       res.status(200).json({ message: "All files uploaded" });
     } catch (error) {
       res.status(500).json({ message: error.toString() });
