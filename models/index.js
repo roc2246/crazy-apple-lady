@@ -1,6 +1,6 @@
 const path = require("path");
 const { Transform } = require("stream");
-const { MongoClient, ObjectId, GridFSBucket } = require("mongodb");
+const { MongoClient } = require("mongodb");
 const utilities = require("../utilities/index");
 const fs = require('fs')
 
@@ -33,28 +33,7 @@ async function connectToDB(
   }
 }
 
-// IMG MANAGEMENT
-async function uploadImg(fileName) {
-  try {
-    const {db} = await connectToDB()
-    const bucket = new GridFSBucket(db, { bucketName: 'uploads' });
-    // Create a download stream
-    const downloadStream = bucket.openDownloadStreamByName(fileName);
-    const writeStream = fs.createWriteStream(`../views/images/${fileName}`);
 
-    downloadStream.pipe(writeStream);
-
-    downloadStream.on('error', (error) => {
-      console.error('Error downloading file:', error);
-    });
-
-    downloadStream.on('end', () => {
-      console.log('File downloaded successfully!');
-    });
-  } catch (error) {
-    console.log(error)
-  }
-}
 // async function deleteImg(fileName) {
 //   try {
 //     const { db } = await connectToDB();
